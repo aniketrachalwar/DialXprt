@@ -1,0 +1,6 @@
+{
+  "name": "DialXprt",
+  "description": "Hyper-local mobile-first service directory for Hyderabad connecting users with local service providers, tradespeople, and Kirana stores.",
+  "requestFramePermissions": ["geolocation"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
