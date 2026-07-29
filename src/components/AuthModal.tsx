@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { X, Phone, ShieldCheck, CheckCircle2, User, Crown, Store } from 'lucide-react';
 import { UserRole } from '../types';
 import { Logo } from './Logo';
+import { supabase, isSupabaseConfigured } from '../lib/supabase';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -33,13 +34,27 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLoginSu
     }, 800);
   };
 
-  const handleSocialLogin = (provider: 'google' | 'apple') => {
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      onLoginSuccess('google_user@example.com', role);
-      onClose();
-    }, 600);
+  const handleSocialLogin = async (provider: 'google' | 'apple') => {
+    if (provider === 'google') {
+      if (isSupabaseConfigured && supabase) {
+        try {
+          setLoading(true);
+          const { error } = await supabase.auth.signInWithOAuth({
+            provider: 'google',
+            options: {
+              redirectTo: window.location.origin
+            }
+          });
+          if (error) throw error;
+        } catch (error: any) {
+          console.error('Google Auth Error:', error.message);
+          alert(`Google login failed: ${error.message}`);
+          setLoading(false);
+        }
+      } else {
+        alert('Google Authentication requires Supabase to be configured. Please add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to your .env file!');
+      }
+    }
   };
 
   return (
