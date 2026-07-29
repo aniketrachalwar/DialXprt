@@ -43,7 +43,7 @@ const CATEGORY_ICON_MAP: Record<string, React.ReactNode> = {
   Scissors: <Scissors className="w-6 h-6 text-pink-500" />,
   Navigation: <Navigation className="w-6 h-6 text-teal-500" />,
   Sparkles: <Sparkles className="w-6 h-6 text-indigo-500" />,
-  Tv: <Tv className="w-6 h-6 text-[#2B3990]" />,
+  Tv: <Tv className="w-6 h-6 text-[#1A9E9E]" />,
   Shirt: <Shirt className="w-6 h-6 text-fuchsia-500" />,
   Bug: <Bug className="w-6 h-6 text-emerald-600" />,
   Camera: <Camera className="w-6 h-6 text-sky-500" />,
@@ -82,7 +82,7 @@ export const CategoryGrid: React.FC<CategoryGridProps> = ({
   return (
     <section className="space-y-5 animate-fade-in">
       {/* Header Banner */}
-      <div className="bg-gradient-to-r from-[#1A237E] via-[#2B3990] to-[#1A237E] text-white p-4 sm:p-5 rounded-2xl shadow-md border border-indigo-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+      <div className="bg-gradient-to-r from-[#0F5C5C] via-[#1A9E9E] to-[#0F5C5C] text-white p-4 sm:p-5 rounded-2xl shadow-md border border-indigo-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
         <div>
           <div className="flex items-center gap-2 mb-1">
             <span className="bg-[#F36F21] text-white text-[10px] font-black uppercase px-2 py-0.5 rounded-md tracking-wider">
@@ -110,7 +110,7 @@ export const CategoryGrid: React.FC<CategoryGridProps> = ({
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4">
         {categories.map((cat) => {
           const bgStyle = CATEGORY_COLOR_BG[cat.slug] || 'bg-indigo-50 group-hover:bg-indigo-100/80 border-indigo-200';
-          const icon = CATEGORY_ICON_MAP[cat.iconName] || <Wrench className="w-6 h-6 text-[#2B3990]" />;
+          const icon = CATEGORY_ICON_MAP[cat.iconName] || <Wrench className="w-6 h-6 text-[#1A9E9E]" />;
           const catTitle = getCategoryName(cat.slug, cat.name, currentLang);
 
           return (
@@ -118,14 +118,14 @@ export const CategoryGrid: React.FC<CategoryGridProps> = ({
               key={cat.id}
               id={`service-card-${cat.slug}`}
               onClick={() => onSelectCategory(cat.slug)}
-              className="group bg-white rounded-2xl p-3.5 sm:p-4 border border-gray-200 hover:border-[#2B3990]/50 shadow-xs hover:shadow-md transition-all text-left flex flex-col justify-between min-h-[140px] cursor-pointer active:scale-98"
+              className="group bg-white rounded-2xl p-3.5 sm:p-4 border border-gray-200 hover:border-[#1A9E9E]/50 shadow-xs hover:shadow-md transition-all text-left flex flex-col justify-between min-h-[140px] cursor-pointer active:scale-98"
             >
               <div>
                 <div className={`w-12 h-12 rounded-2xl border flex items-center justify-center transition-transform group-hover:scale-110 mb-2.5 ${bgStyle}`}>
                   {icon}
                 </div>
 
-                <h3 className="font-extrabold text-xs sm:text-sm text-gray-900 group-hover:text-[#2B3990] transition-colors line-clamp-1">
+                <h3 className="font-extrabold text-xs sm:text-sm text-gray-900 group-hover:text-[#1A9E9E] transition-colors line-clamp-1">
                   {catTitle}
                 </h3>
                 <p className="text-[11px] text-gray-500 line-clamp-2 mt-0.5 leading-snug">
@@ -134,7 +134,7 @@ export const CategoryGrid: React.FC<CategoryGridProps> = ({
               </div>
 
               <div className="pt-2.5 mt-2 border-t border-gray-100 flex items-center justify-between text-[11px] font-bold">
-                <span className="text-[#2B3990] bg-indigo-50 group-hover:bg-indigo-100 px-2 py-0.5 rounded-full">
+                <span className="text-[#1A9E9E] bg-indigo-50 group-hover:bg-indigo-100 px-2 py-0.5 rounded-full">
                   {cat.activeProvidersCount} {t('expertsNear')}
                 </span>
                 <span className="text-gray-400 group-hover:text-[#F36F21] group-hover:translate-x-0.5 transition-all">

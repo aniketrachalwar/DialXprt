@@ -58,7 +58,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLoginSu
     <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in">
       <div className="bg-white w-full max-w-sm rounded-3xl shadow-2xl overflow-hidden flex flex-col">
         {/* Header */}
-        <div className="bg-[#1A237E] text-white p-4 flex items-center justify-between">
+        <div className="bg-[#0F5C5C] text-white p-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Logo variant="white" size="sm" />
           </div>
@@ -177,7 +177,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLoginSu
                     value={phone}
                     onChange={(e) => setPhone(e.target.value.replace(/\D/g, ''))}
                     placeholder="9849012345"
-                    className="w-full pl-12 pr-3 py-2.5 text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#1A237E] focus:outline-none font-bold"
+                    className="w-full pl-12 pr-3 py-2.5 text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0F5C5C] focus:outline-none font-bold"
                   />
                 </div>
               </div>
@@ -185,7 +185,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLoginSu
               <button
                 type="submit"
                 disabled={loading || phone.length < 10}
-                className="w-full bg-[#1A237E] hover:bg-indigo-900 text-white font-bold py-3 px-3 rounded-xl shadow min-h-[48px] disabled:opacity-50"
+                className="w-full bg-[#0F5C5C] hover:bg-teal-700 text-white font-bold py-3 px-3 rounded-xl shadow min-h-[48px] disabled:opacity-50"
               >
                 {loading ? 'Sending SMS OTP...' : 'Send OTP via SMS'}
               </button>
@@ -201,7 +201,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLoginSu
                   value={otp}
                   onChange={(e) => setOtp(e.target.value)}
                   placeholder="e.g. 1234"
-                  className="w-full px-3 py-2.5 text-center text-lg font-black tracking-widest border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#1A237E] focus:outline-none"
+                  className="w-full px-3 py-2.5 text-center text-lg font-black tracking-widest border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0F5C5C] focus:outline-none"
                 />
                 <p className="text-[10px] text-gray-500 mt-1 text-center">OTP sent to +91 {phone}</p>
               </div>

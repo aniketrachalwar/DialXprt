@@ -141,7 +141,7 @@ export const VendorRegistrationModal: React.FC<VendorRegistrationModalProps> = (
         <div className="w-12 h-1 bg-gray-300 rounded-full mx-auto my-2 shrink-0 sm:hidden"></div>
 
         {/* Modal Header */}
-        <div className="bg-[#1A237E] text-white p-4 flex items-center justify-between">
+        <div className="bg-[#0F5C5C] text-white p-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-full bg-[#F36F21] flex items-center justify-center font-bold text-white text-sm">
               {step}
@@ -182,7 +182,7 @@ export const VendorRegistrationModal: React.FC<VendorRegistrationModalProps> = (
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder={t('shopNamePlaceholder')}
-                    className="w-full pl-9 pr-3 py-2.5 text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#1A237E] focus:outline-none min-h-[48px]"
+                    className="w-full pl-9 pr-3 py-2.5 text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0F5C5C] focus:outline-none min-h-[48px]"
                   />
                 </div>
               </div>
@@ -198,7 +198,7 @@ export const VendorRegistrationModal: React.FC<VendorRegistrationModalProps> = (
                     value={ownerName}
                     onChange={(e) => setOwnerName(e.target.value)}
                     placeholder={t('ownerNamePlaceholder')}
-                    className="w-full pl-9 pr-3 py-2.5 text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#1A237E] focus:outline-none min-h-[48px]"
+                    className="w-full pl-9 pr-3 py-2.5 text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0F5C5C] focus:outline-none min-h-[48px]"
                   />
                 </div>
               </div>
@@ -210,7 +210,7 @@ export const VendorRegistrationModal: React.FC<VendorRegistrationModalProps> = (
                 <select
                   value={categorySlug}
                   onChange={(e) => setCategorySlug(e.target.value)}
-                  className="w-full px-3 py-2.5 text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#1A237E] focus:outline-none bg-white min-h-[48px]"
+                  className="w-full px-3 py-2.5 text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0F5C5C] focus:outline-none bg-white min-h-[48px]"
                 >
                   {categories.map((cat) => (
                     <option key={cat.id} value={cat.slug}>
@@ -225,7 +225,7 @@ export const VendorRegistrationModal: React.FC<VendorRegistrationModalProps> = (
                   type="button"
                   disabled={!name}
                   onClick={() => setStep(2)}
-                  className="w-full bg-[#1A237E] hover:bg-indigo-900 text-white font-bold py-3 px-4 rounded-xl flex items-center justify-center gap-2 transition-all min-h-[48px] disabled:opacity-50"
+                  className="w-full bg-[#0F5C5C] hover:bg-teal-700 text-white font-bold py-3 px-4 rounded-xl flex items-center justify-center gap-2 transition-all min-h-[48px] disabled:opacity-50"
                 >
                   <span>Next: Location & Photo</span>
                   <ChevronRight className="w-4 h-4" />
@@ -315,7 +315,7 @@ export const VendorRegistrationModal: React.FC<VendorRegistrationModalProps> = (
                       setNeighborhood(e.target.value);
                     }
                   }}
-                  className="w-full px-3 py-2.5 text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#1A237E] focus:outline-none bg-white min-h-[48px]"
+                  className="w-full px-3 py-2.5 text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0F5C5C] focus:outline-none bg-white min-h-[48px]"
                 >
                   {HYDERABAD_NEIGHBORHOODS.map((n) => (
                     <option key={n.id} value={n.name}>
@@ -334,7 +334,7 @@ export const VendorRegistrationModal: React.FC<VendorRegistrationModalProps> = (
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
                   placeholder={t('addressPlaceholder')}
-                  className="w-full p-2.5 text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#1A237E] focus:outline-none"
+                  className="w-full p-2.5 text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0F5C5C] focus:outline-none"
                 />
               </div>
 
@@ -350,7 +350,7 @@ export const VendorRegistrationModal: React.FC<VendorRegistrationModalProps> = (
                 <button
                   type="button"
                   onClick={() => setStep(3)}
-                  className="flex-2 bg-[#1A237E] hover:bg-indigo-900 text-white font-bold py-3 px-4 rounded-xl flex items-center justify-center gap-2 min-h-[48px]"
+                  className="flex-2 bg-[#0F5C5C] hover:bg-teal-700 text-white font-bold py-3 px-4 rounded-xl flex items-center justify-center gap-2 min-h-[48px]"
                 >
                   <span>Next: Phone & Details</span>
                   <ChevronRight className="w-4 h-4" />
@@ -375,7 +375,7 @@ export const VendorRegistrationModal: React.FC<VendorRegistrationModalProps> = (
                     value={phone}
                     onChange={(e) => setPhone(e.target.value.replace(/\D/g, ''))}
                     placeholder="e.g. 9849012345"
-                    className="w-full pl-9 pr-3 py-2.5 text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#1A237E] focus:outline-none font-semibold min-h-[48px]"
+                    className="w-full pl-9 pr-3 py-2.5 text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0F5C5C] focus:outline-none font-semibold min-h-[48px]"
                   />
                 </div>
               </div>
@@ -392,7 +392,7 @@ export const VendorRegistrationModal: React.FC<VendorRegistrationModalProps> = (
                     value={whatsapp}
                     onChange={(e) => setWhatsapp(e.target.value.replace(/\D/g, ''))}
                     placeholder="Same as phone number if empty"
-                    className="w-full pl-9 pr-3 py-2.5 text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#1A237E] focus:outline-none min-h-[48px]"
+                    className="w-full pl-9 pr-3 py-2.5 text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0F5C5C] focus:outline-none min-h-[48px]"
                   />
                 </div>
               </div>
@@ -409,7 +409,7 @@ export const VendorRegistrationModal: React.FC<VendorRegistrationModalProps> = (
                     className={`flex items-center gap-1 text-xs font-bold px-2 py-1 rounded-lg border transition-all ${
                       isListening
                         ? 'bg-red-500 text-white border-red-600 animate-pulse'
-                        : 'bg-indigo-50 text-[#1A237E] border-indigo-200 hover:bg-indigo-100'
+                        : 'bg-indigo-50 text-[#0F5C5C] border-indigo-200 hover:bg-indigo-100'
                     }`}
                   >
                     <Mic className="w-3.5 h-3.5 text-[#F36F21]" />
@@ -421,7 +421,7 @@ export const VendorRegistrationModal: React.FC<VendorRegistrationModalProps> = (
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder={t('descriptionPlaceholder')}
-                  className="w-full p-2.5 text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#1A237E] focus:outline-none"
+                  className="w-full p-2.5 text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0F5C5C] focus:outline-none"
                 />
               </div>
 

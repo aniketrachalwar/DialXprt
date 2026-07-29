@@ -19,7 +19,7 @@ export const FloatingSupportWidget: React.FC<FloatingSupportWidgetProps> = () =>
       <a
         id="floating-direct-call-btn"
         href={`tel:+91${adminPhone}`}
-        className="w-12 h-12 sm:w-13 sm:h-13 rounded-full bg-[#2B3990] text-white shadow-2xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all border-2 border-white min-w-[48px] min-h-[48px]"
+        className="w-12 h-12 sm:w-13 sm:h-13 rounded-full bg-[#1A9E9E] text-white shadow-2xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all border-2 border-white min-w-[48px] min-h-[48px]"
         title="Direct Call Helpline"
       >
         <PhoneCall className="w-5 h-5 sm:w-6 sm:h-6 text-amber-300 animate-pulse" />

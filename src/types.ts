@@ -33,6 +33,7 @@ export interface Vendor {
   lng: number;
   imageUrl: string;
   isVerified: boolean;
+  isSponsored?: boolean;
   status: VendorStatus;
   rating: number;
   reviewsCount: number;
@@ -47,11 +48,19 @@ export interface Vendor {
   whatsappClicksCount?: number;
 }
 
+export interface SubCategory {
+  id: string;
+  name: string;
+  slug: string;
+  iconName?: string;
+}
+
 export interface Category {
   id: string;
   name: string;
   slug: string;
   iconName: string;
+  subcategories?: SubCategory[];
   description: string;
   activeProvidersCount: number;
   popularSearch?: boolean;

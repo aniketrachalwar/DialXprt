@@ -19,6 +19,7 @@ interface HeaderProps {
   userPhone?: string;
   currentLang: AppLanguage;
   onLanguageChange: (lang: AppLanguage) => void;
+  renderCompactSearch?: React.ReactNode;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -36,6 +37,7 @@ export const Header: React.FC<HeaderProps> = ({
   userPhone,
   currentLang,
   onLanguageChange,
+  renderCompactSearch,
 }) => {
   const [isLangModalOpen, setIsLangModalOpen] = useState<boolean>(false);
   const t = (key: string) => getTranslation(currentLang, key);
@@ -58,7 +60,7 @@ export const Header: React.FC<HeaderProps> = ({
   const activeLangObj = languages.find((l) => l.code === currentLang) || languages[0];
 
   return (
-    <header className="sticky top-0 z-40 bg-[#1A237E] text-white shadow-md transition-all pt-safe">
+    <header className="sticky top-0 z-40 bg-[#0F5C5C] text-white shadow-md transition-all pt-safe">
       {/* Top Banner Bar */}
       <div className="max-w-7xl mx-auto px-2.5 sm:px-4 py-2">
         <div className="flex items-center justify-between gap-1.5 sm:gap-2">
@@ -75,19 +77,12 @@ export const Header: React.FC<HeaderProps> = ({
             </span>
           </div>
 
-          {/* Desktop Location Picker Pill (Visible on sm and up) */}
-          <button
-            id="location-picker-desktop-btn"
-            onClick={onOpenLocationModal}
-            className="hidden sm:flex items-center gap-1.5 bg-indigo-900/80 hover:bg-indigo-800 text-white px-3 py-1.5 rounded-full text-xs font-semibold border border-indigo-500/40 transition-all min-h-[40px] shrink overflow-hidden"
-            title="Change location"
-          >
-            <MapPin className={`w-3.5 h-3.5 shrink-0 ${isAutoDetected ? 'text-green-400 animate-pulse' : 'text-[#F57C00]'}`} />
-            <span className="truncate max-w-[140px] text-xs">
-              {currentNeighborhood || t('hyderabad')}
-            </span>
-            <span className="text-[10px] text-indigo-300 shrink-0">▼</span>
-          </button>
+          {/* Optional Compact Search Bar (Sticky Mode) */}
+          {renderCompactSearch && (
+            <div className="hidden md:block flex-1 max-w-2xl mx-4">
+              {renderCompactSearch}
+            </div>
+          )}
 
           {/* Language Switcher Section */}
           <div className="flex items-center gap-1.5 shrink-0">
@@ -95,7 +90,7 @@ export const Header: React.FC<HeaderProps> = ({
             <button
               id="mobile-language-picker-btn"
               onClick={() => setIsLangModalOpen(true)}
-              className="flex sm:hidden items-center gap-1 bg-indigo-950/90 hover:bg-indigo-900 text-white px-2.5 py-1.5 rounded-xl border border-amber-400/50 shadow-xs active:scale-95 transition-all min-h-[38px] text-xs font-bold"
+              className="flex sm:hidden items-center gap-1 bg-indigo-950/90 hover:bg-teal-700 text-white px-2.5 py-1.5 rounded-xl border border-amber-400/50 shadow-xs active:scale-95 transition-all min-h-[38px] text-xs font-bold"
               title="Change app language"
             >
               <Globe className="w-3.5 h-3.5 text-[#F36F21] shrink-0" />
@@ -122,20 +117,7 @@ export const Header: React.FC<HeaderProps> = ({
               ))}
             </div>
 
-            {/* Notifications Bell */}
-            <button
-              id="notifications-bell-btn"
-              onClick={onOpenNotifications}
-              className="relative p-1.5 rounded-full text-indigo-200 hover:text-white hover:bg-indigo-800/80 transition-colors min-w-[38px] min-h-[38px] flex items-center justify-center"
-              title={t('notifications')}
-            >
-              <Bell className="w-4 h-4 sm:w-5 sm:h-5" />
-              {unreadNotificationsCount > 0 && (
-                <span className="absolute top-0.5 right-0.5 w-3.5 h-3.5 bg-red-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center animate-bounce">
-                  {unreadNotificationsCount}
-                </span>
-              )}
-            </button>
+
 
             {/* User Profile / Account Hub Button */}
             <button
@@ -155,7 +137,7 @@ export const Header: React.FC<HeaderProps> = ({
           <button
             id="location-picker-mobile-bar-btn"
             onClick={onOpenLocationModal}
-            className="w-full flex items-center justify-between bg-indigo-950/80 hover:bg-indigo-900/90 text-white px-3 py-1.5 rounded-xl border border-indigo-500/40 shadow-xs transition-all active:scale-98"
+            className="w-full flex items-center justify-between bg-indigo-950/80 hover:bg-teal-700/90 text-white px-3 py-1.5 rounded-xl border border-indigo-500/40 shadow-xs transition-all active:scale-98"
           >
             <div className="flex items-center gap-2 min-w-0">
               <MapPin className={`w-4 h-4 shrink-0 ${isAutoDetected ? 'text-green-400 animate-pulse' : 'text-[#F57C00]'}`} />
@@ -186,7 +168,7 @@ export const Header: React.FC<HeaderProps> = ({
 
             <div className="flex items-center justify-between border-b pb-3">
               <div className="flex items-center gap-2">
-                <Globe className="w-5 h-5 text-[#2B3990]" />
+                <Globe className="w-5 h-5 text-[#1A9E9E]" />
                 <div>
                   <h3 className="font-black text-base text-gray-900">Select Language</h3>
                   <p className="text-[11px] text-gray-500 font-medium">భాషను ఎంచుకోండి / भाषा चुनें</p>
@@ -210,7 +192,7 @@ export const Header: React.FC<HeaderProps> = ({
                   }}
                   className={`w-full p-3.5 rounded-2xl flex items-center justify-between transition-all text-left border active:scale-98 ${
                     currentLang === langItem.code
-                      ? 'bg-indigo-50/90 border-[#2B3990] text-[#2B3990] shadow-xs'
+                      ? 'bg-indigo-50/90 border-[#1A9E9E] text-[#1A9E9E] shadow-xs'
                       : 'bg-gray-50/80 border-gray-200 text-gray-800 hover:bg-gray-100'
                   }`}
                 >
@@ -222,7 +204,7 @@ export const Header: React.FC<HeaderProps> = ({
                     </div>
                   </div>
                   {currentLang === langItem.code ? (
-                    <div className="w-6 h-6 rounded-full bg-[#2B3990] text-white flex items-center justify-center">
+                    <div className="w-6 h-6 rounded-full bg-[#1A9E9E] text-white flex items-center justify-center">
                       <Check className="w-4 h-4 stroke-[3]" />
                     </div>
                   ) : (

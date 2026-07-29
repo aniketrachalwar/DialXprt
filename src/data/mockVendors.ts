@@ -1,18 +1,27 @@
 import { Vendor, Category, Neighborhood } from '../types';
 
 export const HYDERABAD_NEIGHBORHOODS: Neighborhood[] = [
-  { id: '1', name: 'Madhapur', city: 'Hyderabad', lat: 17.4483, lng: 78.3915, pincode: '500081' },
-  { id: '2', name: 'Gachibowli', city: 'Hyderabad', lat: 17.4401, lng: 78.3489, pincode: '500032' },
-  { id: '3', name: 'Hitec City', city: 'Hyderabad', lat: 17.4435, lng: 78.3772, pincode: '500081' },
-  { id: '4', name: 'Kukatpally', city: 'Hyderabad', lat: 17.4948, lng: 78.3996, pincode: '500072' },
-  { id: '5', name: 'Ameerpet', city: 'Hyderabad', lat: 17.4375, lng: 78.4482, pincode: '500016' },
-  { id: '6', name: 'Jubilee Hills', city: 'Hyderabad', lat: 17.4319, lng: 78.4071, pincode: '500033' },
-  { id: '7', name: 'Banjara Hills', city: 'Hyderabad', lat: 17.4156, lng: 78.4347, pincode: '500034' },
-  { id: '8', name: 'Kondapur', city: 'Hyderabad', lat: 17.4616, lng: 78.3673, pincode: '500084' },
-  { id: '9', name: 'Dilsukhnagar', city: 'Hyderabad', lat: 17.3688, lng: 78.5247, pincode: '500060' },
-  { id: '10', name: 'Charminar', city: 'Hyderabad', lat: 17.3616, lng: 78.4747, pincode: '500002' },
+  { id: '1', name: 'Ameerpet', city: 'Hyderabad', lat: 17.4375, lng: 78.4482, pincode: '500016' },
+  { id: '2', name: 'Banjara Hills', city: 'Hyderabad', lat: 17.4156, lng: 78.4347, pincode: '500034' },
+  { id: '3', name: 'Begumpet', city: 'Hyderabad', lat: 17.4447, lng: 78.4664, pincode: '500016' },
+  { id: '4', name: 'Charminar', city: 'Hyderabad', lat: 17.3616, lng: 78.4747, pincode: '500002' },
+  { id: '5', name: 'Dilsukhnagar', city: 'Hyderabad', lat: 17.3688, lng: 78.5247, pincode: '500060' },
+  { id: '6', name: 'Gachibowli', city: 'Hyderabad', lat: 17.4401, lng: 78.3489, pincode: '500032' },
+  { id: '7', name: 'Hitec City', city: 'Hyderabad', lat: 17.4435, lng: 78.3772, pincode: '500081' },
+  { id: '8', name: 'Jubilee Hills', city: 'Hyderabad', lat: 17.4319, lng: 78.4071, pincode: '500033' },
+  { id: '9', name: 'Kondapur', city: 'Hyderabad', lat: 17.4616, lng: 78.3673, pincode: '500084' },
+  { id: '10', name: 'Kukatpally', city: 'Hyderabad', lat: 17.4948, lng: 78.3996, pincode: '500072' },
   { id: '11', name: 'LB Nagar', city: 'Hyderabad', lat: 17.3457, lng: 78.5522, pincode: '500074' },
-  { id: '12', name: 'Secunderabad', city: 'Hyderabad', lat: 17.4399, lng: 78.4983, pincode: '500003' },
+  { id: '12', name: 'Madhapur', city: 'Hyderabad', lat: 17.4483, lng: 78.3915, pincode: '500081' },
+  { id: '13', name: 'Malkajgiri', city: 'Hyderabad', lat: 17.4520, lng: 78.5332, pincode: '500047' },
+  { id: '14', name: 'Manikonda', city: 'Hyderabad', lat: 17.3999, lng: 78.3887, pincode: '500089' },
+  { id: '15', name: 'Mehdipatnam', city: 'Hyderabad', lat: 17.3916, lng: 78.4398, pincode: '500028' },
+  { id: '16', name: 'Miyapur', city: 'Hyderabad', lat: 17.4968, lng: 78.3614, pincode: '500049' },
+  { id: '17', name: 'Nampally', city: 'Hyderabad', lat: 17.3855, lng: 78.4688, pincode: '500001' },
+  { id: '18', name: 'Secunderabad', city: 'Hyderabad', lat: 17.4399, lng: 78.4983, pincode: '500003' },
+  { id: '19', name: 'Somajiguda', city: 'Hyderabad', lat: 17.4253, lng: 78.4556, pincode: '500082' },
+  { id: '20', name: 'Tolichowki', city: 'Hyderabad', lat: 17.3986, lng: 78.4144, pincode: '500008' },
+  { id: '21', name: 'Uppal', city: 'Hyderabad', lat: 17.4018, lng: 78.5602, pincode: '500039' },
 ];
 
 export const INITIAL_CATEGORIES: Category[] = [

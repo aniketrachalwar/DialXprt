@@ -42,6 +42,9 @@ interface SearchBarProps {
   totalVendorsCount: number;
   currentLang?: AppLanguage;
   onLanguageChange?: (lang: AppLanguage) => void;
+  compact?: boolean;
+  currentNeighborhood?: string;
+  onOpenLocation?: () => void;
 }
 
 const ICON_MAP: Record<string, React.ReactNode> = {
@@ -74,6 +77,9 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   totalVendorsCount,
   currentLang = 'en',
   onLanguageChange,
+  compact = false,
+  currentNeighborhood = 'Hyderabad',
+  onOpenLocation,
 }) => {
   const t = (key: string) => getTranslation(currentLang, key);
   const [isListening, setIsListening] = useState(false);
@@ -85,7 +91,52 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   const [speechError, setSpeechError] = useState<string | null>(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
+  // Typewriter Animation State
+  const [placeholderText, setPlaceholderText] = useState('');
+  const [termIndex, setTermIndex] = useState(0);
+  const [isDeleting, setIsDeleting] = useState(false);
+
   const containerRef = useRef<HTMLDivElement>(null);
+
+  // Typewriter Effect Logic
+  useEffect(() => {
+    const terms = [
+      'Electricians',
+      'Plumbers',
+      'AC Repair',
+      'Restaurants',
+      'Mechanics',
+      'Caterers',
+      'Beauty Parlours',
+      'Hospitals',
+      'Kirana Stores'
+    ];
+    
+    let typingSpeed = isDeleting ? 40 : 100;
+    const currentTerm = terms[termIndex];
+    const fullText = currentTerm + '...';
+
+    if (!isDeleting && placeholderText === fullText) {
+      const timeout = setTimeout(() => setIsDeleting(true), 2000); // Pause when word is complete
+      return () => clearTimeout(timeout);
+    } else if (isDeleting && placeholderText === '') {
+      setIsDeleting(false);
+      setTermIndex((prev) => (prev + 1) % terms.length);
+      return;
+    }
+
+    const timeout = setTimeout(() => {
+      setPlaceholderText((current) => {
+        if (isDeleting) {
+          return current.slice(0, -1);
+        } else {
+          return fullText.slice(0, current.length + 1);
+        }
+      });
+    }, typingSpeed);
+
+    return () => clearTimeout(timeout);
+  }, [placeholderText, isDeleting, termIndex]);
 
   useEffect(() => {
     if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
@@ -183,13 +234,25 @@ export const SearchBar: React.FC<SearchBarProps> = ({
     : [];
 
   return (
-    <div className="w-full bg-[#1A237E] pt-2 pb-5 px-3 sm:px-6 rounded-b-2xl shadow-lg border-b border-indigo-900/40">
+    <div className={`w-full ${compact ? '' : 'bg-[#0F5C5C] pt-2 pb-5 px-3 sm:px-6 rounded-b-2xl shadow-lg border-b border-indigo-900/40'}`}>
       <div className="max-w-4xl mx-auto space-y-3" ref={containerRef}>
         {/* Main Search Input Container */}
         <div className="relative">
-          <div className="relative flex items-center bg-white rounded-2xl shadow-md border-2 border-orange-400/80 focus-within:border-[#F36F21] transition-all overflow-hidden">
-            <div className="pl-3 pr-1.5 text-indigo-900 shrink-0">
-              <Search className="w-4 h-4 sm:w-5 sm:h-5 text-[#2B3990]" />
+          <div className="relative flex items-center bg-white rounded-md shadow-sm border border-gray-300 focus-within:border-[#F36F21] transition-all overflow-hidden h-[46px] sm:h-[50px]">
+            
+            {/* Embedded Location Picker */}
+            <button 
+              onClick={() => onOpenLocation && onOpenLocation()}
+              className="flex items-center gap-1.5 px-2 sm:px-3 py-2 hover:bg-gray-50 h-full transition-colors shrink-0 max-w-[100px] sm:max-w-[140px]"
+            >
+              <MapPin className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-gray-400" />
+              <span className="text-xs sm:text-sm text-gray-700 truncate font-medium">{currentNeighborhood}</span>
+            </button>
+            {/* Vertical Divider */}
+            <div className="w-[1px] h-3/5 bg-gray-300 shrink-0"></div>
+
+            <div className="pl-3 pr-1.5 text-gray-400 shrink-0">
+              <Search className="w-4 h-4 sm:w-5 sm:h-5" />
             </div>
 
             <input
@@ -201,8 +264,8 @@ export const SearchBar: React.FC<SearchBarProps> = ({
                 onSearchChange(e.target.value);
                 setIsDropdownOpen(true);
               }}
-              placeholder={t('searchPlaceholder')}
-              className="w-full py-2.5 sm:py-3 px-1 text-sm sm:text-base font-medium text-gray-900 placeholder-gray-400 focus:outline-none min-h-[44px]"
+              placeholder={`Search for ${placeholderText}`}
+              className="w-full py-2.5 sm:py-3 px-1 text-sm sm:text-base font-medium text-gray-900 placeholder-gray-400 focus:outline-none h-full bg-transparent"
             />
 
             {/* Clear Button */}
@@ -223,14 +286,19 @@ export const SearchBar: React.FC<SearchBarProps> = ({
             <button
               id="voice-search-btn"
               onClick={handleVoiceSearch}
-              className={`mx-1 p-2 rounded-xl min-w-[40px] min-h-[40px] flex items-center justify-center transition-all shrink-0 ${
+              className={`p-2 flex items-center justify-center transition-all shrink-0 ${
                 isListening
-                  ? 'bg-red-500 text-white animate-pulse ring-2 ring-red-300'
-                  : 'bg-indigo-50 text-[#2B3990] hover:bg-indigo-100'
+                  ? 'text-red-500 animate-pulse'
+                  : 'text-blue-500 hover:text-blue-600'
               }`}
               title="Speak into microphone to search"
             >
-              {isListening ? <MicOff className="w-4 h-4 sm:w-5 sm:h-5 text-white" /> : <Mic className="w-4 h-4 sm:w-5 sm:h-5" />}
+              {isListening ? <MicOff className="w-4 h-4 sm:w-5 sm:h-5" /> : <Mic className="w-4 h-4 sm:w-5 sm:h-5" />}
+            </button>
+            
+            {/* JustDial Orange Search Button */}
+            <button className="bg-[#F36F21] hover:bg-orange-600 text-white h-full px-4 flex items-center justify-center transition-colors shrink-0">
+              <Search className="w-5 h-5" />
             </button>
           </div>
 
@@ -241,7 +309,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
               {matchingVendors.length > 0 ? (
                 <div className="p-3 bg-gray-50/60">
                   <div className="flex items-center justify-between text-[11px] font-black text-gray-500 uppercase tracking-wider px-2 pb-2">
-                    <span className="flex items-center gap-1.5 text-[#2B3990]">
+                    <span className="flex items-center gap-1.5 text-[#1A9E9E]">
                       <User className="w-3.5 h-3.5 text-[#F36F21]" />
                       Matching Profiles ({matchingVendors.length})
                     </span>
@@ -277,10 +345,10 @@ export const SearchBar: React.FC<SearchBarProps> = ({
                           {/* Text Info */}
                           <div className="min-w-0">
                             <div className="flex items-center gap-1.5 flex-wrap">
-                              <h4 className="text-xs sm:text-sm font-extrabold text-gray-900 group-hover:text-[#2B3990] truncate">
+                              <h4 className="text-xs sm:text-sm font-extrabold text-gray-900 group-hover:text-[#1A9E9E] truncate">
                                 {vendor.name}
                               </h4>
-                              <span className="bg-indigo-100 text-[#2B3990] text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0">
+                              <span className="bg-indigo-100 text-[#1A9E9E] text-[10px] font-bold px-2 py-0.5 rounded-full shrink-0">
                                 {vendor.category}
                               </span>
                             </div>
@@ -302,7 +370,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
                           <a
                             href={`tel:${vendor.phone}`}
                             onClick={() => onTrackCall && onTrackCall(vendor.id)}
-                            className="p-2.5 rounded-xl bg-indigo-100 hover:bg-[#2B3990] text-[#2B3990] hover:text-white transition-all shadow-2xs min-w-[38px] min-h-[38px] flex items-center justify-center"
+                            className="p-2.5 rounded-xl bg-indigo-100 hover:bg-[#1A9E9E] text-[#1A9E9E] hover:text-white transition-all shadow-2xs min-w-[38px] min-h-[38px] flex items-center justify-center"
                             title={`Call ${vendor.name}`}
                           >
                             <PhoneCall className="w-4 h-4" />
@@ -355,7 +423,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
                           onSelectCategory(cat.slug);
                           setIsDropdownOpen(false);
                         }}
-                        className="px-3 py-1.5 bg-indigo-50 hover:bg-[#2B3990] text-[#2B3990] hover:text-white rounded-xl text-xs font-bold transition-all flex items-center gap-1.5"
+                        className="px-3 py-1.5 bg-indigo-50 hover:bg-[#1A9E9E] text-[#1A9E9E] hover:text-white rounded-xl text-xs font-bold transition-all flex items-center gap-1.5"
                       >
                         <span>{cat.name}</span>
                         <span className="bg-indigo-200/60 text-current text-[10px] px-1.5 rounded-full">
@@ -370,7 +438,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
               {/* Footer: Trigger full grid view search */}
               <div
                 onClick={() => setIsDropdownOpen(false)}
-                className="p-2.5 bg-indigo-900 text-white text-center text-xs font-extrabold cursor-pointer hover:bg-indigo-800 transition-colors flex items-center justify-center gap-2"
+                className="p-2.5 bg-teal-700 text-white text-center text-xs font-extrabold cursor-pointer hover:bg-indigo-800 transition-colors flex items-center justify-center gap-2"
               >
                 <span>Show all matching results in list for "{searchQuery}"</span>
                 <ArrowRight className="w-3.5 h-3.5 text-amber-300" />
@@ -420,16 +488,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
           </div>
         )}
 
-        {/* Quick Stats Header */}
-        <div className="flex items-center justify-between text-xs text-indigo-200 px-1 pt-1">
-          <div className="flex items-center gap-1.5 font-semibold text-white">
-            <Sparkles className="w-4 h-4 text-[#F36F21]" />
-            <span>Search 17+ Service Categories (Electricians, Plumbers, Auto, Cooks & Stores)</span>
-          </div>
-          <span className="text-[11px] font-bold text-amber-300 bg-indigo-900/80 px-2.5 py-1 rounded-full border border-indigo-500/30">
-            {totalVendorsCount} {t('verifiedExpertsNear')}
-          </span>
-        </div>
+
       </div>
     </div>
   );

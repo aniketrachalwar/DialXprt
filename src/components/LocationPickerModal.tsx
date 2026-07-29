@@ -41,7 +41,7 @@ export const LocationPickerModal: React.FC<LocationPickerModalProps> = ({
         <div className="w-12 h-1 bg-gray-300 rounded-full mx-auto my-2 shrink-0 sm:hidden"></div>
 
         {/* Header */}
-        <div className="bg-[#1A237E] text-white p-4 flex items-center justify-between">
+        <div className="bg-[#0F5C5C] text-white p-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Compass className="w-5 h-5 text-[#F36F21]" />
             <h2 className="font-bold text-base">{t('selectLocationTitle')}</h2>
@@ -83,7 +83,7 @@ export const LocationPickerModal: React.FC<LocationPickerModalProps> = ({
               value={filterQuery}
               onChange={(e) => setFilterQuery(e.target.value)}
               placeholder={t('filterNeighborhoodPlaceholder')}
-              className="w-full pl-9 pr-3 py-2 text-xs border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#1A237E] focus:outline-none min-h-[40px]"
+              className="w-full pl-9 pr-3 py-2 text-xs border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0F5C5C] focus:outline-none min-h-[40px]"
             />
           </div>
 
@@ -101,7 +101,7 @@ export const LocationPickerModal: React.FC<LocationPickerModalProps> = ({
                   }}
                   className={`p-2.5 rounded-xl text-left border transition-all flex items-center justify-between min-h-[48px] ${
                     isSelected
-                      ? 'bg-indigo-50 border-[#1A237E] text-[#1A237E] font-bold shadow-sm'
+                      ? 'bg-indigo-50 border-[#0F5C5C] text-[#0F5C5C] font-bold shadow-sm'
                       : 'bg-white border-gray-200 hover:border-gray-300 text-gray-800'
                   }`}
                 >
@@ -112,7 +112,7 @@ export const LocationPickerModal: React.FC<LocationPickerModalProps> = ({
                       <div className="text-[10px] text-gray-400">{area.pincode}</div>
                     </div>
                   </div>
-                  {isSelected && <Check className="w-4 h-4 text-[#1A237E] shrink-0" />}
+                  {isSelected && <Check className="w-4 h-4 text-[#0F5C5C] shrink-0" />}
                 </button>
               );
             })}

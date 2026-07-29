@@ -518,7 +518,7 @@ export const AccountView: React.FC<AccountViewProps> = ({
               }}
               className="bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold px-3.5 py-2.5 rounded-2xl text-xs flex items-center justify-center gap-1.5 shadow-xs transition-transform active:scale-95 min-h-[44px]"
             >
-              <Pencil className="w-3.5 h-3.5 text-[#2B3990]" />
+              <Pencil className="w-3.5 h-3.5 text-[#1A9E9E]" />
               <span>Edit Profile</span>
             </button>
 
@@ -632,7 +632,7 @@ export const AccountView: React.FC<AccountViewProps> = ({
             <div className="bg-white p-4 rounded-2xl border border-gray-200 shadow-sm">
               <div className="flex items-center justify-between text-gray-500">
                 <span className="text-xs font-bold">{t('totalShops')}</span>
-                <Store className="w-4 h-4 text-[#2B3990]" />
+                <Store className="w-4 h-4 text-[#1A9E9E]" />
               </div>
               <p className="text-2xl font-black text-gray-900 mt-1">{vendors.length}</p>
               <p className="text-[10px] text-emerald-600 font-semibold mt-0.5">
@@ -800,7 +800,7 @@ export const AccountView: React.FC<AccountViewProps> = ({
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b pb-4">
               <div>
                 <h2 className="text-lg font-black text-gray-900 flex items-center gap-2">
-                  <Store className="w-5 h-5 text-[#2B3990]" />
+                  <Store className="w-5 h-5 text-[#1A9E9E]" />
                   <span>{t('masterDirectory')}</span>
                 </h2>
                 <p className="text-xs text-gray-500 mt-0.5">
@@ -810,7 +810,7 @@ export const AccountView: React.FC<AccountViewProps> = ({
 
               <button
                 onClick={onExportCSV}
-                className="bg-[#2B3990] hover:bg-indigo-900 text-white font-bold px-3.5 py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow"
+                className="bg-[#1A9E9E] hover:bg-teal-700 text-white font-bold px-3.5 py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow"
               >
                 <FileSpreadsheet className="w-4 h-4 text-emerald-400" />
                 <span>{t('exportData')}</span>
@@ -826,7 +826,7 @@ export const AccountView: React.FC<AccountViewProps> = ({
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   placeholder="Search store name, category or phone..."
-                  className="w-full pl-9 pr-3 py-2 text-xs border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2B3990]"
+                  className="w-full pl-9 pr-3 py-2 text-xs border rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1A9E9E]"
                 />
               </div>
 
@@ -836,7 +836,7 @@ export const AccountView: React.FC<AccountViewProps> = ({
                     key={st}
                     onClick={() => setStatusFilter(st)}
                     className={`px-3 py-1 rounded-lg text-xs font-extrabold capitalize ${
-                      statusFilter === st ? 'bg-white text-[#2B3990] shadow-xs' : 'text-gray-600 hover:text-gray-900'
+                      statusFilter === st ? 'bg-white text-[#1A9E9E] shadow-xs' : 'text-gray-600 hover:text-gray-900'
                     }`}
                   >
                     {st} {st === 'pending' && `(${pendingVendors.length})`}
@@ -885,7 +885,7 @@ export const AccountView: React.FC<AccountViewProps> = ({
 
                     <button
                       onClick={() => onSelectVendor(vendor)}
-                      className="p-2 text-gray-600 hover:text-[#2B3990] hover:bg-indigo-50 rounded-lg text-xs font-bold"
+                      className="p-2 text-gray-600 hover:text-[#1A9E9E] hover:bg-indigo-50 rounded-lg text-xs font-bold"
                       title="View Details"
                     >
                       <Eye className="w-4 h-4" />
@@ -1050,7 +1050,7 @@ export const AccountView: React.FC<AccountViewProps> = ({
                   <div className="flex items-center gap-2 flex-wrap">
                     <button
                       onClick={() => openEditVendorModal(shop)}
-                      className="bg-indigo-50 hover:bg-indigo-100 text-[#2B3990] font-bold px-3 py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 border border-indigo-200 min-h-[44px]"
+                      className="bg-indigo-50 hover:bg-indigo-100 text-[#1A9E9E] font-bold px-3 py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 border border-indigo-200 min-h-[44px]"
                     >
                       <Pencil className="w-3.5 h-3.5" />
                       <span>Edit Business</span>
@@ -1060,7 +1060,7 @@ export const AccountView: React.FC<AccountViewProps> = ({
                       onClick={() => onSelectVendor(shop)}
                       className="bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold px-3.5 py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 min-h-[44px]"
                     >
-                      <Eye className="w-4 h-4 text-[#2B3990]" />
+                      <Eye className="w-4 h-4 text-[#1A9E9E]" />
                       <span>View Public Storefront</span>
                     </button>
                   </div>
@@ -1069,7 +1069,7 @@ export const AccountView: React.FC<AccountViewProps> = ({
                 <div className="grid grid-cols-3 gap-3">
                   <div className="bg-indigo-50/60 p-3 rounded-2xl border border-indigo-100 text-center">
                     <p className="text-xs font-bold text-indigo-900">{t('storeViews')}</p>
-                    <p className="text-xl font-black text-[#2B3990] mt-1">{shop.viewsCount || 128}</p>
+                    <p className="text-xl font-black text-[#1A9E9E] mt-1">{shop.viewsCount || 128}</p>
                   </div>
                   <div className="bg-blue-50/60 p-3 rounded-2xl border border-blue-100 text-center">
                     <p className="text-xs font-bold text-blue-900">{t('phoneLeads')}</p>
@@ -1091,7 +1091,7 @@ export const AccountView: React.FC<AccountViewProps> = ({
                       onClick={() => alert('Printable QR Code Poster generator triggered!')}
                       className="flex-1 sm:flex-none border border-gray-300 hover:bg-gray-50 text-gray-700 font-bold px-3 py-2 rounded-xl text-xs flex items-center justify-center gap-1.5"
                     >
-                      <QrCode className="w-4 h-4 text-[#2B3990]" />
+                      <QrCode className="w-4 h-4 text-[#1A9E9E]" />
                       <span>{t('downloadQR')}</span>
                     </button>
                   </div>
@@ -1152,7 +1152,7 @@ export const AccountView: React.FC<AccountViewProps> = ({
               onClick={() => setCustomerSubTab('history')}
               className={`flex-1 py-2.5 px-3 rounded-xl text-xs font-black flex items-center justify-center gap-2 transition-all ${
                 customerSubTab === 'history'
-                  ? 'bg-[#2B3990] text-white shadow-sm'
+                  ? 'bg-[#1A9E9E] text-white shadow-sm'
                   : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
               }`}
             >
@@ -1164,7 +1164,7 @@ export const AccountView: React.FC<AccountViewProps> = ({
               onClick={() => setCustomerSubTab('saved')}
               className={`flex-1 py-2.5 px-3 rounded-xl text-xs font-black flex items-center justify-center gap-2 transition-all ${
                 customerSubTab === 'saved'
-                  ? 'bg-[#2B3990] text-white shadow-sm'
+                  ? 'bg-[#1A9E9E] text-white shadow-sm'
                   : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
               }`}
             >
@@ -1176,7 +1176,7 @@ export const AccountView: React.FC<AccountViewProps> = ({
               onClick={() => setCustomerSubTab('profile')}
               className={`flex-1 py-2.5 px-3 rounded-xl text-xs font-black flex items-center justify-center gap-2 transition-all ${
                 customerSubTab === 'profile'
-                  ? 'bg-[#2B3990] text-white shadow-sm'
+                  ? 'bg-[#1A9E9E] text-white shadow-sm'
                   : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
               }`}
             >
@@ -1226,7 +1226,7 @@ export const AccountView: React.FC<AccountViewProps> = ({
                           <div>
                             <div className="flex items-center gap-2 flex-wrap">
                               <h4 className="font-black text-base text-gray-900">{item.vendorName}</h4>
-                              <span className="bg-indigo-100 text-[#2B3990] text-[10px] font-black px-2 py-0.5 rounded-full">
+                              <span className="bg-indigo-100 text-[#1A9E9E] text-[10px] font-black px-2 py-0.5 rounded-full">
                                 {item.vendorCategory}
                               </span>
                               <span
@@ -1283,7 +1283,7 @@ export const AccountView: React.FC<AccountViewProps> = ({
                         <div className="flex items-center gap-2 flex-wrap">
                           <a
                             href={`tel:${item.vendorPhone}`}
-                            className="bg-[#2B3990] hover:bg-indigo-900 text-white font-bold px-3 py-1.5 rounded-xl text-xs flex items-center gap-1.5 shadow-xs"
+                            className="bg-[#1A9E9E] hover:bg-teal-700 text-white font-bold px-3 py-1.5 rounded-xl text-xs flex items-center gap-1.5 shadow-xs"
                           >
                             <Phone className="w-3.5 h-3.5" />
                             <span>{t('callAgain')}</span>
@@ -1394,7 +1394,7 @@ export const AccountView: React.FC<AccountViewProps> = ({
                       <div className="flex items-center justify-between gap-2 pt-2 border-t">
                         <a
                           href={`tel:${sw.vendorPhone}`}
-                          className="flex-1 bg-[#2B3990] text-white font-bold py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-xs"
+                          className="flex-1 bg-[#1A9E9E] text-white font-bold py-2 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow-xs"
                         >
                           <Phone className="w-3.5 h-3.5" />
                           <span>{t('callNow')}</span>
@@ -1462,7 +1462,7 @@ export const AccountView: React.FC<AccountViewProps> = ({
                     </div>
 
                     <div className="p-4 border border-gray-200 rounded-2xl bg-gray-50 hover:bg-gray-100/80 transition-all flex items-start gap-3">
-                      <div className="p-2.5 rounded-xl bg-[#2B3990] text-white shrink-0">
+                      <div className="p-2.5 rounded-xl bg-[#1A9E9E] text-white shrink-0">
                         <ShieldCheck className="w-5 h-5 text-emerald-400" />
                       </div>
                       <div>
@@ -1470,7 +1470,7 @@ export const AccountView: React.FC<AccountViewProps> = ({
                         <p className="text-xs text-gray-500 mt-0.5">Help verify offline stores in your locality.</p>
                         <button
                           onClick={() => onRoleChange('volunteer')}
-                          className="mt-2 text-xs font-extrabold text-[#2B3990] hover:underline flex items-center gap-1"
+                          className="mt-2 text-xs font-extrabold text-[#1A9E9E] hover:underline flex items-center gap-1"
                         >
                           <span>{t('switchToVolunteer')}</span> →
                         </button>
@@ -1499,7 +1499,7 @@ export const AccountView: React.FC<AccountViewProps> = ({
 
                   <a
                     href="tel:+919849012345"
-                    className="bg-[#2B3990] hover:bg-indigo-900 text-white font-bold py-3 px-4 rounded-2xl flex items-center justify-center gap-2 shadow"
+                    className="bg-[#1A9E9E] hover:bg-teal-700 text-white font-bold py-3 px-4 rounded-2xl flex items-center justify-center gap-2 shadow"
                   >
                     <Phone className="w-4 h-4" />
                     <span>{t('callHotline')} +91 9849012345</span>
@@ -1563,7 +1563,7 @@ export const AccountView: React.FC<AccountViewProps> = ({
                   value={ratingComment}
                   onChange={(e) => setRatingComment(e.target.value)}
                   placeholder="Mention how prompt the service was, work quality, pricing..."
-                  className="w-full px-3 py-2 text-xs border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2B3990]"
+                  className="w-full px-3 py-2 text-xs border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1A9E9E]"
                 ></textarea>
               </div>
 
@@ -1577,7 +1577,7 @@ export const AccountView: React.FC<AccountViewProps> = ({
                 </button>
                 <button
                   type="submit"
-                  className="bg-[#2B3990] hover:bg-indigo-900 text-white font-bold px-4 py-2 rounded-xl text-xs shadow-sm"
+                  className="bg-[#1A9E9E] hover:bg-teal-700 text-white font-bold px-4 py-2 rounded-xl text-xs shadow-sm"
                 >
                   Submit Rating
                 </button>
@@ -1595,7 +1595,7 @@ export const AccountView: React.FC<AccountViewProps> = ({
             
             <div className="flex items-center justify-between border-b pb-3">
               <h3 className="font-extrabold text-lg text-gray-900 flex items-center gap-2">
-                <Pencil className="w-5 h-5 text-[#2B3990]" />
+                <Pencil className="w-5 h-5 text-[#1A9E9E]" />
                 <span>Edit Account Profile</span>
               </h3>
               <button
@@ -1615,7 +1615,7 @@ export const AccountView: React.FC<AccountViewProps> = ({
                   value={editName}
                   onChange={(e) => setEditName(e.target.value)}
                   placeholder="e.g. Rahul Sharma"
-                  className="w-full px-3.5 py-2.5 text-xs border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2B3990] font-bold min-h-[44px]"
+                  className="w-full px-3.5 py-2.5 text-xs border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1A9E9E] font-bold min-h-[44px]"
                 />
               </div>
 
@@ -1629,7 +1629,7 @@ export const AccountView: React.FC<AccountViewProps> = ({
                     value={editPhone}
                     onChange={(e) => setEditPhone(e.target.value)}
                     placeholder="9849012345"
-                    className="flex-1 px-3.5 py-2.5 text-xs border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2B3990] font-bold min-h-[44px]"
+                    className="flex-1 px-3.5 py-2.5 text-xs border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1A9E9E] font-bold min-h-[44px]"
                   />
                 </div>
               </div>
@@ -1641,7 +1641,7 @@ export const AccountView: React.FC<AccountViewProps> = ({
                   value={editEmail}
                   onChange={(e) => setEditEmail(e.target.value)}
                   placeholder="rahul.sharma@example.com"
-                  className="w-full px-3.5 py-2.5 text-xs border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2B3990] font-bold min-h-[44px]"
+                  className="w-full px-3.5 py-2.5 text-xs border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1A9E9E] font-bold min-h-[44px]"
                 />
               </div>
 
@@ -1650,7 +1650,7 @@ export const AccountView: React.FC<AccountViewProps> = ({
                 <select
                   value={editNeighborhood}
                   onChange={(e) => setEditNeighborhood(e.target.value)}
-                  className="w-full px-3.5 py-2.5 text-xs border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2B3990] font-bold min-h-[44px]"
+                  className="w-full px-3.5 py-2.5 text-xs border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1A9E9E] font-bold min-h-[44px]"
                 >
                   {HYDERABAD_NEIGHBORHOODS.map((n) => (
                     <option key={n.id} value={n.name}>{n.name}</option>
@@ -1668,7 +1668,7 @@ export const AccountView: React.FC<AccountViewProps> = ({
                 </button>
                 <button
                   type="submit"
-                  className="bg-[#2B3990] hover:bg-indigo-900 text-white font-bold px-5 py-2.5 rounded-xl text-xs shadow-md flex items-center gap-1.5 min-h-[44px]"
+                  className="bg-[#1A9E9E] hover:bg-teal-700 text-white font-bold px-5 py-2.5 rounded-xl text-xs shadow-md flex items-center gap-1.5 min-h-[44px]"
                 >
                   <Save className="w-4 h-4" />
                   <span>Save Profile</span>
@@ -1707,7 +1707,7 @@ export const AccountView: React.FC<AccountViewProps> = ({
                     required
                     value={editShopName}
                     onChange={(e) => setEditShopName(e.target.value)}
-                    className="w-full px-3 py-2 text-xs border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2B3990] font-bold min-h-[44px]"
+                    className="w-full px-3 py-2 text-xs border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1A9E9E] font-bold min-h-[44px]"
                   />
                 </div>
 
@@ -1716,7 +1716,7 @@ export const AccountView: React.FC<AccountViewProps> = ({
                   <select
                     value={editCategorySlug}
                     onChange={(e) => setEditCategorySlug(e.target.value)}
-                    className="w-full px-3 py-2 text-xs border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2B3990] font-bold min-h-[44px]"
+                    className="w-full px-3 py-2 text-xs border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1A9E9E] font-bold min-h-[44px]"
                   >
                     {categories.map((cat) => (
                       <option key={cat.id} value={cat.slug}>{cat.name}</option>
@@ -1733,7 +1733,7 @@ export const AccountView: React.FC<AccountViewProps> = ({
                     required
                     value={editOwnerName}
                     onChange={(e) => setEditOwnerName(e.target.value)}
-                    className="w-full px-3 py-2 text-xs border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2B3990] font-bold min-h-[44px]"
+                    className="w-full px-3 py-2 text-xs border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1A9E9E] font-bold min-h-[44px]"
                   />
                 </div>
 
@@ -1744,7 +1744,7 @@ export const AccountView: React.FC<AccountViewProps> = ({
                     required
                     value={editShopPhone}
                     onChange={(e) => setEditShopPhone(e.target.value)}
-                    className="w-full px-3 py-2 text-xs border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2B3990] font-bold min-h-[44px]"
+                    className="w-full px-3 py-2 text-xs border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1A9E9E] font-bold min-h-[44px]"
                   />
                 </div>
 
@@ -1754,7 +1754,7 @@ export const AccountView: React.FC<AccountViewProps> = ({
                     type="tel"
                     value={editShopWhatsapp}
                     onChange={(e) => setEditShopWhatsapp(e.target.value)}
-                    className="w-full px-3 py-2 text-xs border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2B3990] font-bold min-h-[44px]"
+                    className="w-full px-3 py-2 text-xs border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1A9E9E] font-bold min-h-[44px]"
                   />
                 </div>
               </div>
@@ -1767,7 +1767,7 @@ export const AccountView: React.FC<AccountViewProps> = ({
                     required
                     value={editAddress}
                     onChange={(e) => setEditAddress(e.target.value)}
-                    className="w-full px-3 py-2 text-xs border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2B3990] font-bold min-h-[44px]"
+                    className="w-full px-3 py-2 text-xs border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1A9E9E] font-bold min-h-[44px]"
                   />
                 </div>
 
@@ -1776,7 +1776,7 @@ export const AccountView: React.FC<AccountViewProps> = ({
                   <select
                     value={editShopNeighborhood}
                     onChange={(e) => setEditShopNeighborhood(e.target.value)}
-                    className="w-full px-3 py-2 text-xs border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2B3990] font-bold min-h-[44px]"
+                    className="w-full px-3 py-2 text-xs border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1A9E9E] font-bold min-h-[44px]"
                   >
                     {HYDERABAD_NEIGHBORHOODS.map((n) => (
                       <option key={n.id} value={n.name}>{n.name}</option>
@@ -1791,7 +1791,7 @@ export const AccountView: React.FC<AccountViewProps> = ({
                   rows={3}
                   value={editDescription}
                   onChange={(e) => setEditDescription(e.target.value)}
-                  className="w-full px-3 py-2 text-xs border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2B3990]"
+                  className="w-full px-3 py-2 text-xs border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1A9E9E]"
                 ></textarea>
               </div>
 
@@ -1801,7 +1801,7 @@ export const AccountView: React.FC<AccountViewProps> = ({
                   type="text"
                   value={editImageUrl}
                   onChange={(e) => setEditImageUrl(e.target.value)}
-                  className="w-full px-3 py-2 text-xs border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#2B3990] min-h-[44px]"
+                  className="w-full px-3 py-2 text-xs border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1A9E9E] min-h-[44px]"
                 />
               </div>
 

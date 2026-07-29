@@ -52,7 +52,7 @@ export const VolunteerAdminDashboard: React.FC<VolunteerAdminDashboardProps> = (
   return (
     <div className="max-w-7xl mx-auto px-3 sm:px-6 py-6 space-y-6">
       {/* Dashboard Top Header */}
-      <div className="bg-gradient-to-r from-[#1A237E] to-indigo-900 text-white rounded-2xl p-4 sm:p-6 shadow-lg flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+      <div className="bg-gradient-to-r from-[#0F5C5C] to-indigo-900 text-white rounded-2xl p-4 sm:p-6 shadow-lg flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2">
             <span className="bg-emerald-500 text-gray-900 text-xs font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider">
@@ -117,8 +117,8 @@ export const VolunteerAdminDashboard: React.FC<VolunteerAdminDashboardProps> = (
         <div className="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex flex-col justify-between">
           <span className="text-xs font-semibold text-gray-500">Phone Calls Leads</span>
           <div className="flex items-baseline justify-between mt-1">
-            <span className="text-2xl font-black text-[#1A237E]">{totalCalls}</span>
-            <span className="text-[10px] bg-indigo-100 text-[#1A237E] px-1.5 py-0.5 rounded font-bold">Direct Taps</span>
+            <span className="text-2xl font-black text-[#0F5C5C]">{totalCalls}</span>
+            <span className="text-[10px] bg-indigo-100 text-[#0F5C5C] px-1.5 py-0.5 rounded font-bold">Direct Taps</span>
           </div>
         </div>
 
@@ -145,7 +145,7 @@ export const VolunteerAdminDashboard: React.FC<VolunteerAdminDashboardProps> = (
           onClick={() => setActiveTab('pending')}
           className={`px-4 py-2.5 font-bold text-xs sm:text-sm rounded-t-xl transition-all flex items-center gap-2 shrink-0 border-b-2 min-h-[44px] ${
             activeTab === 'pending'
-              ? 'border-[#F57C00] text-[#1A237E] bg-indigo-50/50'
+              ? 'border-[#F57C00] text-[#0F5C5C] bg-indigo-50/50'
               : 'border-transparent text-gray-500 hover:text-gray-900'
           }`}
         >
@@ -160,11 +160,11 @@ export const VolunteerAdminDashboard: React.FC<VolunteerAdminDashboardProps> = (
           onClick={() => setActiveTab('all')}
           className={`px-4 py-2.5 font-bold text-xs sm:text-sm rounded-t-xl transition-all flex items-center gap-2 shrink-0 border-b-2 min-h-[44px] ${
             activeTab === 'all'
-              ? 'border-[#1A237E] text-[#1A237E] bg-indigo-50/50'
+              ? 'border-[#0F5C5C] text-[#0F5C5C] bg-indigo-50/50'
               : 'border-transparent text-gray-500 hover:text-gray-900'
           }`}
         >
-          <Users className="w-4 h-4 text-[#1A237E]" />
+          <Users className="w-4 h-4 text-[#0F5C5C]" />
           <span>All Vendor Directory ({vendors.length})</span>
         </button>
 
@@ -172,7 +172,7 @@ export const VolunteerAdminDashboard: React.FC<VolunteerAdminDashboardProps> = (
           onClick={() => setActiveTab('analytics')}
           className={`px-4 py-2.5 font-bold text-xs sm:text-sm rounded-t-xl transition-all flex items-center gap-2 shrink-0 border-b-2 min-h-[44px] ${
             activeTab === 'analytics'
-              ? 'border-[#1A237E] text-[#1A237E] bg-indigo-50/50'
+              ? 'border-[#0F5C5C] text-[#0F5C5C] bg-indigo-50/50'
               : 'border-transparent text-gray-500 hover:text-gray-900'
           }`}
         >
@@ -184,7 +184,7 @@ export const VolunteerAdminDashboard: React.FC<VolunteerAdminDashboardProps> = (
           onClick={() => setActiveTab('sql')}
           className={`px-4 py-2.5 font-bold text-xs sm:text-sm rounded-t-xl transition-all flex items-center gap-2 shrink-0 border-b-2 min-h-[44px] ${
             activeTab === 'sql'
-              ? 'border-[#1A237E] text-[#1A237E] bg-indigo-50/50'
+              ? 'border-[#0F5C5C] text-[#0F5C5C] bg-indigo-50/50'
               : 'border-transparent text-gray-500 hover:text-gray-900'
           }`}
         >
@@ -271,7 +271,7 @@ export const VolunteerAdminDashboard: React.FC<VolunteerAdminDashboardProps> = (
                       value={notesInput[vendor.id] || ''}
                       onChange={(e) => handleNoteChange(vendor.id, e.target.value)}
                       placeholder="e.g. Called shop owner. Confirmed location in Madhapur."
-                      className="w-full text-xs border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-[#1A237E] focus:outline-none"
+                      className="w-full text-xs border border-gray-300 rounded-lg p-2 focus:ring-2 focus:ring-[#0F5C5C] focus:outline-none"
                     />
                   </div>
 
@@ -279,7 +279,7 @@ export const VolunteerAdminDashboard: React.FC<VolunteerAdminDashboardProps> = (
                   <div className="grid grid-cols-3 gap-2 pt-1">
                     <a
                       href={`tel:+91${vendor.phone}`}
-                      className="bg-indigo-50 hover:bg-indigo-100 text-[#1A237E] font-bold py-2 px-2 rounded-xl text-xs flex items-center justify-center gap-1 border border-indigo-200"
+                      className="bg-indigo-50 hover:bg-indigo-100 text-[#0F5C5C] font-bold py-2 px-2 rounded-xl text-xs flex items-center justify-center gap-1 border border-indigo-200"
                     >
                       <Phone className="w-3.5 h-3.5" />
                       <span>Call Owner</span>
@@ -333,7 +333,7 @@ export const VolunteerAdminDashboard: React.FC<VolunteerAdminDashboardProps> = (
                 value={searchFilter}
                 onChange={(e) => setSearchFilter(e.target.value)}
                 placeholder="Search by name, phone, neighborhood..."
-                className="w-full pl-9 pr-3 py-2 text-xs border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#1A237E] focus:outline-none min-h-[40px]"
+                className="w-full pl-9 pr-3 py-2 text-xs border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0F5C5C] focus:outline-none min-h-[40px]"
               />
             </div>
             <span className="text-xs font-semibold text-gray-500">
@@ -363,7 +363,7 @@ export const VolunteerAdminDashboard: React.FC<VolunteerAdminDashboardProps> = (
                       <div className="text-[11px] text-gray-500">{v.ownerName}</div>
                     </td>
                     <td className="p-2.5 font-medium text-gray-700">{v.category}</td>
-                    <td className="p-2.5 font-semibold text-[#1A237E]">{v.phone}</td>
+                    <td className="p-2.5 font-semibold text-[#0F5C5C]">{v.phone}</td>
                     <td className="p-2.5 text-gray-600">{v.neighborhood}</td>
                     <td className="p-2.5">
                       {v.status === 'approved' ? (
@@ -416,7 +416,7 @@ export const VolunteerAdminDashboard: React.FC<VolunteerAdminDashboardProps> = (
                     <span>{totalCalls} leads ({Math.round((totalCalls / (totalCalls + totalWhatsApp || 1)) * 100)}%)</span>
                   </div>
                   <div className="w-full bg-gray-200 h-2.5 rounded-full overflow-hidden">
-                    <div className="bg-[#1A237E] h-full rounded-full" style={{ width: `${Math.min(100, (totalCalls / (totalCalls + totalWhatsApp || 1)) * 100)}%` }}></div>
+                    <div className="bg-[#0F5C5C] h-full rounded-full" style={{ width: `${Math.min(100, (totalCalls / (totalCalls + totalWhatsApp || 1)) * 100)}%` }}></div>
                   </div>
                 </div>
 

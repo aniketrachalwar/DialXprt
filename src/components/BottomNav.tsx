@@ -44,11 +44,11 @@ export const BottomNav: React.FC<BottomNavProps> = ({
           onClick={() => onTabChange('home')}
           className={`flex flex-col items-center justify-center h-full min-h-[48px] py-1 transition-all active:scale-95 ${
             activeTab === 'home'
-              ? 'text-[#2B3990] font-extrabold border-t-2 border-[#2B3990]'
+              ? 'text-[#1A9E9E] font-extrabold border-t-2 border-[#1A9E9E]'
               : 'text-gray-500 hover:text-gray-900 font-medium'
           }`}
         >
-          <Home className={`w-5 h-5 ${activeTab === 'home' ? 'text-[#2B3990]' : ''}`} />
+          <Home className={`w-5 h-5 ${activeTab === 'home' ? 'text-[#1A9E9E]' : ''}`} />
           <span className="text-[11px] mt-0.5">{t('homeTab')}</span>
         </button>
 
@@ -70,7 +70,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
           onClick={() => onTabChange('account')}
           className={`relative flex flex-col items-center justify-center h-full min-h-[48px] py-1 transition-all active:scale-95 ${
             activeTab === 'account'
-              ? 'text-[#2B3990] font-extrabold border-t-2 border-[#2B3990]'
+              ? 'text-[#1A9E9E] font-extrabold border-t-2 border-[#1A9E9E]'
               : 'text-gray-500 hover:text-gray-900 font-medium'
           }`}
         >
