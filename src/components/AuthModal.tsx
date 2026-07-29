@@ -10,46 +10,34 @@ interface AuthModalProps {
 }
 
 export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLoginSuccess }) => {
-  const [authStep, setAuthStep] = useState<'phone' | 'otp'>('phone');
-  const [phone, setPhone] = useState('');
-  const [otp, setOtp] = useState('');
+  const [authStep, setAuthStep] = useState<'login' | 'register'>('register');
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [role, setRole] = useState<UserRole>('customer');
   const [loading, setLoading] = useState(false);
 
   if (!isOpen) return null;
 
-  const handleSendOTP = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (phone.length < 10) {
-      alert('Please enter a valid 10-digit mobile number.');
+    if (!email || !password) {
+      alert('Please enter your email and password.');
       return;
     }
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
-      setAuthStep('otp');
-    }, 500);
-  };
-
-  const handleVerifyOTP = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!otp) {
-      alert('Please enter the 4-digit SMS OTP code.');
-      return;
-    }
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      onLoginSuccess(phone, role);
+      onLoginSuccess(email, role);
       onClose();
-    }, 500);
+    }, 800);
   };
 
   const handleSocialLogin = (provider: 'google' | 'apple') => {
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
-      onLoginSuccess('9849012345', role);
+      onLoginSuccess('google_user@example.com', role);
       onClose();
     }, 600);
   };
@@ -160,61 +148,65 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLoginSu
               <div className="w-full border-t border-gray-200"></div>
             </div>
             <div className="relative flex justify-center text-[10px] uppercase">
-              <span className="bg-white px-2 text-gray-400 font-bold">Or 10-Digit Mobile SMS</span>
+              <span className="bg-white px-2 text-gray-400 font-bold">Or Email Address</span>
             </div>
           </div>
 
-          {authStep === 'phone' ? (
-            <form onSubmit={handleSendOTP} className="space-y-3">
+          <form onSubmit={handleSubmit} className="space-y-3">
+            {authStep === 'register' && (
               <div>
-                <label className="block font-bold text-gray-700 mb-1">Mobile Number</label>
-                <div className="relative">
-                  <span className="absolute left-3 top-3 font-bold text-gray-500">+91</span>
-                  <input
-                    type="tel"
-                    required
-                    maxLength={10}
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value.replace(/\D/g, ''))}
-                    placeholder="9849012345"
-                    className="w-full pl-12 pr-3 py-2.5 text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0F5C5C] focus:outline-none font-bold"
-                  />
-                </div>
-              </div>
-
-              <button
-                type="submit"
-                disabled={loading || phone.length < 10}
-                className="w-full bg-[#0F5C5C] hover:bg-teal-700 text-white font-bold py-3 px-3 rounded-xl shadow min-h-[48px] disabled:opacity-50"
-              >
-                {loading ? 'Sending SMS OTP...' : 'Send OTP via SMS'}
-              </button>
-            </form>
-          ) : (
-            <form onSubmit={handleVerifyOTP} className="space-y-3">
-              <div>
-                <label className="block font-bold text-gray-700 mb-1">Enter 4-Digit OTP Code</label>
+                <label className="block font-bold text-gray-700 mb-1">Full Name</label>
                 <input
                   type="text"
                   required
-                  maxLength={4}
-                  value={otp}
-                  onChange={(e) => setOtp(e.target.value)}
-                  placeholder="e.g. 1234"
-                  className="w-full px-3 py-2.5 text-center text-lg font-black tracking-widest border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0F5C5C] focus:outline-none"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Rahul Sharma"
+                  className="w-full px-3 py-2.5 text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0F5C5C] focus:outline-none"
                 />
-                <p className="text-[10px] text-gray-500 mt-1 text-center">OTP sent to +91 {phone}</p>
               </div>
+            )}
+            <div>
+              <label className="block font-bold text-gray-700 mb-1">Email Address</label>
+              <input
+                type="email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="rahul@example.com"
+                className="w-full px-3 py-2.5 text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0F5C5C] focus:outline-none"
+              />
+            </div>
+            <div>
+              <label className="block font-bold text-gray-700 mb-1">Password</label>
+              <input
+                type="password"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
+                className="w-full px-3 py-2.5 text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0F5C5C] focus:outline-none"
+              />
+            </div>
 
-              <button
-                type="submit"
-                disabled={loading || !otp}
-                className="w-full bg-[#F36F21] hover:bg-orange-600 text-white font-bold py-3 px-3 rounded-xl shadow min-h-[48px] disabled:opacity-50"
+            <button
+              type="submit"
+              disabled={loading || !email || !password}
+              className="w-full bg-[#0F5C5C] hover:bg-teal-700 text-white font-bold py-3 px-3 rounded-xl shadow min-h-[48px] disabled:opacity-50 mt-2"
+            >
+              {loading ? 'Processing...' : authStep === 'register' ? 'Create Account' : 'Sign In'}
+            </button>
+            
+            <div className="text-center mt-2">
+              <button 
+                type="button" 
+                onClick={() => setAuthStep(authStep === 'login' ? 'register' : 'login')}
+                className="text-[#F36F21] hover:underline font-bold"
               >
-                {loading ? 'Verifying...' : 'Verify OTP & Log In'}
+                {authStep === 'login' ? "Don't have an account? Sign up" : "Already have an account? Log in"}
               </button>
-            </form>
-          )}
+            </div>
+          </form>
         </div>
       </div>
     </div>

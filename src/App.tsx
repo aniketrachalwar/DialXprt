@@ -13,6 +13,7 @@ import { FloatingSupportWidget } from './components/FloatingSupportWidget';
 import { AuthModal } from './components/AuthModal';
 import { NotificationToast } from './components/NotificationToast';
 import { Footer } from './components/Footer';
+import { RightStickyBar } from './components/RightStickyBar';
 
 import { Vendor, Category, Neighborhood, UserRole, NotificationItem } from './types';
 import { INITIAL_CATEGORIES, HYDERABAD_NEIGHBORHOODS } from './data/mockVendors';
@@ -159,14 +160,12 @@ export default function App() {
   };
 
   const handleLogout = () => {
-    if (confirm('Are you sure you want to log out of your session?')) {
-      setUserPhone('');
-      setUserName('Guest User');
-      setUserEmail('');
-      setCurrentRole('customer');
-      setActiveTab('home');
-      setIsAuthModalOpen(true);
-    }
+    setUserPhone('');
+    setUserName('Guest User');
+    setUserEmail('');
+    setCurrentRole('customer');
+    setActiveTab('home');
+    setIsAuthModalOpen(true);
   };
 
   // System Notifications
@@ -246,6 +245,13 @@ export default function App() {
       { enableHighAccuracy: true, timeout: 10000 }
     );
   };
+
+  // Auto-detect on initial load if not already detected
+  useEffect(() => {
+    if (!isAutoDetected && navigator.geolocation) {
+      handleAutoDetectGPS();
+    }
+  }, []);
 
   const handleSelectNeighborhood = (n: Neighborhood) => {
     setUserLat(n.lat);
@@ -634,6 +640,9 @@ export default function App() {
 
       {/* 4. FLOATING SUPPORT WIDGET */}
       <FloatingSupportWidget currentLang={currentLang} />
+      
+      {/* 4.5 RIGHT STICKY ACTION BAR */}
+      <RightStickyBar onOpenRegistration={() => setIsRegistrationOpen(true)} />
 
       {/* 5. MODALS */}
       <VendorRegistrationModal
