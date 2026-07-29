@@ -123,11 +123,11 @@ export const Header: React.FC<HeaderProps> = ({
             <button
               id="user-auth-btn"
               onClick={onOpenAccount}
-              className="flex items-center gap-1 bg-white/10 hover:bg-white/20 text-white p-1.5 sm:px-2.5 rounded-full sm:rounded-lg text-xs font-semibold min-w-[38px] min-h-[38px] justify-center"
-              title={t('accountHub')}
+              className={`flex items-center gap-1 ${userPhone ? 'bg-white/10 hover:bg-white/20' : 'bg-[#F36F21] hover:bg-orange-600 shadow-sm'} text-white p-1.5 sm:px-2.5 rounded-full sm:rounded-lg text-xs font-semibold min-w-[38px] min-h-[38px] justify-center transition-all`}
+              title={userPhone ? t('accountHub') : 'Login'}
             >
-              <User className="w-4 h-4 text-[#F36F21]" />
-              <span className="hidden sm:inline">{t('accountTab')}</span>
+              <User className={`w-4 h-4 ${userPhone ? 'text-[#F36F21]' : 'text-white'}`} />
+              <span className="hidden sm:inline">{userPhone ? t('accountTab') : 'Login'}</span>
             </button>
           </div>
         </div>

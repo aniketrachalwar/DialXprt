@@ -25,6 +25,7 @@ import {
   updateVendorDetails,
   trackInteraction,
   calculateDistanceKm,
+  supabase
 } from './lib/supabase';
 import { HomeDashboard } from './components/HomeDashboard';
 import { MapPin, Search, ArrowLeft } from 'lucide-react';
@@ -129,9 +130,9 @@ export default function App() {
 
   // Role & User Context
   const [currentRole, setCurrentRole] = useState<UserRole>('customer');
-  const [userPhone, setUserPhone] = useState<string>('9849012345');
-  const [userName, setUserName] = useState<string>('Rahul Sharma');
-  const [userEmail, setUserEmail] = useState<string>('rahul.sharma@example.com');
+  const [userPhone, setUserPhone] = useState<string>('');
+  const [userName, setUserName] = useState<string>('Guest User');
+  const [userEmail, setUserEmail] = useState<string>('');
 
 
   const handleUpdateUserProfile = (name: string, phone: string, email: string, neighborhood: string) => {
@@ -159,13 +160,19 @@ export default function App() {
     });
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     setUserPhone('');
     setUserName('Guest User');
     setUserEmail('');
     setCurrentRole('customer');
     setActiveTab('home');
-    setIsAuthModalOpen(true);
+    if (supabase) {
+      try {
+        await supabase.auth.signOut();
+      } catch (err) {
+        console.error('Supabase logout error:', err);
+      }
+    }
   };
 
   // System Notifications
@@ -399,7 +406,13 @@ export default function App() {
         onOpenRegistration={() => setIsRegistrationOpen(true)}
         onOpenAuth={() => setIsAuthModalOpen(true)}
         onOpenNotifications={() => setIsNotificationsModalOpen(true)}
-        onOpenAccount={() => setActiveTab('account')}
+        onOpenAccount={() => {
+          if (!userPhone) {
+            setIsAuthModalOpen(true);
+          } else {
+            setActiveTab('account');
+          }
+        }}
         onGoHome={() => {
           setActiveTab('home');
           setSearchQuery('');
