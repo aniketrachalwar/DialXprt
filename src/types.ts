@@ -41,6 +41,9 @@ export interface Vendor {
   createdAt: string;
   updatedAt: string;
   distanceKm?: number;
+  keywords?: string;
+  operatingHours?: string;
+  fullAddress?: string;
   verifiedByVolunteer?: string;
   volunteerNotes?: string;
   viewsCount?: number;

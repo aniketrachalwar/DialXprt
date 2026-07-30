@@ -40,6 +40,8 @@ export const VendorRegistrationModal: React.FC<VendorRegistrationModalProps> = (
   const [neighborhood, setNeighborhood] = useState(currentNeighborhood || 'Madhapur');
   const [pincode, setPincode] = useState('500081');
   const [description, setDescription] = useState('');
+  const [keywords, setKeywords] = useState('');
+  const [operatingHours, setOperatingHours] = useState('9:00 AM - 8:00 PM');
   const [imageUrl, setImageUrl] = useState('');
   const [lat, setLat] = useState(userLat);
   const [lng, setLng] = useState(userLng);
@@ -124,6 +126,9 @@ export const VendorRegistrationModal: React.FC<VendorRegistrationModalProps> = (
         lat,
         lng,
         imageUrl: finalImage,
+        keywords,
+        operatingHours,
+        fullAddress: address,
         description: description || `${categoryName} services available in ${neighborhood}, Hyderabad.`,
       });
       setLoading(false);
@@ -207,17 +212,22 @@ export const VendorRegistrationModal: React.FC<VendorRegistrationModalProps> = (
                 <label className="block text-xs font-bold text-gray-700 mb-1">
                   {t('categoryLabel')} *
                 </label>
-                <select
+                <input
+                  list="categories-list"
+                  required
                   value={categorySlug}
                   onChange={(e) => setCategorySlug(e.target.value)}
+                  placeholder="Search or type custom category..."
                   className="w-full px-3 py-2.5 text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0F5C5C] focus:outline-none bg-white min-h-[48px]"
-                >
+                />
+                <datalist id="categories-list">
                   {categories.map((cat) => (
                     <option key={cat.id} value={cat.slug}>
                       {getCategoryName(cat.slug, cat.name, currentLang)}
                     </option>
                   ))}
-                </select>
+                  <option value="other">Other (Please specify)</option>
+                </datalist>
               </div>
 
               <div className="pt-3">
@@ -327,7 +337,7 @@ export const VendorRegistrationModal: React.FC<VendorRegistrationModalProps> = (
 
               <div>
                 <label className="block text-xs font-bold text-gray-700 mb-1">
-                  {t('fullAddressLabel')}
+                  Full Street Address (Crucial for Local SEO)
                 </label>
                 <textarea
                   rows={2}
@@ -422,6 +432,32 @@ export const VendorRegistrationModal: React.FC<VendorRegistrationModalProps> = (
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder={t('descriptionPlaceholder')}
                   className="w-full p-2.5 text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0F5C5C] focus:outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-gray-700 mb-1">
+                  Services / Keywords (Comma separated)
+                </label>
+                <input
+                  type="text"
+                  value={keywords}
+                  onChange={(e) => setKeywords(e.target.value)}
+                  placeholder="e.g. fan repair, MCB trip, wiring"
+                  className="w-full px-3 py-2.5 text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0F5C5C] focus:outline-none min-h-[48px]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-gray-700 mb-1">
+                  Operating Hours
+                </label>
+                <input
+                  type="text"
+                  value={operatingHours}
+                  onChange={(e) => setOperatingHours(e.target.value)}
+                  placeholder="e.g. 9:00 AM - 8:00 PM"
+                  className="w-full px-3 py-2.5 text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0F5C5C] focus:outline-none min-h-[48px]"
                 />
               </div>
 

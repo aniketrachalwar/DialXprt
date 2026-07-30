@@ -5,7 +5,7 @@ export const TRANSLATIONS: Record<AppLanguage, Record<string, string>> = {
     // Header & Meta
     searchPlaceholder: "Search 'Electrician', 'Kirana', 'Raju Plumber'...",
     listBusiness: "List Business",
-    accountHub: "Account Hub",
+    accountHub: "B2B",
     changeLocation: "Services near",
     hyderabad: "Hyderabad",
     notifications: "Notifications",
@@ -13,7 +13,7 @@ export const TRANSLATIONS: Record<AppLanguage, Record<string, string>> = {
     // Bottom Navigation
     homeTab: "Home",
     addBusinessTab: "Add Business",
-    accountTab: "Account",
+    accountTab: "B2B",
     adminTab: "Admin",
     volunteerTab: "Volunteer",
     shopOwnerTab: "Shop Owner",
@@ -215,7 +215,7 @@ export const TRANSLATIONS: Record<AppLanguage, Record<string, string>> = {
     // Telugu Translations
     searchPlaceholder: "'ఎలక్ట్రీషియన్', 'కిరాణా', 'ప్లంబర్' అని శోధించండి...",
     listBusiness: "వ్యాపారాన్ని జోడించండి",
-    accountHub: "ఖాతా కేంద్రం",
+    accountHub: "B2B",
     changeLocation: "సమీప సేవలు",
     hyderabad: "హైదరాబాద్",
     notifications: "నోటిఫికేషన్లు",
@@ -223,7 +223,7 @@ export const TRANSLATIONS: Record<AppLanguage, Record<string, string>> = {
     // Bottom Navigation
     homeTab: "హోమ్",
     addBusinessTab: "వ్యాపారం జోడించు",
-    accountTab: "ఖాతా",
+    accountTab: "B2B",
     adminTab: "అడ్మిన్",
     volunteerTab: "వాలంటీర్",
     shopOwnerTab: "షాప్ యజమాని",
@@ -408,7 +408,7 @@ export const TRANSLATIONS: Record<AppLanguage, Record<string, string>> = {
     // Hindi Translations
     searchPlaceholder: "'इलेक्ट्रीशियन', 'किराना', 'प्लंबर' खोजें...",
     listBusiness: "व्यवसाय जोड़ें",
-    accountHub: "खाता केंद्र",
+    accountHub: "B2B",
     changeLocation: "निकटतम सेवाएं",
     hyderabad: "हैदराबाद",
     notifications: "सूचनाएं",
@@ -416,7 +416,7 @@ export const TRANSLATIONS: Record<AppLanguage, Record<string, string>> = {
     // Bottom Navigation
     homeTab: "होम",
     addBusinessTab: "बिजनेस जोड़ें",
-    accountTab: "अकाउंट",
+    accountTab: "B2B",
     adminTab: "एडमिन",
     volunteerTab: "वोलंटियर",
     shopOwnerTab: "दुकान मालिक",

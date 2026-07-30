@@ -20,6 +20,7 @@ interface HeaderProps {
   currentLang: AppLanguage;
   onLanguageChange: (lang: AppLanguage) => void;
   renderCompactSearch?: React.ReactNode;
+  onOpenLanguage: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -38,8 +39,8 @@ export const Header: React.FC<HeaderProps> = ({
   currentLang,
   onLanguageChange,
   renderCompactSearch,
+  onOpenLanguage
 }) => {
-  const [isLangModalOpen, setIsLangModalOpen] = useState<boolean>(false);
   const t = (key: string) => getTranslation(currentLang, key);
 
   const getRoleBadge = () => {
@@ -89,8 +90,8 @@ export const Header: React.FC<HeaderProps> = ({
             {/* Mobile Language Button (Visible on phone < sm) */}
             <button
               id="mobile-language-picker-btn"
-              onClick={() => setIsLangModalOpen(true)}
-              className="flex sm:hidden items-center gap-1 bg-indigo-950/90 hover:bg-teal-700 text-white px-2.5 py-1.5 rounded-xl border border-amber-400/50 shadow-xs active:scale-95 transition-all min-h-[38px] text-xs font-bold"
+              onClick={onOpenLanguage}
+              className="flex sm:hidden items-center gap-1.5 bg-indigo-950/40 hover:bg-white/10 px-2 py-1.5 rounded-lg border border-indigo-500/20 active:scale-95 transition-all min-h-[38px] text-xs font-bold"
               title="Change app language"
             >
               <Globe className="w-3.5 h-3.5 text-[#F36F21] shrink-0" />
@@ -127,101 +128,12 @@ export const Header: React.FC<HeaderProps> = ({
               title={userPhone ? t('accountHub') : 'Login'}
             >
               <User className={`w-4 h-4 ${userPhone ? 'text-[#F36F21]' : 'text-white'}`} />
-              <span className="hidden sm:inline">{userPhone ? t('accountTab') : 'Login'}</span>
+              <span className="hidden sm:inline">{userPhone ? 'Profile' : 'Login'}</span>
             </button>
           </div>
         </div>
 
-        {/* Dedicated Mobile Location Selector Bar (Visible on phone < sm) */}
-        <div className="mt-1.5 sm:hidden">
-          <button
-            id="location-picker-mobile-bar-btn"
-            onClick={onOpenLocationModal}
-            className="w-full flex items-center justify-between bg-indigo-950/80 hover:bg-teal-700/90 text-white px-3 py-1.5 rounded-xl border border-indigo-500/40 shadow-xs transition-all active:scale-98"
-          >
-            <div className="flex items-center gap-2 min-w-0">
-              <MapPin className={`w-4 h-4 shrink-0 ${isAutoDetected ? 'text-green-400 animate-pulse' : 'text-[#F57C00]'}`} />
-              <div className="text-left min-w-0">
-                <div className="flex items-center gap-1 text-[10px] text-indigo-300 font-semibold uppercase tracking-wide">
-                  <span>Current Area</span>
-                  {isAutoDetected && <span className="bg-green-500/20 text-green-300 px-1 rounded text-[9px]">GPS</span>}
-                </div>
-                <div className="text-xs font-bold text-white truncate">
-                  {currentNeighborhood || t('hyderabad')}
-                </div>
-              </div>
-            </div>
-            <span className="text-xs font-extrabold text-[#F36F21] bg-white/10 hover:bg-white/20 px-2 py-0.5 rounded-lg flex items-center gap-1 shrink-0 ml-2">
-              <span>Change</span>
-              <ChevronDown className="w-3 h-3" />
-            </span>
-          </button>
-        </div>
       </div>
-
-      {/* iOS / Mobile Style Language Selection Bottom Sheet */}
-      {isLangModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4 animate-fade-in text-gray-900">
-          <div className="bg-white w-full max-w-sm rounded-t-[28px] sm:rounded-2xl p-5 space-y-4 shadow-2xl animate-slide-up sm:animate-fade-in pb-safe border border-gray-200">
-            {/* iOS Drag Handle */}
-            <div className="w-12 h-1 bg-gray-300 rounded-full mx-auto -mt-1 mb-2 sm:hidden"></div>
-
-            <div className="flex items-center justify-between border-b pb-3">
-              <div className="flex items-center gap-2">
-                <Globe className="w-5 h-5 text-[#1A9E9E]" />
-                <div>
-                  <h3 className="font-black text-base text-gray-900">Select Language</h3>
-                  <p className="text-[11px] text-gray-500 font-medium">భాషను ఎంచుకోండి / भाषा चुनें</p>
-                </div>
-              </div>
-              <button
-                onClick={() => setIsLangModalOpen(false)}
-                className="p-1.5 text-gray-400 hover:text-gray-700 hover:bg-gray-100 rounded-xl transition-colors"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            <div className="space-y-2.5 pt-1">
-              {languages.map((langItem) => (
-                <button
-                  key={langItem.code}
-                  onClick={() => {
-                    onLanguageChange(langItem.code);
-                    setIsLangModalOpen(false);
-                  }}
-                  className={`w-full p-3.5 rounded-2xl flex items-center justify-between transition-all text-left border active:scale-98 ${
-                    currentLang === langItem.code
-                      ? 'bg-indigo-50/90 border-[#1A9E9E] text-[#1A9E9E] shadow-xs'
-                      : 'bg-gray-50/80 border-gray-200 text-gray-800 hover:bg-gray-100'
-                  }`}
-                >
-                  <div className="flex items-center gap-3">
-                    <span className="text-2xl">{langItem.flag}</span>
-                    <div>
-                      <p className="text-sm font-black text-gray-900">{langItem.nativeName}</p>
-                      <p className="text-xs text-gray-500">{langItem.englishName}</p>
-                    </div>
-                  </div>
-                  {currentLang === langItem.code ? (
-                    <div className="w-6 h-6 rounded-full bg-[#1A9E9E] text-white flex items-center justify-center">
-                      <Check className="w-4 h-4 stroke-[3]" />
-                    </div>
-                  ) : (
-                    <div className="w-6 h-6 rounded-full border border-gray-300"></div>
-                  )}
-                </button>
-              ))}
-            </div>
-
-            <div className="pt-2 text-center">
-              <p className="text-[10px] text-gray-400">
-                DialXprt automatically translates all Hyderabad vendor lists & services.
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
     </header>
   );
 };

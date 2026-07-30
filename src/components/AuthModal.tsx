@@ -72,62 +72,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLoginSu
 
         <div className="p-5 space-y-4 text-xs text-gray-800">
           {/* Account Role Selector */}
-          <div>
-            <label className="block font-bold text-gray-700 mb-1.5">Select Account Type:</label>
-            <div className="grid grid-cols-2 gap-1.5">
-              <button
-                type="button"
-                onClick={() => setRole('customer')}
-                className={`py-2 px-2 rounded-xl border text-center font-bold flex items-center justify-center gap-1.5 ${
-                  role === 'customer'
-                    ? 'bg-emerald-50 border-emerald-600 text-emerald-900 ring-1 ring-emerald-500'
-                    : 'bg-white border-gray-200 text-gray-600'
-                }`}
-              >
-                <User className="w-3.5 h-3.5" />
-                <span>Customer</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setRole('vendor')}
-                className={`py-2 px-2 rounded-xl border text-center font-bold flex items-center justify-center gap-1.5 ${
-                  role === 'vendor'
-                    ? 'bg-blue-50 border-blue-600 text-blue-900 ring-1 ring-blue-500'
-                    : 'bg-white border-gray-200 text-gray-600'
-                }`}
-              >
-                <Store className="w-3.5 h-3.5" />
-                <span>Shop Owner</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setRole('volunteer')}
-                className={`py-2 px-2 rounded-xl border text-center font-bold flex items-center justify-center gap-1.5 ${
-                  role === 'volunteer'
-                    ? 'bg-amber-50 border-amber-600 text-amber-900 ring-1 ring-amber-500'
-                    : 'bg-white border-gray-200 text-gray-600'
-                }`}
-              >
-                <ShieldCheck className="w-3.5 h-3.5" />
-                <span>Volunteer</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => setRole('admin')}
-                className={`py-2 px-2 rounded-xl border text-center font-bold flex items-center justify-center gap-1.5 ${
-                  role === 'admin'
-                    ? 'bg-purple-50 border-purple-600 text-purple-900 ring-1 ring-purple-500'
-                    : 'bg-white border-gray-200 text-gray-600'
-                }`}
-              >
-                <Crown className="w-3.5 h-3.5" />
-                <span>Admin</span>
-              </button>
-            </div>
-          </div>
 
           {/* Social Auth Options */}
           <div className="space-y-2">

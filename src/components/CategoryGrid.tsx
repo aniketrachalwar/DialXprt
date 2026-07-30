@@ -1,5 +1,12 @@
 import React from 'react';
 import {
+  Search,
+  DollarSign,
+  Home,
+  Video,
+  Coffee,
+  CheckCircle2,
+  Navigation,
   Zap,
   Wrench,
   ShoppingBag,
@@ -9,7 +16,6 @@ import {
   Paintbrush,
   BookOpen,
   Scissors,
-  Navigation,
   Sparkles,
   Tv,
   Shirt,
@@ -23,6 +29,7 @@ import {
 } from 'lucide-react';
 import { Category } from '../types';
 import { AppLanguage, getTranslation, getCategoryName } from '../lib/translations';
+import { CATEGORY_IMAGE_MAP } from '../lib/categoryImages';
 
 interface CategoryGridProps {
   categories: Category[];
@@ -111,6 +118,7 @@ export const CategoryGrid: React.FC<CategoryGridProps> = ({
         {categories.map((cat) => {
           const bgStyle = CATEGORY_COLOR_BG[cat.slug] || 'bg-indigo-50 group-hover:bg-indigo-100/80 border-indigo-200';
           const icon = CATEGORY_ICON_MAP[cat.iconName] || <Wrench className="w-6 h-6 text-[#1A9E9E]" />;
+          const imageUrl = CATEGORY_IMAGE_MAP[cat.slug];
           const catTitle = getCategoryName(cat.slug, cat.name, currentLang);
 
           return (
@@ -121,8 +129,12 @@ export const CategoryGrid: React.FC<CategoryGridProps> = ({
               className="group bg-white rounded-2xl p-3.5 sm:p-4 border border-gray-200 hover:border-[#1A9E9E]/50 shadow-xs hover:shadow-md transition-all text-left flex flex-col justify-between min-h-[140px] cursor-pointer active:scale-98"
             >
               <div>
-                <div className={`w-12 h-12 rounded-2xl border flex items-center justify-center transition-transform group-hover:scale-110 mb-2.5 ${bgStyle}`}>
-                  {icon}
+                <div className={`w-12 h-12 rounded-full border flex items-center justify-center transition-transform group-hover:scale-110 mb-2.5 overflow-hidden relative ${imageUrl ? 'border-gray-200' : bgStyle}`}>
+                  {imageUrl ? (
+                    <img src={imageUrl} alt={catTitle} className="w-full h-full object-cover" loading="lazy" />
+                  ) : (
+                    icon
+                  )}
                 </div>
 
                 <h3 className="font-extrabold text-xs sm:text-sm text-gray-900 group-hover:text-[#1A9E9E] transition-colors line-clamp-1">

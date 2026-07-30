@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Facebook, Twitter, Instagram, Linkedin, Youtube, Handshake, Truck, UtensilsCrossed, ChevronRight } from 'lucide-react';
 
 export const Footer = () => {
@@ -27,24 +28,24 @@ export const Footer = () => {
           <div>
             <h3 className="font-bold text-gray-800 mb-4 uppercase text-xs tracking-wider">Corporate</h3>
             <ul className="space-y-2 text-xs text-gray-500">
-              <li><a href="#" className="hover:text-[#1A9E9E] transition-colors">About Us</a></li>
-              <li><a href="#" className="hover:text-[#1A9E9E] transition-colors">Investor Relations</a></li>
-              <li><a href="#" className="hover:text-[#1A9E9E] transition-colors">We're Hiring</a></li>
-              <li><a href="#" className="hover:text-[#1A9E9E] transition-colors">Contact Us</a></li>
-              <li><a href="#" className="hover:text-[#1A9E9E] transition-colors">Free Listing</a></li>
-              <li><a href="#" className="hover:text-[#1A9E9E] transition-colors">Privacy Policy</a></li>
-              <li><a href="#" className="hover:text-[#1A9E9E] transition-colors">Terms of Service</a></li>
+              <li><Link to="/about" className="hover:text-[#1A9E9E] transition-colors">About Us</Link></li>
+              <li><Link to="/investor-relations" className="hover:text-[#1A9E9E] transition-colors">Investor Relations</Link></li>
+              <li><Link to="/careers" className="hover:text-[#1A9E9E] transition-colors">We're Hiring</Link></li>
+              <li><Link to="/contact" className="hover:text-[#1A9E9E] transition-colors">Contact Us</Link></li>
+              <li><Link to="/free-listing" className="hover:text-[#1A9E9E] transition-colors">Free Listing</Link></li>
+              <li><Link to="/privacy" className="hover:text-[#1A9E9E] transition-colors">Privacy Policy</Link></li>
+              <li><Link to="/terms" className="hover:text-[#1A9E9E] transition-colors">Terms of Service</Link></li>
             </ul>
           </div>
           
           <div>
             <h3 className="font-bold text-gray-800 mb-4 uppercase text-xs tracking-wider">DialXprt Verticals</h3>
             <ul className="space-y-2 text-xs text-gray-500">
-              <li><a href="#" className="hover:text-[#1A9E9E] transition-colors">B2B & Manufacturers</a></li>
-              <li><a href="#" className="hover:text-[#1A9E9E] transition-colors">Real Estate & Properties</a></li>
-              <li><a href="#" className="hover:text-[#1A9E9E] transition-colors">Travel & Bookings</a></li>
-              <li><a href="#" className="hover:text-[#1A9E9E] transition-colors">Health & Medical</a></li>
-              <li><a href="#" className="hover:text-[#1A9E9E] transition-colors">Home Services</a></li>
+              <li><Link to="/b2b" className="hover:text-[#1A9E9E] transition-colors">B2B & Manufacturers</Link></li>
+              <li><Link to="/hyderabad/all/real-estate" className="hover:text-[#1A9E9E] transition-colors">Real Estate & Properties</Link></li>
+              <li><Link to="/hyderabad/all/travel-agents" className="hover:text-[#1A9E9E] transition-colors">Travel & Bookings</Link></li>
+              <li><Link to="/hyderabad/all/hospitals" className="hover:text-[#1A9E9E] transition-colors">Health & Medical</Link></li>
+              <li><Link to="/hyderabad/all/electrician" className="hover:text-[#1A9E9E] transition-colors">Home Services</Link></li>
             </ul>
           </div>
         </div>
@@ -58,7 +59,7 @@ export const Footer = () => {
             <div className="flex flex-wrap gap-x-2 gap-y-1 text-xs text-gray-500">
               {['Madhapur', 'Gachibowli', 'Jubilee Hills', 'Banjara Hills', 'Kukatpally', 'Hitech City', 'Kondapur', 'Begumpet', 'Secunderabad', 'Miyapur', 'Ameerpet', 'Mehdipatnam', 'Manikonda', 'Dilsukhnagar', 'L.B. Nagar'].map((loc, i, arr) => (
                 <React.Fragment key={loc}>
-                  <a href="#" className="hover:text-[#1A9E9E] transition-colors">{loc}</a>
+                  <Link to={`/hyderabad/${loc.toLowerCase()}/all`} className="hover:text-[#1A9E9E] transition-colors">{loc}</Link>
                   {i < arr.length - 1 && <span className="text-gray-300">|</span>}
                 </React.Fragment>
               ))}
@@ -70,9 +71,22 @@ export const Footer = () => {
               Trending Categories
             </h3>
             <div className="flex flex-wrap gap-x-2 gap-y-1 text-xs text-gray-500">
-              {['Plumbers', 'Electricians', 'Carpenters', 'AC Repair', 'Pest Control', 'Beauty Parlours', 'Salons', 'Real Estate Agents', 'Tutors', 'Car Mechanics', 'Packers & Movers', 'Interior Designers', 'Caterers', 'Event Organizers', 'Hospitals'].map((cat, i, arr) => (
-                <React.Fragment key={cat}>
-                  <a href="#" className="hover:text-[#1A9E9E] transition-colors">{cat}</a>
+              {[
+                { name: 'Plumbers', slug: 'plumber' },
+                { name: 'Electricians', slug: 'electrician' },
+                { name: 'Carpenters', slug: 'carpenter' },
+                { name: 'AC Repair', slug: 'ac-repair' },
+                { name: 'Pest Control', slug: 'pest-control' },
+                { name: 'Real Estate Agents', slug: 'real-estate' },
+                { name: 'Car Mechanics', slug: 'mechanic' },
+                { name: 'Packers & Movers', slug: 'packers-movers' },
+                { name: 'Interior Designers', slug: 'interior-designers' },
+                { name: 'Caterers', slug: 'caterers' },
+                { name: 'Event Organizers', slug: 'event-organizers' },
+                { name: 'Hospitals', slug: 'hospitals' }
+              ].map((cat, i, arr) => (
+                <React.Fragment key={cat.slug}>
+                  <Link to={`/hyderabad/all/${cat.slug}`} className="hover:text-[#1A9E9E] transition-colors">{cat.name}</Link>
                   {i < arr.length - 1 && <span className="text-gray-300">|</span>}
                 </React.Fragment>
               ))}

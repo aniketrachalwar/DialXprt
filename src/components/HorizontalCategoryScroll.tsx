@@ -7,6 +7,7 @@ import {
   Zap, Wrench, ShoppingBag, Wind, Car, Hammer, Paintbrush,
   Scissors, Navigation, Sparkles, Tv, Shirt, Bug, Camera, Utensils
 } from 'lucide-react';
+import { CATEGORY_IMAGE_MAP } from '../lib/categoryImages';
 
 const CATEGORY_ICON_MAP: Record<string, React.ReactNode> = {
   Zap: <Zap className="w-6 h-6 text-amber-500" />,
@@ -49,10 +50,13 @@ export const HorizontalCategoryScroll = ({
   onSelectCategory: (slug: string) => void;
   currentLang?: AppLanguage;
 }) => {
+  const isFewCategories = categories.length <= 4;
+  
   return (
-    <div className="grid grid-rows-2 grid-flow-col overflow-x-auto gap-x-4 gap-y-6 py-2 px-1 no-scrollbar -mx-1">
+    <div className={`grid ${isFewCategories ? 'grid-rows-1' : 'grid-rows-2'} grid-flow-col auto-cols-max overflow-x-auto gap-x-4 gap-y-6 py-2 px-1 no-scrollbar -mx-1`}>
       {categories.map((cat) => {
         const icon = CATEGORY_ICON_MAP[cat.iconName] || <Wrench className="w-6 h-6 text-[#1A9E9E]" />;
+        const imageUrl = CATEGORY_IMAGE_MAP[cat.slug];
         const catTitle = getCategoryName(cat.slug, cat.name, currentLang);
         return (
           <button
@@ -60,10 +64,14 @@ export const HorizontalCategoryScroll = ({
             onClick={() => onSelectCategory(cat.slug)}
             className="flex flex-col items-center gap-2 min-w-[76px] shrink-0 group cursor-pointer active:scale-95 transition-transform"
           >
-            <div className="w-16 h-16 bg-white border border-gray-200 rounded-2xl flex justify-center items-center group-hover:shadow-lg group-hover:-translate-y-1 transition-all duration-300">
-              <div className="group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300">
-                {icon}
-              </div>
+            <div className="w-16 h-16 bg-white border border-gray-200 rounded-full flex justify-center items-center group-hover:shadow-lg group-hover:-translate-y-1 transition-all duration-300 overflow-hidden relative">
+              {imageUrl ? (
+                <img src={imageUrl} alt={catTitle} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" loading="lazy" />
+              ) : (
+                <div className="group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300">
+                  {icon}
+                </div>
+              )}
             </div>
             <span className="text-[11px] font-medium text-gray-700 text-center leading-tight line-clamp-2 w-[72px]">
               {catTitle}

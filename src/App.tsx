@@ -1,23 +1,39 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { SEOHead } from './components/SEOHead';
-import { Header } from './components/Header';
-import { BottomNav } from './components/BottomNav';
-import { SearchBar } from './components/SearchBar';
-import { VendorCard } from './components/VendorCard';
-import { VendorRegistrationModal } from './components/VendorRegistrationModal';
-import { AccountView } from './components/AccountView';
-import { VendorDetailModal } from './components/VendorDetailModal';
-import { LocationPickerModal } from './components/LocationPickerModal';
-import { FloatingSupportWidget } from './components/FloatingSupportWidget';
-import { AuthModal } from './components/AuthModal';
-import { NotificationToast } from './components/NotificationToast';
-import { Footer } from './components/Footer';
-import { RightStickyBar } from './components/RightStickyBar';
+import React, { useState, useEffect, useMemo } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { SEOHead } from "./components/SEOHead";
+import { Header } from "./components/Header";
+import { BottomNav } from "./components/BottomNav";
+import { SearchBar } from "./components/SearchBar";
+import { VendorCard } from "./components/VendorCard";
+import { VendorRegistrationModal } from "./components/VendorRegistrationModal";
+import { B2BView } from "./components/B2BView";
+import { LocationPickerModal } from "./components/LocationPickerModal";
+import { ProfileSidebar } from "./components/ProfileSidebar";
+import { SidebarPages } from "./components/SidebarPages";
+import { LanguageModal } from "./components/LanguageModal";
+import { AdminPanelView } from "./components/AdminPanelView";
+import { StaticPage } from "./components/StaticPages";
+import { VendorProfilePage } from "./components/VendorProfilePage";
+import { LocationModal } from "./components/LocationModal";
+import { FloatingSupportWidget } from "./components/FloatingSupportWidget";
+import { AuthModal } from "./components/AuthModal";
+import { NotificationsModal } from "./components/NotificationsModal";
+import { NotificationToast } from "./components/NotificationToast";
+import { Footer } from "./components/Footer";
+import { RightStickyBar } from "./components/RightStickyBar";
 
-import { Vendor, Category, Neighborhood, UserRole, NotificationItem } from './types';
-import { INITIAL_CATEGORIES, HYDERABAD_NEIGHBORHOODS } from './data/mockVendors';
-import { AppLanguage, getTranslation } from './lib/translations';
+import {
+  Vendor,
+  Category,
+  Neighborhood,
+  UserRole,
+  NotificationItem,
+} from "./types";
+import {
+  INITIAL_CATEGORIES,
+  HYDERABAD_NEIGHBORHOODS,
+} from "./data/mockVendors";
+import { AppLanguage, getTranslation } from "./lib/translations";
 import {
   fetchNearbyVendors,
   registerVendor,
@@ -25,71 +41,121 @@ import {
   updateVendorDetails,
   trackInteraction,
   calculateDistanceKm,
-  supabase
-} from './lib/supabase';
-import { HomeDashboard } from './components/HomeDashboard';
-import { MapPin, Search, ArrowLeft } from 'lucide-react';
+  supabase,
+} from "./lib/supabase";
+import { fetchCategories } from "./lib/adminApi";
+import { HomeDashboard } from "./components/HomeDashboard";
+import { MapPin, Search, ArrowLeft } from "lucide-react";
 
 export default function App() {
   // Global Language State
-  const [currentLang, setCurrentLang] = useState<AppLanguage>('en');
+  const [currentLang, setCurrentLang] = useState<AppLanguage>("en");
   // Helper for app translations
   const t = (key: string) => getTranslation(currentLang, key);
 
   // Core Directory State
   const [vendors, setVendors] = useState<Vendor[]>([]);
-  const [categories] = useState<Category[]>(INITIAL_CATEGORIES);
+  const [categories, setCategories] = useState<Category[]>(INITIAL_CATEGORIES);
   const [loading, setLoading] = useState<boolean>(true);
 
   // User Geolocation State (Defaulting to Madhapur, Hyderabad)
   const [userLat, setUserLat] = useState<number>(17.4483);
   const [userLng, setUserLng] = useState<number>(78.3915);
-  const [currentNeighborhood, setCurrentNeighborhood] = useState<string>('Madhapur');
+  const [currentNeighborhood, setCurrentNeighborhood] =
+    useState<string>("Madhapur");
   const [isAutoDetected, setIsAutoDetected] = useState<boolean>(false);
   const [isDetectingGPS, setIsDetectingGPS] = useState<boolean>(false);
 
   // Search & Clean 3-Tab Bottom Navigation
-  const [searchQuery, setSearchQuery] = useState<string>('');
-  const [selectedCategory, setSelectedCategory] = useState<string>('all');
-  const [activeTab, setActiveTab] = useState<'home' | 'add' | 'account'>('home');
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const [activeTab, setActiveTab] = useState<
+    | "home"
+    | "add"
+    | "account"
+    | "favorites"
+    | "saved"
+    | "transactions"
+    | "customer_service"
+    | "investor_relations"
+    | "policy"
+    | "feedback"
+    | "help"
+  >("home");
 
   // UI/UX Filter & Sort State
-  const [sortBy, setSortBy] = useState<'distance' | 'rating' | 'popular'>('distance');
+  const [sortBy, setSortBy] = useState<"distance" | "rating" | "popular">(
+    "distance",
+  );
   const [openNowOnly, setOpenNowOnly] = useState<boolean>(false);
   const [verifiedOnly, setVerifiedOnly] = useState<boolean>(false);
 
   // Router hooks for SEO URLs
   const location = useLocation();
   const navigate = useNavigate();
+  const [staticRoute, setStaticRoute] = useState<string | null>(null);
+  const [selectedVendorSlug, setSelectedVendorSlug] = useState<string | null>(null);
+
+  // Role & User Context
+  const [currentRole, setCurrentRole] = useState<UserRole>("customer");
+  const [userPhone, setUserPhone] = useState<string>("");
+  const [userName, setUserName] = useState<string>("Guest User");
+  const [userEmail, setUserEmail] = useState<string>("");
+
+  const handleOpenRegistration = () => {
+    if (!userPhone && !userEmail) {
+      setIsAuthModalOpen(true);
+    } else {
+      setIsRegistrationOpen(true);
+    }
+  };
 
   // URL State Synchronization
   useEffect(() => {
-    const parts = location.pathname.split('/').filter(Boolean);
-    if (parts.length >= 2 && parts[0] === 'hyderabad') {
+    const parts = location.pathname.split("/").filter(Boolean);
+    if (parts.length >= 2 && parts[0] === "hyderabad") {
+      setStaticRoute(null);
+      setSelectedVendorSlug(null);
       const decodedNeighborhood = decodeURIComponent(parts[1]);
-      
+
       const foundNeighborhood = HYDERABAD_NEIGHBORHOODS.find(
-        n => n.name.toLowerCase() === decodedNeighborhood.toLowerCase()
+        (n) => n.name.toLowerCase() === decodedNeighborhood.toLowerCase(),
       );
-      
+
       if (foundNeighborhood && currentNeighborhood !== foundNeighborhood.name) {
         setCurrentNeighborhood(foundNeighborhood.name);
         setUserLat(foundNeighborhood.lat);
         setUserLng(foundNeighborhood.lng);
       }
-      
+
       if (parts.length >= 3) {
         const decodedCategory = decodeURIComponent(parts[2]);
         if (selectedCategory !== decodedCategory) {
           setSelectedCategory(decodedCategory);
         }
       }
+    } else if (parts.length >= 2 && parts[0] === 'expert') {
+      setSelectedVendorSlug(decodeURIComponent(parts[1]));
+      setStaticRoute(null);
+    } else if (parts.length === 1 && ['about', 'investor-relations', 'careers', 'contact', 'free-listing', 'privacy', 'terms', 'b2b'].includes(parts[0])) {
+      setSelectedVendorSlug(null);
+      if (parts[0] === 'b2b') {
+        setActiveTab('account');
+      } else if (parts[0] === 'free-listing') {
+        handleOpenRegistration();
+        navigate('/');
+      } else {
+        setStaticRoute(parts[0]);
+      }
+    } else if (parts.length === 0 || location.pathname === '/') {
+      setStaticRoute(null);
+      setSelectedVendorSlug(null);
     }
   }, [location.pathname]);
 
   // Update URL when state changes
   useEffect(() => {
-    if (currentNeighborhood && selectedCategory && selectedCategory !== 'all') {
+    if (currentNeighborhood && selectedCategory && selectedCategory !== "all") {
       const newPath = `/hyderabad/${encodeURIComponent(currentNeighborhood.toLowerCase())}/${encodeURIComponent(selectedCategory)}`;
       if (location.pathname !== newPath) {
         navigate(newPath, { replace: true });
@@ -100,19 +166,24 @@ export default function App() {
   // Dynamic SEO Service Name
   const serviceName = useMemo(() => {
     if (searchQuery) return searchQuery;
-    if (selectedCategory !== 'all') {
-      const cat = INITIAL_CATEGORIES.find(c => c.slug === selectedCategory);
+    if (selectedCategory !== "all") {
+      const cat = INITIAL_CATEGORIES.find((c) => c.slug === selectedCategory);
       return cat ? getTranslation(currentLang, cat.name) : selectedCategory;
     }
-    return t('services');
+    return t("services");
   }, [searchQuery, selectedCategory, currentLang]);
 
   // Modals
   const [selectedVendor, setSelectedVendor] = useState<Vendor | null>(null);
   const [isRegistrationOpen, setIsRegistrationOpen] = useState<boolean>(false);
-  const [isLocationModalOpen, setIsLocationModalOpen] = useState<boolean>(false);
+  const [isLocationModalOpen, setIsLocationModalOpen] =
+    useState<boolean>(false);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState<boolean>(false);
-  const [isNotificationsModalOpen, setIsNotificationsModalOpen] = useState<boolean>(false);
+  const [isNotificationsModalOpen, setIsNotificationsModalOpen] =
+    useState<boolean>(false);
+  const [isProfileSidebarOpen, setIsProfileSidebarOpen] =
+    useState<boolean>(false);
+  const [isLangModalOpen, setIsLangModalOpen] = useState<boolean>(false);
   const [isScrolled, setIsScrolled] = useState<boolean>(false);
 
   // Scroll listener for sticky search bar
@@ -124,18 +195,74 @@ export default function App() {
         setIsScrolled(false);
       }
     };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Role & User Context
-  const [currentRole, setCurrentRole] = useState<UserRole>('customer');
-  const [userPhone, setUserPhone] = useState<string>('');
-  const [userName, setUserName] = useState<string>('Guest User');
-  const [userEmail, setUserEmail] = useState<string>('');
+  // Sync with Supabase Auth Session
+  useEffect(() => {
+    if (!supabase) {
+      console.warn("Supabase client not initialized. Auth sync disabled.");
+      return;
+    }
 
+    // Get initial session on load
+    supabase.auth.getSession().then(({ data: { session }, error }) => {
+      if (error) {
+        console.error("Error getting Supabase session:", error);
+      }
+      if (session?.user) {
+        console.log(
+          "Active Supabase session found on load for:",
+          session.user.email,
+        );
+        setUserEmail(session.user.email || "");
+        setUserPhone(session.user.phone || session.user.email || "");
+        setUserName(
+          session.user.user_metadata?.full_name ||
+            session.user.email?.split("@")[0] ||
+            "User",
+        );
+        if (session.user.email === "aniketrachalwar073@gmail.com") {
+          setCurrentRole("admin");
+        }
+      }
+    });
 
-  const handleUpdateUserProfile = (name: string, phone: string, email: string, neighborhood: string) => {
+    // Listen for auth changes (login, logout, token refresh)
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      console.log("Supabase Auth Event:", event);
+      if (session?.user) {
+        setUserEmail(session.user.email || "");
+        setUserPhone(session.user.phone || session.user.email || "");
+        setUserName(
+          session.user.user_metadata?.full_name ||
+            session.user.email?.split("@")[0] ||
+            "User",
+        );
+        if (session.user.email === "aniketrachalwar073@gmail.com") {
+          setCurrentRole("admin");
+        } else {
+          setCurrentRole("customer"); // reset if different user logs in
+        }
+      } else {
+        setUserEmail("");
+        setUserPhone("");
+        setUserName("Guest User");
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const handleUpdateUserProfile = (
+    name: string,
+    phone: string,
+    email: string,
+    neighborhood: string,
+  ) => {
     setUserName(name);
     setUserPhone(phone);
     setUserEmail(email);
@@ -143,9 +270,9 @@ export default function App() {
       setCurrentNeighborhood(neighborhood);
     }
     addNotification({
-      title: 'Profile Updated!',
+      title: "Profile Updated!",
       message: `Your account details for ${name} have been updated successfully.`,
-      type: 'system',
+      type: "system",
     });
   };
 
@@ -153,24 +280,24 @@ export default function App() {
     updateVendorDetails(updatedVendor);
     loadVendors();
     addNotification({
-      title: 'Business Details Updated!',
+      title: "Business Details Updated!",
       message: `Listing details for '${updatedVendor.name}' were saved.`,
-      type: 'approval',
+      type: "approval",
       storeId: updatedVendor.id,
     });
   };
 
   const handleLogout = async () => {
-    setUserPhone('');
-    setUserName('Guest User');
-    setUserEmail('');
-    setCurrentRole('customer');
-    setActiveTab('home');
+    setUserPhone("");
+    setUserName("Guest User");
+    setUserEmail("");
+    setCurrentRole("customer");
+    setActiveTab("home");
     if (supabase) {
       try {
         await supabase.auth.signOut();
       } catch (err) {
-        console.error('Supabase logout error:', err);
+        console.error("Supabase logout error:", err);
       }
     }
   };
@@ -178,10 +305,11 @@ export default function App() {
   // System Notifications
   const [notifications, setNotifications] = useState<NotificationItem[]>([
     {
-      id: 'n1',
-      title: 'Welcome to DialXprt Hyderabad!',
-      message: 'Find local plumbers, electricians & verified Kirana stores near you instantly.',
-      type: 'system',
+      id: "n1",
+      title: "Welcome to DialXprt Hyderabad!",
+      message:
+        "Find local plumbers, electricians & verified Kirana stores near you instantly.",
+      type: "system",
       createdAt: new Date().toISOString(),
       read: false,
     },
@@ -189,10 +317,10 @@ export default function App() {
 
   // Load Vendors on Mount & Filter Change
   useEffect(() => {
-    loadVendors();
+    loadData();
   }, [userLat, userLng, selectedCategory, searchQuery]);
 
-  const loadVendors = async () => {
+  const loadData = async () => {
     setLoading(true);
     try {
       const data = await fetchNearbyVendors(
@@ -200,11 +328,14 @@ export default function App() {
         userLng,
         selectedCategory,
         searchQuery,
-        true // Include pending for volunteer review visibility
+        true, // Include pending for volunteer review visibility
       );
       setVendors(data);
+      
+      const dynamicCats = await fetchCategories();
+      setCategories(dynamicCats);
     } catch (err) {
-      console.error('Error fetching vendors:', err);
+      console.error("Error fetching vendors:", err);
     } finally {
       setLoading(false);
     }
@@ -213,7 +344,7 @@ export default function App() {
   // HTML5 GPS Auto-Detection
   const handleAutoDetectGPS = () => {
     if (!navigator.geolocation) {
-      alert('Geolocation is not supported by your browser.');
+      alert("Geolocation is not supported by your browser.");
       return;
     }
 
@@ -240,16 +371,18 @@ export default function App() {
         setCurrentNeighborhood(closest.name);
 
         addNotification({
-          title: 'Location Auto-Detected',
+          title: "Location Auto-Detected",
           message: `Position centered at ${closest.name}, Hyderabad (${minDist.toFixed(1)} km away).`,
-          type: 'system',
+          type: "system",
         });
       },
       (error) => {
         setIsDetectingGPS(false);
-        alert('Location access denied or unavailable. Defaulting to Madhapur, Hyderabad.');
+        alert(
+          "Location access denied or unavailable. Defaulting to Madhapur, Hyderabad.",
+        );
       },
-      { enableHighAccuracy: true, timeout: 10000 }
+      { enableHighAccuracy: true, timeout: 10000 },
     );
   };
 
@@ -271,16 +404,26 @@ export default function App() {
   const handleRegisterVendorSubmit = async (
     vendorData: Omit<
       Vendor,
-      'id' | 'slug' | 'createdAt' | 'updatedAt' | 'status' | 'isVerified' | 'rating' | 'reviewsCount' | 'viewsCount' | 'callsCount' | 'whatsappClicksCount'
-    >
+      | "id"
+      | "slug"
+      | "createdAt"
+      | "updatedAt"
+      | "status"
+      | "isVerified"
+      | "rating"
+      | "reviewsCount"
+      | "viewsCount"
+      | "callsCount"
+      | "whatsappClicksCount"
+    >,
   ) => {
     const newVendor = await registerVendor(vendorData);
     await loadVendors();
 
     addNotification({
-      title: 'Store Submitted for Verification!',
+      title: "Store Submitted for Verification!",
       message: `Your business '${newVendor.name}' is registered. DialXprt volunteer will verify offline shortly.`,
-      type: 'new_store',
+      type: "new_store",
       storeId: newVendor.id,
     });
   };
@@ -288,25 +431,27 @@ export default function App() {
   // Volunteer / Admin Status Action
   const handleUpdateVendorStatus = (
     vendorId: string,
-    status: 'approved' | 'pending' | 'rejected',
+    status: "approved" | "pending" | "rejected",
     volunteerName: string,
-    notes: string
+    notes: string,
   ) => {
     const updated = updateVendorStatus(vendorId, status, volunteerName, notes);
     if (updated) {
       loadVendors();
-      if (status === 'approved') {
+      if (status === "approved") {
         addNotification({
-          title: 'Store Verified & Live!',
+          title: "Store Verified & Live!",
           message: `Store '${updated.name}' was verified by ${volunteerName} and is now live on DialXprt!`,
-          type: 'approval',
+          type: "approval",
           storeId: updated.id,
         });
       }
     }
   };
 
-  const addNotification = (item: Omit<NotificationItem, 'id' | 'createdAt' | 'read'>) => {
+  const addNotification = (
+    item: Omit<NotificationItem, "id" | "createdAt" | "read">,
+  ) => {
     const newNotif: NotificationItem = {
       ...item,
       id: `notif-${Date.now()}`,
@@ -318,28 +463,41 @@ export default function App() {
 
   const handleCloseNotification = (id: string) => {
     setNotifications((prev) =>
-      prev.map((n) => (n.id === id ? { ...n, read: true } : n))
+      prev.map((n) => (n.id === id ? { ...n, read: true } : n)),
     );
   };
 
   const handleTrackCall = (id: string) => {
-    trackInteraction(id, 'call');
+    trackInteraction(id, "call");
     setVendors((prev) =>
-      prev.map((v) => (v.id === id ? { ...v, callsCount: (v.callsCount || 0) + 1 } : v))
+      prev.map((v) =>
+        v.id === id ? { ...v, callsCount: (v.callsCount || 0) + 1 } : v,
+      ),
     );
   };
 
   const handleTrackWhatsApp = (id: string) => {
-    trackInteraction(id, 'whatsapp');
+    trackInteraction(id, "whatsapp");
     setVendors((prev) =>
       prev.map((v) =>
-        v.id === id ? { ...v, whatsappClicksCount: (v.whatsappClicksCount || 0) + 1 } : v
-      )
+        v.id === id
+          ? { ...v, whatsappClicksCount: (v.whatsappClicksCount || 0) + 1 }
+          : v,
+      ),
     );
   };
 
   const handleExportCSV = () => {
-    const headers = ['ID', 'Name', 'Category', 'Owner', 'Phone', 'Neighborhood', 'Status', 'Verified'];
+    const headers = [
+      "ID",
+      "Name",
+      "Category",
+      "Owner",
+      "Phone",
+      "Neighborhood",
+      "Status",
+      "Verified",
+    ];
     const rows = vendors.map((v) => [
       v.id,
       `"${v.name}"`,
@@ -348,43 +506,47 @@ export default function App() {
       v.phone,
       `"${v.neighborhood}"`,
       v.status,
-      v.isVerified ? 'Yes' : 'No',
+      v.isVerified ? "Yes" : "No",
     ]);
 
-    const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map((e) => e.join(','))].join('\n');
+    const csvContent =
+      "data:text/csv;charset=utf-8," +
+      [headers.join(","), ...rows.map((e) => e.join(","))].join("\n");
     const encodedUri = encodeURI(csvContent);
-    const link = document.createElement('a');
-    link.setAttribute('href', encodedUri);
-    link.setAttribute('download', `DialXprt_Vendors_Export_${Date.now()}.csv`);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `DialXprt_Vendors_Export_${Date.now()}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   };
 
   const unreadCount = notifications.filter((n) => !n.read).length;
-  const pendingCount = vendors.filter((v) => v.status === 'pending').length;
-  
+  const pendingCount = vendors.filter((v) => v.status === "pending").length;
+
   const processedVendors = useMemo(() => {
-    let result = vendors.filter((v) => v.status === 'approved');
-    
+    let result = vendors.filter((v) => v.status === "approved");
+
     // UI Filters
     if (verifiedOnly) {
-      result = result.filter(v => v.isVerified);
+      result = result.filter((v) => v.isVerified);
     }
     if (openNowOnly) {
       // Mock open now logic (just an example, maybe limit to those with > 4 rating to simulate "open")
       // In a real app this would check current time vs operating hours
-      result = result.filter(v => (v.rating || 4.5) > 4.2);
+      result = result.filter((v) => (v.rating || 4.5) > 4.2);
     }
 
     // Sorting
     result.sort((a, b) => {
-      if (sortBy === 'distance') return (a.distanceKm || 0) - (b.distanceKm || 0);
-      if (sortBy === 'rating') return (b.rating || 0) - (a.rating || 0);
-      if (sortBy === 'popular') return (b.reviewsCount || 0) - (a.reviewsCount || 0);
+      if (sortBy === "distance")
+        return (a.distanceKm || 0) - (b.distanceKm || 0);
+      if (sortBy === "rating") return (b.rating || 0) - (a.rating || 0);
+      if (sortBy === "popular")
+        return (b.reviewsCount || 0) - (a.reviewsCount || 0);
       return 0;
     });
-    
+
     return result;
   }, [vendors, verifiedOnly, openNowOnly, sortBy]);
 
@@ -392,10 +554,12 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-[#F4F7FA] text-gray-900 font-sans pb-[calc(5rem+env(safe-area-inset-bottom))] md:pb-10">
-      <SEOHead 
-        title={selectedCategory === 'all' && !searchQuery 
-          ? "DialXprt - Local Service Experts in Hyderabad" 
-          : `Best ${serviceName} in ${currentNeighborhood}, Hyderabad | DialXprt`}
+      <SEOHead
+        title={
+          selectedCategory === "all" && !searchQuery
+            ? "DialXprt - Local Service Experts in Hyderabad"
+            : `Best ${serviceName} in ${currentNeighborhood}, Hyderabad | DialXprt`
+        }
         description={`Find the best ${serviceName} in ${currentNeighborhood}. Get quotes, chat on WhatsApp, or call now.`}
       />
       {/* 1. STICKY TOP HEADER */}
@@ -403,26 +567,27 @@ export default function App() {
         currentNeighborhood={currentNeighborhood}
         isAutoDetected={isAutoDetected}
         onOpenLocationModal={() => setIsLocationModalOpen(true)}
-        onOpenRegistration={() => setIsRegistrationOpen(true)}
+        onOpenRegistration={handleOpenRegistration}
         onOpenAuth={() => setIsAuthModalOpen(true)}
         onOpenNotifications={() => setIsNotificationsModalOpen(true)}
         onOpenAccount={() => {
           if (!userPhone) {
             setIsAuthModalOpen(true);
           } else {
-            setActiveTab('account');
+            setIsProfileSidebarOpen(true);
           }
         }}
+        onOpenLanguage={() => setIsLangModalOpen(true)}
         onGoHome={() => {
-          setActiveTab('home');
-          setSearchQuery('');
-          setSelectedCategory('all');
-          window.scrollTo({ top: 0, behavior: 'smooth' });
+          setActiveTab("home");
+          setSearchQuery("");
+          setSelectedCategory("all");
+          window.scrollTo({ top: 0, behavior: "smooth" });
         }}
         currentRole={currentRole}
         onToggleRole={(role) => {
           setCurrentRole(role);
-          setActiveTab('account');
+          setActiveTab("account");
         }}
         unreadNotificationsCount={unreadCount}
         userPhone={userPhone}
@@ -437,7 +602,7 @@ export default function App() {
               onSelectCategory={setSelectedCategory}
               categories={INITIAL_CATEGORIES}
               vendors={vendors}
-              onSelectVendor={setSelectedVendor}
+              onSelectVendor={(v) => navigate(`/expert/${v.slug}`)}
               totalVendorsCount={vendors.length}
               currentLang={currentLang}
               onLanguageChange={setCurrentLang}
@@ -450,7 +615,7 @@ export default function App() {
       />
 
       {/* 2. SEARCH & QUICK FILTERS */}
-      {activeTab === 'home' && (
+      {activeTab === "home" && (
         <SearchBar
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
@@ -458,7 +623,7 @@ export default function App() {
           onSelectCategory={setSelectedCategory}
           categories={categories}
           vendors={approvedVendors}
-          onSelectVendor={(v) => setSelectedVendor(v)}
+          onSelectVendor={(v) => navigate(`/expert/${v.slug}`)}
           onTrackCall={handleTrackCall}
           onTrackWhatsApp={handleTrackWhatsApp}
           totalVendorsCount={approvedVendors.length}
@@ -472,33 +637,35 @@ export default function App() {
       {/* MAIN BODY DISPLAY */}
       <main className="max-w-7xl mx-auto px-3 sm:px-6 py-5">
         {/* VIEW 1: ROLE-TAILORED ACCOUNT DASHBOARD */}
-        {activeTab === 'account' ? (
-          <AccountView
-            currentRole={currentRole}
-            onRoleChange={(role) => setCurrentRole(role)}
-            userPhone={userPhone}
-            userName={userName}
-            userEmail={userEmail}
-            onUpdateUserProfile={handleUpdateUserProfile}
-            onUpdateVendorDetails={handleUpdateVendorDetailsSubmit}
-            onLogout={handleLogout}
-            vendors={vendors}
-            categories={categories}
-            currentNeighborhood={currentNeighborhood}
-            onUpdateVendorStatus={handleUpdateVendorStatus}
-            onOpenRegistration={() => setIsRegistrationOpen(true)}
-            onExportCSV={handleExportCSV}
-            onSelectVendor={(vendor) => setSelectedVendor(vendor)}
+        {selectedVendorSlug ? (
+          <VendorProfilePage
+            vendor={vendors.find((v) => v.slug === selectedVendorSlug) || null}
+            onTrackCall={handleTrackCall}
+            onTrackWhatsApp={handleTrackWhatsApp}
             currentLang={currentLang}
           />
+        ) : staticRoute ? (
+          <StaticPage route={staticRoute} />
+        ) : activeTab === "account" ? (
+          <B2BView />
+        ) : activeTab === "admin" ? (
+          <AdminPanelView />
+        ) : ["favorites", "saved", "transactions", "customer_service", "investor_relations", "policy", "feedback", "help"].includes(activeTab) ? (
+          <SidebarPages activeTab={activeTab} onBack={() => setActiveTab("home")} />
         ) : (
           /* VIEW 2: PUBLIC DIRECTORY HOMEPAGE GRID */
           <div className="space-y-6">
-            {selectedCategory === 'all' && searchQuery === '' ? (
+            {selectedCategory === "all" && searchQuery === "" ? (
               /* HOME DASHBOARD WITH PROMO & QUICK FILTERS */
               <HomeDashboard
                 categories={categories}
-                onSelectCategory={(slug) => setSelectedCategory(slug)}
+                onSelectCategory={(slug) => {
+                  if (slug === 'b2b') {
+                    setActiveTab('account');
+                  } else {
+                    setSelectedCategory(slug);
+                  }
+                }}
                 onSearchQuery={(q) => setSearchQuery(q)}
                 currentLang={currentLang}
               />
@@ -510,8 +677,8 @@ export default function App() {
                   <div className="flex items-center gap-3">
                     <button
                       onClick={() => {
-                        setSelectedCategory('all');
-                        setSearchQuery('');
+                        setSelectedCategory("all");
+                        setSearchQuery("");
                       }}
                       className="p-2.5 bg-gray-100 hover:bg-[#1A9E9E] hover:text-white text-gray-700 rounded-xl transition-all shrink-0 min-h-[44px] min-w-[44px] flex items-center justify-center font-bold"
                       title="Back to All Services Grid"
@@ -522,24 +689,27 @@ export default function App() {
                     <div>
                       <div className="flex items-center gap-2">
                         <span className="text-xs font-bold text-[#F36F21] bg-orange-50 px-2.5 py-0.5 rounded-md border border-orange-200">
-                          {selectedCategory !== 'all'
-                            ? categories.find((c) => c.slug === selectedCategory)?.name || selectedCategory
-                            : 'Search Results'}
+                          {selectedCategory !== "all"
+                            ? categories.find(
+                                (c) => c.slug === selectedCategory,
+                              )?.name || selectedCategory
+                            : "Search Results"}
                         </span>
                         <span className="text-xs text-gray-400">•</span>
                         <span className="text-xs text-gray-500 font-semibold flex items-center gap-1">
-                          <MapPin className="w-3.5 h-3.5 text-[#F36F21]" /> {currentNeighborhood}, Hyderabad
+                          <MapPin className="w-3.5 h-3.5 text-[#F36F21]" />{" "}
+                          {currentNeighborhood}, Hyderabad
                         </span>
                       </div>
 
                       <h1 className="font-extrabold text-base sm:text-lg text-gray-900 mt-0.5">
-                        {selectedCategory !== 'all'
+                        {selectedCategory !== "all"
                           ? `Nearest ${categories.find((c) => c.slug === selectedCategory)?.name || selectedCategory} Experts`
                           : `Search results for "${searchQuery}"`}
                       </h1>
                     </div>
                   </div>
-                  
+
                   {/* Filter & Sort Toolbar */}
                   <div className="flex items-center gap-2 overflow-x-auto hide-scrollbar pt-2 border-t border-gray-100">
                     <select
@@ -555,26 +725,28 @@ export default function App() {
                     <button
                       onClick={() => setOpenNowOnly(!openNowOnly)}
                       className={`px-3 py-1.5 rounded-full text-xs font-bold shrink-0 flex items-center gap-1 transition-colors border ${
-                        openNowOnly 
-                          ? 'bg-green-50 border-green-200 text-green-700' 
-                          : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50'
+                        openNowOnly
+                          ? "bg-green-50 border-green-200 text-green-700"
+                          : "bg-white border-gray-200 text-gray-700 hover:bg-gray-50"
                       }`}
                     >
-                      <span className={`w-1.5 h-1.5 rounded-full ${openNowOnly ? 'bg-green-500 animate-pulse' : 'bg-gray-400'}`}></span>
+                      <span
+                        className={`w-1.5 h-1.5 rounded-full ${openNowOnly ? "bg-green-500 animate-pulse" : "bg-gray-400"}`}
+                      ></span>
                       Open Now
                     </button>
 
                     <button
                       onClick={() => setVerifiedOnly(!verifiedOnly)}
                       className={`px-3 py-1.5 rounded-full text-xs font-bold shrink-0 transition-colors border ${
-                        verifiedOnly 
-                          ? 'bg-[#1A9E9E]/10 border-[#1A9E9E]/30 text-[#1A9E9E]' 
-                          : 'bg-white border-gray-200 text-gray-700 hover:bg-gray-50'
+                        verifiedOnly
+                          ? "bg-[#1A9E9E]/10 border-[#1A9E9E]/30 text-[#1A9E9E]"
+                          : "bg-white border-gray-200 text-gray-700 hover:bg-gray-50"
                       }`}
                     >
                       ✓ Verified
                     </button>
-                    
+
                     <button className="px-3 py-1.5 bg-white border border-gray-200 rounded-full text-xs font-bold text-gray-700 hover:bg-gray-50 shrink-0 flex items-center gap-1 ml-auto">
                       Filter
                     </button>
@@ -585,7 +757,10 @@ export default function App() {
                 {loading ? (
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     {[1, 2, 3, 4, 5, 6].map((i) => (
-                      <div key={i} className="bg-white rounded-2xl h-80 animate-pulse border p-4 space-y-3">
+                      <div
+                        key={i}
+                        className="bg-white rounded-2xl h-80 animate-pulse border p-4 space-y-3"
+                      >
                         <div className="bg-gray-200 h-40 rounded-xl w-full"></div>
                         <div className="bg-gray-200 h-4 rounded w-3/4"></div>
                         <div className="bg-gray-200 h-3 rounded w-1/2"></div>
@@ -596,18 +771,20 @@ export default function App() {
                 ) : approvedVendors.length === 0 ? (
                   <div className="bg-white border border-gray-200 rounded-3xl p-10 text-center space-y-3 max-w-lg mx-auto shadow-sm">
                     <Search className="w-12 h-12 text-[#F36F21] mx-auto" />
-                    <h3 className="text-lg font-bold text-gray-900">{t('noVerifiedExpertsTitle')}</h3>
+                    <h3 className="text-lg font-bold text-gray-900">
+                      {t("noVerifiedExpertsTitle")}
+                    </h3>
                     <p className="text-xs text-gray-500">
-                      {t('noMatchingListingsMsg')}
+                      {t("noMatchingListingsMsg")}
                     </p>
                     <button
                       onClick={() => {
-                        setSearchQuery('');
-                        setSelectedCategory('all');
+                        setSearchQuery("");
+                        setSelectedCategory("all");
                       }}
                       className="bg-[#1A9E9E] text-white font-bold px-4 py-2.5 rounded-xl text-xs min-h-[44px]"
                     >
-                      {t('clearFiltersShowAll')}
+                      {t("clearFiltersShowAll")}
                     </button>
                   </div>
                 ) : (
@@ -616,10 +793,15 @@ export default function App() {
                       <VendorCard
                         key={vendor.id}
                         vendor={vendor}
-                        onSelectVendor={(v) => setSelectedVendor(v)}
+                        onSelectVendor={(v) => navigate(`/expert/${v.slug}`)}
                         onGetBestDeal={(v) => {
-                          const waMessage = encodeURIComponent(`Hi ${v.ownerName}, I'd like to get a quote for ${v.category} services.`);
-                          window.open(`https://wa.me/${v.whatsapp}?text=${waMessage}`, '_blank');
+                          const waMessage = encodeURIComponent(
+                            `Hi ${v.ownerName}, I'd like to get a quote for ${v.category} services.`,
+                          );
+                          window.open(
+                            `https://wa.me/${v.whatsapp}?text=${waMessage}`,
+                            "_blank",
+                          );
                         }}
                         onTrackCall={handleTrackCall}
                         onTrackWhatsApp={handleTrackWhatsApp}
@@ -632,7 +814,7 @@ export default function App() {
             )}
           </div>
         )}
-        
+
         <Footer />
       </main>
 
@@ -640,8 +822,8 @@ export default function App() {
       <BottomNav
         activeTab={activeTab}
         onTabChange={(tab) => {
-          if (tab === 'add') {
-            setIsRegistrationOpen(true);
+          if (tab === "add") {
+            handleOpenRegistration();
           } else {
             setActiveTab(tab);
           }
@@ -653,9 +835,9 @@ export default function App() {
 
       {/* 4. FLOATING SUPPORT WIDGET */}
       <FloatingSupportWidget currentLang={currentLang} />
-      
+
       {/* 4.5 RIGHT STICKY ACTION BAR */}
-      <RightStickyBar onOpenRegistration={() => setIsRegistrationOpen(true)} />
+      <RightStickyBar onOpenRegistration={handleOpenRegistration} />
 
       {/* 5. MODALS */}
       <VendorRegistrationModal
@@ -666,14 +848,6 @@ export default function App() {
         userLng={userLng}
         currentNeighborhood={currentNeighborhood}
         onSubmit={handleRegisterVendorSubmit}
-        currentLang={currentLang}
-      />
-
-      <VendorDetailModal
-        vendor={selectedVendor}
-        onClose={() => setSelectedVendor(null)}
-        onTrackCall={handleTrackCall}
-        onTrackWhatsApp={handleTrackWhatsApp}
         currentLang={currentLang}
       />
 
@@ -693,7 +867,7 @@ export default function App() {
         onLoginSuccess={(phone, role) => {
           setUserPhone(phone);
           setCurrentRole(role);
-          setActiveTab('account');
+          setActiveTab("account");
         }}
       />
 
@@ -703,6 +877,27 @@ export default function App() {
         isOpenModal={isNotificationsModalOpen}
         onCloseModal={() => setIsNotificationsModalOpen(false)}
         currentLang={currentLang}
+      />
+
+      <ProfileSidebar
+        isOpen={isProfileSidebarOpen}
+        onClose={() => setIsProfileSidebarOpen(false)}
+        userName={userName}
+        onLogout={handleLogout}
+        onEditProfile={() => {
+          setActiveTab('account');
+        }}
+        onChangeLanguage={() => setIsLangModalOpen(true)}
+        onOpenNotifications={() => setIsNotificationsModalOpen(true)}
+        onNavigate={(tab: any) => setActiveTab(tab)}
+        isAdmin={currentRole === 'admin'}
+      />
+
+      <LanguageModal
+        isOpen={isLangModalOpen}
+        onClose={() => setIsLangModalOpen(false)}
+        currentLang={currentLang}
+        onLanguageChange={setCurrentLang}
       />
     </div>
   );
