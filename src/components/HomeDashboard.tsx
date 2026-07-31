@@ -1,14 +1,11 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { HeroBanners } from './HeroBanners';
-import { HorizontalCategoryScroll } from './HorizontalCategoryScroll';
+import { CategoryGrid } from './CategoryGrid';
 import { ImageCategorySection } from './ImageCategorySection';
 import { TravelBookings } from './TravelBookings';
 import { PopularSearches } from './PopularSearches';
-import { B2BSection } from './B2BSection';
-import { TrendingMarquee } from './TrendingMarquee';
-import { PromoCarousel } from './PromoCarousel';
-import { QuickFilters } from './QuickFilters';
+
 import { Category } from '../types';
 import { AppLanguage } from '../lib/translations';
 
@@ -46,34 +43,22 @@ export const HomeDashboard = ({
       className="space-y-6 md:space-y-8 pb-10 overflow-x-hidden"
     >
       <div className="pt-4 space-y-8 px-2 sm:px-0">
-        <motion.div variants={itemVariants}>
-          <PromoCarousel onBannerClick={onSelectCategory} />
-        </motion.div>
 
-        <motion.div variants={itemVariants}>
-          <QuickFilters onSelectFilter={onSearchQuery} />
-        </motion.div>
 
-        <motion.div variants={itemVariants}>
-          <HeroBanners onSelectCategory={onSelectCategory} />
-        </motion.div>
 
-        <motion.div variants={itemVariants} className="-mt-2 mb-2">
-          <TrendingMarquee />
-        </motion.div>
+
+
         
-        <motion.div variants={itemVariants} className="-mx-1">
-          <HorizontalCategoryScroll 
+        <motion.div variants={itemVariants}>
+          <CategoryGrid 
             categories={categories} 
             onSelectCategory={onSelectCategory} 
-            currentLang={currentLang} 
+            currentLang={currentLang}
+            currentNeighborhood="Banjara Hills" 
           />
         </motion.div>
         
-        <motion.div variants={itemVariants}>
-          <B2BSection onSelectCategory={onSelectCategory} />
-        </motion.div>
-        
+
         <motion.div variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <ImageCategorySection 
             title="Wedding Requisites" 
@@ -114,6 +99,10 @@ export const HomeDashboard = ({
 
         <motion.div variants={itemVariants}>
           <TravelBookings onSelectCategory={onSelectCategory} />
+        </motion.div>
+
+        <motion.div variants={itemVariants}>
+          <HeroBanners onSelectCategory={onSelectCategory} />
         </motion.div>
 
         <motion.div variants={itemVariants}>

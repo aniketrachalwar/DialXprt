@@ -69,9 +69,10 @@ export function saveStoredVendors(vendors: Vendor[]): void {
 export async function fetchNearbyVendors(
   userLat: number,
   userLng: number,
-  categoryFilter: string = '',
+  categoryFilter: string = 'all',
   searchQuery: string = '',
-  includePending: boolean = false
+  includePending: boolean = false,
+  subCategoryFilter: string | null = null
 ): Promise<Vendor[]> {
   // 1. Try Supabase RPC if configured
   if (supabase) {
@@ -133,6 +134,10 @@ export async function fetchNearbyVendors(
     }
     // Filter by category
     if (cat && cat !== 'all' && v.categorySlug.toLowerCase() !== cat) {
+      return false;
+    }
+    // Filter by subcategory
+    if (subCategoryFilter && v.subCategorySlug !== subCategoryFilter) {
       return false;
     }
     // Filter by search query
@@ -213,6 +218,10 @@ export async function registerVendor(vendorData: Omit<Vendor, 'id' | 'slug' | 'c
           lng: newVendor.lng,
           image_url: newVendor.imageUrl,
           description: newVendor.description,
+          experience: newVendor.experience,
+          suggestions: newVendor.suggestions,
+          reference_name: newVendor.referenceName,
+          reference_number: newVendor.referenceNumber,
           status: 'pending',
           is_verified: false,
         },

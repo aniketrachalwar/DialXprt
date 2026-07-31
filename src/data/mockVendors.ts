@@ -1218,3 +1218,38 @@ export const INITIAL_VENDORS: Vendor[] = [
     whatsappClicksCount: 95,
   }
 ];
+// Auto-generate subcategories for all categories to ensure the new SubCategory view has data
+INITIAL_CATEGORIES.forEach(cat => {
+  if (!cat.subcategories || cat.subcategories.length === 0) {
+    if (cat.slug === 'mechanic') {
+      cat.subcategories = [
+        { id: 'sub-car', name: 'Car Mechanic', slug: 'car-mechanic', iconName: 'Car' },
+        { id: 'sub-bike', name: 'Bike Mechanic', slug: 'bike-mechanic', iconName: 'Activity' },
+        { id: 'sub-auto', name: 'Auto Electrician', slug: 'auto-electrician', iconName: 'Zap' }
+      ];
+    } else if (cat.slug === 'doctors') {
+      cat.subcategories = [
+        { id: 'sub-dentist', name: 'Dentist', slug: 'dentist', iconName: 'Activity' },
+        { id: 'sub-pediatrician', name: 'Pediatrician', slug: 'pediatrician', iconName: 'Heart' },
+        { id: 'sub-general', name: 'General Physician', slug: 'general-physician', iconName: 'PlusSquare' }
+      ];
+    } else {
+      cat.subcategories = [
+        { id: `sub--1`, name: `General `, slug: `-general`, iconName: cat.iconName },
+        { id: `sub--2`, name: `Premium `, slug: `-premium`, iconName: 'Star' },
+        { id: `sub--3`, name: `Emergency `, slug: `-emergency`, iconName: 'Zap' }
+      ];
+    }
+  }
+});
+
+// Randomly assign vendors to subcategories based on their parent category
+INITIAL_VENDORS.forEach(v => {
+  if (!v.subCategorySlug) {
+    const parentCat = INITIAL_CATEGORIES.find(c => c.slug === v.categorySlug);
+    if (parentCat && parentCat.subcategories && parentCat.subcategories.length > 0) {
+      const subIndex = v.name.length % parentCat.subcategories.length;
+      v.subCategorySlug = parentCat.subcategories[subIndex].slug;
+    }
+  }
+});

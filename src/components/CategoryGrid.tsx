@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Search,
   DollarSign,
@@ -26,6 +26,28 @@ import {
   ArrowRight,
   ShieldCheck,
   MapPin,
+  Activity,
+  PlusSquare,
+  Pill,
+  Building,
+  Truck,
+  Package,
+  Layout,
+  Star,
+  Shield,
+  Laptop,
+  Smartphone,
+  Droplets,
+  Recycle,
+  Plane,
+  Music,
+  Headphones,
+  Briefcase,
+  Calculator,
+  Globe,
+  Heart,
+  Trash2,
+  Eye,
 } from 'lucide-react';
 import { Category } from '../types';
 import { AppLanguage, getTranslation, getCategoryName } from '../lib/translations';
@@ -56,6 +78,31 @@ const CATEGORY_ICON_MAP: Record<string, React.ReactNode> = {
   Camera: <Camera className="w-6 h-6 text-sky-500" />,
   Utensils: <Utensils className="w-6 h-6 text-orange-500" />,
   Flame: <Flame className="w-6 h-6 text-rose-500" />,
+  Activity: <Activity className="w-6 h-6 text-red-500" />,
+  PlusSquare: <PlusSquare className="w-6 h-6 text-red-600" />,
+  Pill: <Pill className="w-6 h-6 text-teal-500" />,
+  Building: <Building className="w-6 h-6 text-indigo-600" />,
+  Truck: <Truck className="w-6 h-6 text-amber-600" />,
+  Coffee: <Coffee className="w-6 h-6 text-amber-700" />,
+  Package: <Package className="w-6 h-6 text-orange-500" />,
+  Layout: <Layout className="w-6 h-6 text-purple-600" />,
+  Star: <Star className="w-6 h-6 text-yellow-500" />,
+  Shield: <Shield className="w-6 h-6 text-slate-700" />,
+  Laptop: <Laptop className="w-6 h-6 text-gray-600" />,
+  Smartphone: <Smartphone className="w-6 h-6 text-blue-600" />,
+  Droplets: <Droplets className="w-6 h-6 text-cyan-600" />,
+  Recycle: <Recycle className="w-6 h-6 text-emerald-600" />,
+  Plane: <Plane className="w-6 h-6 text-sky-500" />,
+  Music: <Music className="w-6 h-6 text-pink-600" />,
+  Headphones: <Headphones className="w-6 h-6 text-purple-500" />,
+  Briefcase: <Briefcase className="w-6 h-6 text-slate-600" />,
+  Calculator: <Calculator className="w-6 h-6 text-emerald-700" />,
+  Globe: <Globe className="w-6 h-6 text-blue-500" />,
+  Heart: <Heart className="w-6 h-6 text-rose-500" />,
+  MapPin: <MapPin className="w-6 h-6 text-red-500" />,
+  Home: <Home className="w-6 h-6 text-indigo-500" />,
+  Trash2: <Trash2 className="w-6 h-6 text-slate-500" />,
+  Eye: <Eye className="w-6 h-6 text-cyan-700" />,
 };
 
 const CATEGORY_COLOR_BG: Record<string, string> = {
@@ -85,40 +132,19 @@ export const CategoryGrid: React.FC<CategoryGridProps> = ({
   currentLang = 'en',
 }) => {
   const t = (key: string) => getTranslation(currentLang, key);
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  const displayCategories = isExpanded ? categories : categories.slice(0, 7);
 
   return (
     <section className="space-y-5 animate-fade-in">
-      {/* Header Banner */}
-      <div className="bg-gradient-to-r from-[#0F5C5C] via-[#1A9E9E] to-[#0F5C5C] text-white p-4 sm:p-5 rounded-2xl shadow-md border border-indigo-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-        <div>
-          <div className="flex items-center gap-2 mb-1">
-            <span className="bg-[#F36F21] text-white text-[10px] font-black uppercase px-2 py-0.5 rounded-md tracking-wider">
-              Local Directory
-            </span>
-            <span className="text-xs font-semibold text-indigo-200 flex items-center gap-1">
-              <MapPin className="w-3.5 h-3.5 text-[#F36F21]" /> {currentNeighborhood}, Hyderabad
-            </span>
-          </div>
-          <h2 className="text-lg sm:text-xl font-extrabold text-white">
-            Choose a Service to Find Nearby Experts
-          </h2>
-          <p className="text-xs text-indigo-200 mt-0.5">
-            Select any service below to view verified local technicians & stores sorted from nearest to farthest.
-          </p>
-        </div>
 
-        <div className="flex items-center gap-1.5 bg-white/10 backdrop-blur-md px-3 py-2 rounded-xl border border-white/15 text-xs font-bold text-amber-300 shrink-0">
-          <ShieldCheck className="w-4 h-4 text-emerald-400" />
-          <span>Offline Volunteer Verified</span>
-        </div>
-      </div>
 
       {/* Grid of All Services */}
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4">
-        {categories.map((cat) => {
+        {displayCategories.map((cat) => {
           const bgStyle = CATEGORY_COLOR_BG[cat.slug] || 'bg-indigo-50 group-hover:bg-indigo-100/80 border-indigo-200';
-          const icon = CATEGORY_ICON_MAP[cat.iconName] || <Wrench className="w-6 h-6 text-[#1A9E9E]" />;
-          const imageUrl = CATEGORY_IMAGE_MAP[cat.slug];
+          const imageUrl = CATEGORY_IMAGE_MAP[cat.slug] || `https://picsum.photos/seed/${cat.slug}/120/120`;
           const catTitle = getCategoryName(cat.slug, cat.name, currentLang);
 
           return (
@@ -129,12 +155,8 @@ export const CategoryGrid: React.FC<CategoryGridProps> = ({
               className="group bg-white rounded-2xl p-3.5 sm:p-4 border border-gray-200 hover:border-[#1A9E9E]/50 shadow-xs hover:shadow-md transition-all text-left flex flex-col justify-between min-h-[140px] cursor-pointer active:scale-98"
             >
               <div>
-                <div className={`w-12 h-12 rounded-full border flex items-center justify-center transition-transform group-hover:scale-110 mb-2.5 overflow-hidden relative ${imageUrl ? 'border-gray-200' : bgStyle}`}>
-                  {imageUrl ? (
-                    <img src={imageUrl} alt={catTitle} className="w-full h-full object-cover" loading="lazy" />
-                  ) : (
-                    icon
-                  )}
+                <div className={`w-14 h-14 rounded-2xl border flex items-center justify-center transition-transform group-hover:scale-110 mb-2.5 overflow-hidden relative border-gray-200`}>
+                  <img src={imageUrl} alt={catTitle} className="w-full h-full object-cover" loading="lazy" />
                 </div>
 
                 <h3 className="font-extrabold text-xs sm:text-sm text-gray-900 group-hover:text-[#1A9E9E] transition-colors line-clamp-1">
@@ -156,6 +178,23 @@ export const CategoryGrid: React.FC<CategoryGridProps> = ({
             </button>
           );
         })}
+        
+        {!isExpanded && categories.length > 7 && (
+          <button
+            onClick={() => setIsExpanded(true)}
+            className="group bg-gray-50 hover:bg-white rounded-2xl p-3.5 sm:p-4 border border-dashed border-gray-300 hover:border-gray-400 shadow-xs hover:shadow-md transition-all text-center flex flex-col items-center justify-center min-h-[140px] cursor-pointer active:scale-98"
+          >
+            <div className="w-14 h-14 rounded-2xl bg-white border border-gray-200 flex items-center justify-center text-gray-500 group-hover:text-gray-900 group-hover:scale-110 transition-transform mb-2.5 shadow-sm">
+              <PlusSquare className="w-6 h-6" />
+            </div>
+            <h3 className="font-extrabold text-xs sm:text-sm text-gray-700 group-hover:text-gray-900 transition-colors">
+              Show More
+            </h3>
+            <p className="text-[11px] text-gray-500 mt-1">
+              {categories.length - 7} more categories
+            </p>
+          </button>
+        )}
       </div>
     </section>
   );

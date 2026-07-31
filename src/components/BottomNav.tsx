@@ -36,15 +36,15 @@ export const BottomNav: React.FC<BottomNavProps> = ({
   };
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-xl border-t border-gray-200/80 shadow-2xl md:hidden pb-[env(safe-area-inset-bottom)]">
-      <div className="grid grid-cols-3 h-16 max-w-lg mx-auto px-2">
+    <nav className="fixed bottom-0 left-0 right-0 z-40 bg-white/90 backdrop-blur-xl border-t border-gray-200/50 shadow-[0_-8px_30px_rgba(0,0,0,0.04)] md:hidden pb-[env(safe-area-inset-bottom)]">
+      <div className="grid grid-cols-3 h-[68px] max-w-lg mx-auto px-2">
         {/* TAB 1: HOME */}
         <button
           id="bottom-nav-home-btn"
           onClick={() => onTabChange('home')}
           className={`flex flex-col items-center justify-center h-full min-h-[48px] py-1 transition-all active:scale-95 ${
             activeTab === 'home'
-              ? 'text-[#1A9E9E] font-extrabold border-t-2 border-[#1A9E9E]'
+              ? 'text-[#1A9E9E] font-bold'
               : 'text-gray-500 hover:text-gray-900 font-medium'
           }`}
         >
@@ -68,9 +68,9 @@ export const BottomNav: React.FC<BottomNavProps> = ({
         <button
           id="bottom-nav-account-btn"
           onClick={() => onTabChange('account')}
-          className={`relative flex flex-col items-center justify-center h-full min-h-[48px] py-1 transition-all active:scale-95 ${
+          className={`flex flex-col items-center justify-center h-full min-h-[48px] py-1 transition-all active:scale-95 ${
             activeTab === 'account'
-              ? 'text-[#1A9E9E] font-extrabold border-t-2 border-[#1A9E9E]'
+              ? 'text-[#1A9E9E] font-bold'
               : 'text-gray-500 hover:text-gray-900 font-medium'
           }`}
         >

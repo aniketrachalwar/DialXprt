@@ -22,6 +22,7 @@ export interface Vendor {
   name: string;
   category: string;
   categorySlug: string;
+  subCategorySlug?: string;
   ownerName: string;
   phone: string;
   whatsapp: string;
@@ -49,6 +50,10 @@ export interface Vendor {
   viewsCount?: number;
   callsCount?: number;
   whatsappClicksCount?: number;
+  experience?: string;
+  suggestions?: string;
+  referenceName?: string;
+  referenceNumber?: string;
 }
 
 export interface SubCategory {
@@ -63,6 +68,7 @@ export interface Category {
   name: string;
   slug: string;
   iconName: string;
+  imageUrl?: string;
   subcategories?: SubCategory[];
   description: string;
   activeProvidersCount: number;

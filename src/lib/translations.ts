@@ -12,8 +12,9 @@ export const TRANSLATIONS: Record<AppLanguage, Record<string, string>> = {
 
     // Bottom Navigation
     homeTab: "Home",
-    addBusinessTab: "Add Business",
-    accountTab: "B2B",
+    b2bTab: "B2B",
+    addBusinessTab: "List your Business",
+    accountTab: "Account",
     adminTab: "Admin",
     volunteerTab: "Volunteer",
     shopOwnerTab: "Shop Owner",

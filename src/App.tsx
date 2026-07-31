@@ -45,6 +45,7 @@ import {
 } from "./lib/supabase";
 import { fetchCategories } from "./lib/adminApi";
 import { HomeDashboard } from "./components/HomeDashboard";
+import { SubCategoryView } from "./components/SubCategoryView";
 import { MapPin, Search, ArrowLeft } from "lucide-react";
 
 export default function App() {
@@ -69,6 +70,7 @@ export default function App() {
   // Search & Clean 3-Tab Bottom Navigation
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
+  const [selectedSubCategory, setSelectedSubCategory] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<
     | "home"
     | "add"
@@ -111,6 +113,10 @@ export default function App() {
   };
 
   // URL State Synchronization
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [selectedCategory, selectedSubCategory, activeTab, staticRoute, selectedVendorSlug]);
+
   useEffect(() => {
     const parts = location.pathname.split("/").filter(Boolean);
     if (parts.length >= 2 && parts[0] === "hyderabad") {
@@ -318,7 +324,7 @@ export default function App() {
   // Load Vendors on Mount & Filter Change
   useEffect(() => {
     loadData();
-  }, [userLat, userLng, selectedCategory, searchQuery]);
+  }, [userLat, userLng, selectedCategory, selectedSubCategory, searchQuery]);
 
   const loadData = async () => {
     setLoading(true);
@@ -329,6 +335,7 @@ export default function App() {
         selectedCategory,
         searchQuery,
         true, // Include pending for volunteer review visibility
+        selectedSubCategory
       );
       setVendors(data);
       
@@ -593,46 +600,31 @@ export default function App() {
         userPhone={userPhone}
         currentLang={currentLang}
         onLanguageChange={setCurrentLang}
-        renderCompactSearch={
-          isScrolled ? (
+        renderCompactSearch={undefined}
+      >
+        {activeTab === "home" && (
+          <div className="space-y-4">
             <SearchBar
               searchQuery={searchQuery}
               onSearchChange={setSearchQuery}
               selectedCategory={selectedCategory}
               onSelectCategory={setSelectedCategory}
-              categories={INITIAL_CATEGORIES}
-              vendors={vendors}
+              categories={categories}
+              vendors={approvedVendors}
               onSelectVendor={(v) => navigate(`/expert/${v.slug}`)}
-              totalVendorsCount={vendors.length}
+              onTrackCall={handleTrackCall}
+              onTrackWhatsApp={handleTrackWhatsApp}
+              totalVendorsCount={approvedVendors.length}
               currentLang={currentLang}
-              onLanguageChange={setCurrentLang}
-              compact={true}
+              onLanguageChange={(lang) => setCurrentLang(lang)}
               currentNeighborhood={currentNeighborhood}
               onOpenLocation={() => setIsLocationModalOpen(true)}
             />
-          ) : undefined
-        }
-      />
 
-      {/* 2. SEARCH & QUICK FILTERS */}
-      {activeTab === "home" && (
-        <SearchBar
-          searchQuery={searchQuery}
-          onSearchChange={setSearchQuery}
-          selectedCategory={selectedCategory}
-          onSelectCategory={setSelectedCategory}
-          categories={categories}
-          vendors={approvedVendors}
-          onSelectVendor={(v) => navigate(`/expert/${v.slug}`)}
-          onTrackCall={handleTrackCall}
-          onTrackWhatsApp={handleTrackWhatsApp}
-          totalVendorsCount={approvedVendors.length}
-          currentLang={currentLang}
-          onLanguageChange={(lang) => setCurrentLang(lang)}
-          currentNeighborhood={currentNeighborhood}
-          onOpenLocation={() => setIsLocationModalOpen(true)}
-        />
-      )}
+          </div>
+        )}
+      </Header>
+
 
       {/* MAIN BODY DISPLAY */}
       <main className="max-w-7xl mx-auto px-3 sm:px-6 py-5">
@@ -664,10 +656,22 @@ export default function App() {
                     setActiveTab('account');
                   } else {
                     setSelectedCategory(slug);
+                    setSelectedSubCategory(null);
                   }
                 }}
                 onSearchQuery={(q) => setSearchQuery(q)}
                 currentLang={currentLang}
+              />
+            ) : selectedCategory !== "all" && !selectedSubCategory && searchQuery === "" ? (
+              /* SUBCATEGORY SELECTION VIEW */
+              <SubCategoryView 
+                category={categories.find(c => c.slug === selectedCategory) || categories[0]}
+                currentNeighborhood={currentNeighborhood}
+                onSelectSubCategory={(slug) => setSelectedSubCategory(slug)}
+                onBack={() => {
+                  setSelectedCategory("all");
+                  setSelectedSubCategory(null);
+                }}
               />
             ) : (
               /* SPECIFIC CATEGORY / SEARCH RESULTS VIEW - SORTED BY PROXIMITY */
@@ -677,11 +681,16 @@ export default function App() {
                   <div className="flex items-center gap-3">
                     <button
                       onClick={() => {
-                        setSelectedCategory("all");
-                        setSearchQuery("");
+                        if (searchQuery) {
+                          setSelectedCategory("all");
+                          setSelectedSubCategory(null);
+                          setSearchQuery("");
+                        } else {
+                          setSelectedSubCategory(null);
+                        }
                       }}
                       className="p-2.5 bg-gray-100 hover:bg-[#1A9E9E] hover:text-white text-gray-700 rounded-xl transition-all shrink-0 min-h-[44px] min-w-[44px] flex items-center justify-center font-bold"
-                      title="Back to All Services Grid"
+                      title={searchQuery ? "Back to All Services Grid" : "Back to Subcategories"}
                     >
                       <ArrowLeft className="w-5 h-5" />
                     </button>
@@ -755,16 +764,18 @@ export default function App() {
 
                 {/* Vendor Cards Grid */}
                 {loading ? (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {[1, 2, 3, 4, 5, 6].map((i) => (
+                  <div className="flex flex-col gap-4 max-w-4xl mx-auto w-full">
+                    {[1, 2, 3].map((i) => (
                       <div
                         key={i}
-                        className="bg-white rounded-2xl h-80 animate-pulse border p-4 space-y-3"
+                        className="bg-white rounded-2xl h-48 animate-pulse border p-4 flex gap-4"
                       >
-                        <div className="bg-gray-200 h-40 rounded-xl w-full"></div>
-                        <div className="bg-gray-200 h-4 rounded w-3/4"></div>
-                        <div className="bg-gray-200 h-3 rounded w-1/2"></div>
-                        <div className="bg-gray-200 h-10 rounded-xl w-full mt-4"></div>
+                        <div className="bg-gray-200 h-full w-32 sm:w-40 rounded-xl shrink-0"></div>
+                        <div className="flex-1 space-y-3 pt-2">
+                          <div className="bg-gray-200 h-6 rounded w-3/4"></div>
+                          <div className="bg-gray-200 h-4 rounded w-1/2"></div>
+                          <div className="bg-gray-200 h-10 rounded-xl w-full mt-auto"></div>
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -788,7 +799,7 @@ export default function App() {
                     </button>
                   </div>
                 ) : (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4 sm:gap-5">
+                  <div className="flex flex-col gap-4 sm:gap-5 max-w-4xl mx-auto w-full">
                     {approvedVendors.map((vendor) => (
                       <VendorCard
                         key={vendor.id}

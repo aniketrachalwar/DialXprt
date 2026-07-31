@@ -5,7 +5,10 @@ import {
   Flame, Briefcase, Activity, Plane, Star, Heart, BookOpen,
   Truck, Key, Search, DollarSign, Home, Video, Coffee,
   Zap, Wrench, ShoppingBag, Wind, Car, Hammer, Paintbrush,
-  Scissors, Navigation, Sparkles, Tv, Shirt, Bug, Camera, Utensils
+  Scissors, Navigation, Sparkles, Tv, Shirt, Bug, Camera, Utensils,
+  PlusSquare, Pill, Building, Package, Layout, Shield, Laptop,
+  Smartphone, Droplets, Recycle, Music, Headphones, Calculator,
+  Globe, MapPin, Trash2, Eye
 } from 'lucide-react';
 import { CATEGORY_IMAGE_MAP } from '../lib/categoryImages';
 
@@ -39,6 +42,23 @@ const CATEGORY_ICON_MAP: Record<string, React.ReactNode> = {
   Home: <Home className="w-6 h-6 text-indigo-600" />,
   Video: <Video className="w-6 h-6 text-red-600" />,
   Coffee: <Coffee className="w-6 h-6 text-[#1A9E9E]lue-400" />,
+  PlusSquare: <PlusSquare className="w-6 h-6 text-red-600" />,
+  Pill: <Pill className="w-6 h-6 text-teal-500" />,
+  Building: <Building className="w-6 h-6 text-indigo-600" />,
+  Package: <Package className="w-6 h-6 text-orange-500" />,
+  Layout: <Layout className="w-6 h-6 text-purple-600" />,
+  Shield: <Shield className="w-6 h-6 text-slate-700" />,
+  Laptop: <Laptop className="w-6 h-6 text-gray-600" />,
+  Smartphone: <Smartphone className="w-6 h-6 text-blue-600" />,
+  Droplets: <Droplets className="w-6 h-6 text-cyan-600" />,
+  Recycle: <Recycle className="w-6 h-6 text-emerald-600" />,
+  Music: <Music className="w-6 h-6 text-pink-600" />,
+  Headphones: <Headphones className="w-6 h-6 text-purple-500" />,
+  Calculator: <Calculator className="w-6 h-6 text-emerald-700" />,
+  Globe: <Globe className="w-6 h-6 text-blue-500" />,
+  MapPin: <MapPin className="w-6 h-6 text-red-500" />,
+  Trash2: <Trash2 className="w-6 h-6 text-slate-500" />,
+  Eye: <Eye className="w-6 h-6 text-cyan-700" />,
 };
 
 export const HorizontalCategoryScroll = ({
@@ -50,10 +70,8 @@ export const HorizontalCategoryScroll = ({
   onSelectCategory: (slug: string) => void;
   currentLang?: AppLanguage;
 }) => {
-  const isFewCategories = categories.length <= 4;
-  
   return (
-    <div className={`grid ${isFewCategories ? 'grid-rows-1' : 'grid-rows-2'} grid-flow-col auto-cols-max overflow-x-auto gap-x-4 gap-y-6 py-2 px-1 no-scrollbar -mx-1`}>
+    <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-x-2 gap-y-4 py-2 px-1">
       {categories.map((cat) => {
         const icon = CATEGORY_ICON_MAP[cat.iconName] || <Wrench className="w-6 h-6 text-[#1A9E9E]" />;
         const imageUrl = CATEGORY_IMAGE_MAP[cat.slug];
@@ -62,9 +80,9 @@ export const HorizontalCategoryScroll = ({
           <button
             key={cat.id}
             onClick={() => onSelectCategory(cat.slug)}
-            className="flex flex-col items-center gap-2 min-w-[76px] shrink-0 group cursor-pointer active:scale-95 transition-transform"
+            className="flex flex-col items-center gap-2 group cursor-pointer active:scale-95 transition-transform"
           >
-            <div className="w-16 h-16 bg-white border border-gray-200 rounded-full flex justify-center items-center group-hover:shadow-lg group-hover:-translate-y-1 transition-all duration-300 overflow-hidden relative">
+            <div className="w-[70px] h-[70px] bg-white border border-gray-100 rounded-2xl flex justify-center items-center shadow-sm group-hover:shadow-md group-hover:-translate-y-1 transition-all duration-300 overflow-hidden relative">
               {imageUrl ? (
                 <img src={imageUrl} alt={catTitle} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" loading="lazy" />
               ) : (
@@ -73,7 +91,7 @@ export const HorizontalCategoryScroll = ({
                 </div>
               )}
             </div>
-            <span className="text-[11px] font-medium text-gray-700 text-center leading-tight line-clamp-2 w-[72px]">
+            <span className="text-[10px] sm:text-[11px] font-semibold text-gray-800 text-center leading-tight line-clamp-2 px-1">
               {catTitle}
             </span>
           </button>

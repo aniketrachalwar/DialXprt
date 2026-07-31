@@ -21,6 +21,7 @@ interface HeaderProps {
   onLanguageChange: (lang: AppLanguage) => void;
   renderCompactSearch?: React.ReactNode;
   onOpenLanguage: () => void;
+  children?: React.ReactNode;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -39,7 +40,8 @@ export const Header: React.FC<HeaderProps> = ({
   currentLang,
   onLanguageChange,
   renderCompactSearch,
-  onOpenLanguage
+  onOpenLanguage,
+  children
 }) => {
   const t = (key: string) => getTranslation(currentLang, key);
 
@@ -61,9 +63,9 @@ export const Header: React.FC<HeaderProps> = ({
   const activeLangObj = languages.find((l) => l.code === currentLang) || languages[0];
 
   return (
-    <header className="sticky top-0 z-40 bg-[#0F5C5C] text-white shadow-md transition-all pt-safe">
+    <header className="sticky top-0 z-40 bg-[#1E2875] text-white shadow-md transition-all pt-safe rounded-b-2xl">
       {/* Top Banner Bar */}
-      <div className="max-w-7xl mx-auto px-2.5 sm:px-4 py-2">
+      <div className="max-w-7xl mx-auto px-2.5 sm:px-4 py-3">
         <div className="flex items-center justify-between gap-1.5 sm:gap-2">
           {/* Logo Section - Navigates Home */}
           <div
@@ -133,6 +135,12 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
         </div>
 
+        {/* Children (SearchBar, Filters, etc.) */}
+        {children && (
+          <div className="mt-3">
+            {children}
+          </div>
+        )}
       </div>
     </header>
   );

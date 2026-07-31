@@ -37,9 +37,13 @@ export const VendorRegistrationModal: React.FC<VendorRegistrationModalProps> = (
   const [phone, setPhone] = useState('');
   const [whatsapp, setWhatsapp] = useState('');
   const [address, setAddress] = useState('');
-  const [neighborhood, setNeighborhood] = useState(currentNeighborhood || 'Madhapur');
-  const [pincode, setPincode] = useState('500081');
+  const [neighborhood, setNeighborhood] = useState('');
+  const [pincode, setPincode] = useState('');
   const [description, setDescription] = useState('');
+  const [experience, setExperience] = useState('');
+  const [suggestions, setSuggestions] = useState('');
+  const [referenceName, setReferenceName] = useState('');
+  const [referenceNumber, setReferenceNumber] = useState('');
   const [keywords, setKeywords] = useState('');
   const [operatingHours, setOperatingHours] = useState('9:00 AM - 8:00 PM');
   const [imageUrl, setImageUrl] = useState('');
@@ -97,8 +101,8 @@ export const VendorRegistrationModal: React.FC<VendorRegistrationModalProps> = (
 
   const handleSubmitForm = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name || !phone) {
-      alert('Please fill in required fields (Shop Name and Phone Number).');
+    if (!ownerName || !categorySlug || !experience || !neighborhood || !pincode || !phone || !whatsapp) {
+      alert('Please fill in all required fields marked with *');
       return;
     }
 
@@ -113,23 +117,27 @@ export const VendorRegistrationModal: React.FC<VendorRegistrationModalProps> = (
 
     try {
       await onSubmit({
-        name,
-        ownerName: ownerName || name,
+        name: name || ownerName,
+        ownerName,
         category: categoryName,
         categorySlug,
         phone,
         whatsapp: whatsapp || phone,
-        address: address || `${neighborhood}, Hyderabad`,
+        address: address || neighborhood,
         neighborhood,
         city: 'Hyderabad',
-        pincode: pincode || '500081',
+        pincode,
         lat,
         lng,
         imageUrl: finalImage,
         keywords,
         operatingHours,
         fullAddress: address,
-        description: description || `${categoryName} services available in ${neighborhood}, Hyderabad.`,
+        description,
+        experience,
+        suggestions,
+        referenceName,
+        referenceNumber,
       });
       setLoading(false);
       onClose();
@@ -172,37 +180,21 @@ export const VendorRegistrationModal: React.FC<VendorRegistrationModalProps> = (
 
         {/* Step Form Content */}
         <form onSubmit={handleSubmitForm} className="p-4 overflow-y-auto space-y-4 flex-1">
-          {/* STEP 1: Basic Information */}
+        {/* STEP 1: Basic Information */}
           {step === 1 && (
             <div className="space-y-3 animate-fade-in">
               <div>
                 <label className="block text-xs font-bold text-gray-700 mb-1">
-                  {t('shopNameLabel')} *
-                </label>
-                <div className="relative">
-                  <Building2 className="w-4 h-4 text-gray-400 absolute left-3 top-3.5" />
-                  <input
-                    type="text"
-                    required
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder={t('shopNamePlaceholder')}
-                    className="w-full pl-9 pr-3 py-2.5 text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0F5C5C] focus:outline-none min-h-[48px]"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-gray-700 mb-1">
-                  {t('ownerNameLabel')}
+                  Name/పేరు/नाम *
                 </label>
                 <div className="relative">
                   <User className="w-4 h-4 text-gray-400 absolute left-3 top-3.5" />
                   <input
                     type="text"
+                    required
                     value={ownerName}
                     onChange={(e) => setOwnerName(e.target.value)}
-                    placeholder={t('ownerNamePlaceholder')}
+                    placeholder="Your full name"
                     className="w-full pl-9 pr-3 py-2.5 text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0F5C5C] focus:outline-none min-h-[48px]"
                   />
                 </div>
@@ -210,34 +202,40 @@ export const VendorRegistrationModal: React.FC<VendorRegistrationModalProps> = (
 
               <div>
                 <label className="block text-xs font-bold text-gray-700 mb-1">
-                  {t('categoryLabel')} *
+                  Profession/వృత్తి/वृत्ति *
                 </label>
                 <input
-                  list="categories-list"
+                  type="text"
                   required
                   value={categorySlug}
                   onChange={(e) => setCategorySlug(e.target.value)}
-                  placeholder="Search or type custom category..."
-                  className="w-full px-3 py-2.5 text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0F5C5C] focus:outline-none bg-white min-h-[48px]"
+                  placeholder="For example Electrician, Tours And Travels, Wholesale Textiles, Plumber, AC Mechanic etc..."
+                  className="w-full px-3 py-2.5 text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0F5C5C] focus:outline-none min-h-[48px]"
                 />
-                <datalist id="categories-list">
-                  {categories.map((cat) => (
-                    <option key={cat.id} value={cat.slug}>
-                      {getCategoryName(cat.slug, cat.name, currentLang)}
-                    </option>
-                  ))}
-                  <option value="other">Other (Please specify)</option>
-                </datalist>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-gray-700 mb-1">
+                  Experience *
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={experience}
+                  onChange={(e) => setExperience(e.target.value)}
+                  placeholder="For Example :- 1yr, 10yr, 6 Months etc..."
+                  className="w-full px-3 py-2.5 text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0F5C5C] focus:outline-none min-h-[48px]"
+                />
               </div>
 
               <div className="pt-3">
                 <button
                   type="button"
-                  disabled={!name}
+                  disabled={!ownerName || !categorySlug || !experience}
                   onClick={() => setStep(2)}
                   className="w-full bg-[#0F5C5C] hover:bg-teal-700 text-white font-bold py-3 px-4 rounded-xl flex items-center justify-center gap-2 transition-all min-h-[48px] disabled:opacity-50"
                 >
-                  <span>Next: Location & Photo</span>
+                  <span>Next: Location Details</span>
                   <ChevronRight className="w-4 h-4" />
                 </button>
               </div>
@@ -310,40 +308,57 @@ export const VendorRegistrationModal: React.FC<VendorRegistrationModalProps> = (
 
               <div>
                 <label className="block text-xs font-bold text-gray-700 mb-1">
-                  {t('neighborhoodLabel')} *
+                  Area/ప్రాంతం/क्षेत्र *
                 </label>
-                <select
+                <input
+                  type="text"
+                  required
                   value={neighborhood}
-                  onChange={(e) => {
-                    const found = HYDERABAD_NEIGHBORHOODS.find((n) => n.name === e.target.value);
-                    if (found) {
-                      setNeighborhood(found.name);
-                      setPincode(found.pincode);
-                      setLat(found.lat);
-                      setLng(found.lng);
-                    } else {
-                      setNeighborhood(e.target.value);
-                    }
-                  }}
-                  className="w-full px-3 py-2.5 text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0F5C5C] focus:outline-none bg-white min-h-[48px]"
-                >
-                  {HYDERABAD_NEIGHBORHOODS.map((n) => (
-                    <option key={n.id} value={n.name}>
-                      {n.name} ({n.pincode})
-                    </option>
-                  ))}
-                </select>
+                  onChange={(e) => setNeighborhood(e.target.value)}
+                  placeholder="Business/Shop Located or Service Provide From. ( Example :- Goshamahal, Kachiguda, Attapur.)"
+                  className="w-full px-3 py-2.5 text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0F5C5C] focus:outline-none min-h-[48px]"
+                />
               </div>
 
               <div>
                 <label className="block text-xs font-bold text-gray-700 mb-1">
-                  Full Street Address (Crucial for Local SEO)
+                  Pincode *
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={pincode}
+                  onChange={(e) => setPincode(e.target.value)}
+                  placeholder="e.g. 500081"
+                  className="w-full px-3 py-2.5 text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0F5C5C] focus:outline-none min-h-[48px]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-gray-700 mb-1">
+                  Business or Shop Name ( OPTIONAL )
+                </label>
+                <div className="relative">
+                  <Building2 className="w-4 h-4 text-gray-400 absolute left-3 top-3.5" />
+                  <input
+                    type="text"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="Better if you provide Name."
+                    className="w-full pl-9 pr-3 py-2.5 text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0F5C5C] focus:outline-none min-h-[48px]"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-gray-700 mb-1">
+                  Address/చిరునామా/पता ( OPTIONAL )
                 </label>
                 <textarea
                   rows={2}
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
-                  placeholder={t('addressPlaceholder')}
+                  placeholder="In detail with Landmark. ( Example :- Shivaji Nagar Opposite Hanuman Temple etc...)"
                   className="w-full p-2.5 text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0F5C5C] focus:outline-none"
                 />
               </div>
@@ -411,7 +426,7 @@ export const VendorRegistrationModal: React.FC<VendorRegistrationModalProps> = (
               <div>
                 <div className="flex items-center justify-between mb-1">
                   <label className="block text-xs font-bold text-gray-700">
-                    {t('descriptionLabel')}
+                    Profession Discription ( OPTIONAL )
                   </label>
                   <button
                     type="button"
@@ -430,36 +445,51 @@ export const VendorRegistrationModal: React.FC<VendorRegistrationModalProps> = (
                   rows={3}
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  placeholder={t('descriptionPlaceholder')}
+                  placeholder="Better if you provide discription."
                   className="w-full p-2.5 text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0F5C5C] focus:outline-none"
                 />
               </div>
 
               <div>
                 <label className="block text-xs font-bold text-gray-700 mb-1">
-                  Services / Keywords (Comma separated)
+                  Any Suggestions ( OPTIONAL )
+                </label>
+                <textarea
+                  rows={2}
+                  value={suggestions}
+                  onChange={(e) => setSuggestions(e.target.value)}
+                  placeholder="Your suggestions"
+                  className="w-full p-2.5 text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0F5C5C] focus:outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-gray-700 mb-1">
+                  Reference Name ( OPTIONAL )
                 </label>
                 <input
                   type="text"
-                  value={keywords}
-                  onChange={(e) => setKeywords(e.target.value)}
-                  placeholder="e.g. fan repair, MCB trip, wiring"
+                  value={referenceName}
+                  onChange={(e) => setReferenceName(e.target.value)}
+                  placeholder="Name of the person who referred you"
                   className="w-full px-3 py-2.5 text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0F5C5C] focus:outline-none min-h-[48px]"
                 />
               </div>
 
               <div>
                 <label className="block text-xs font-bold text-gray-700 mb-1">
-                  Operating Hours
+                  Reference Number ( OPTIONAL )
                 </label>
                 <input
                   type="text"
-                  value={operatingHours}
-                  onChange={(e) => setOperatingHours(e.target.value)}
-                  placeholder="e.g. 9:00 AM - 8:00 PM"
+                  value={referenceNumber}
+                  onChange={(e) => setReferenceNumber(e.target.value)}
+                  placeholder="Number of the person who referred you"
                   className="w-full px-3 py-2.5 text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0F5C5C] focus:outline-none min-h-[48px]"
                 />
               </div>
+
+
 
               <div className="flex gap-2 pt-2">
                 <button
@@ -473,7 +503,7 @@ export const VendorRegistrationModal: React.FC<VendorRegistrationModalProps> = (
 
                 <button
                   type="submit"
-                  disabled={loading || !phone || !name}
+                  disabled={loading || !phone || !ownerName || !categorySlug || !experience || !neighborhood || !pincode}
                   className="flex-2 bg-[#F36F21] hover:bg-orange-600 text-white font-bold py-3 px-4 rounded-xl flex items-center justify-center gap-2 shadow-lg min-h-[48px] disabled:opacity-50"
                 >
                   {loading ? (

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Phone, MapPin, CheckCircle2, Star, Share2, ShieldCheck, Clock, Building2, User } from 'lucide-react';
+import { ArrowLeft, Phone, MapPin, CheckCircle2, Star, Share2, ShieldCheck, Clock, Building2, User, Navigation } from 'lucide-react';
 import { Vendor } from '../types';
 import { WhatsAppLogo } from './WhatsAppLogo';
 import { AppLanguage, getTranslation } from '../lib/translations';
@@ -69,67 +69,105 @@ export const VendorProfilePage: React.FC<VendorProfilePageProps> = ({
             alt={`${vendor.name}`}
             className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/20"></div>
+          <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent pointer-events-none"></div>
 
-          <div className="absolute top-4 left-4 right-4 flex items-center justify-between">
-            <button onClick={() => navigate(-1)} className="bg-black/40 hover:bg-black/60 text-white p-2.5 rounded-full backdrop-blur-md transition-colors">
+          <div className="absolute top-4 left-4 right-4 flex items-center justify-between z-10">
+            <button onClick={() => navigate(-1)} className="bg-white/80 hover:bg-white text-gray-900 p-2.5 rounded-full backdrop-blur-md transition-colors shadow-sm">
               <ArrowLeft className="w-5 h-5" />
             </button>
-            <button onClick={handleShare} className="bg-black/40 hover:bg-black/60 text-white p-2.5 rounded-full backdrop-blur-md transition-colors">
+            <button onClick={handleShare} className="bg-white/80 hover:bg-white text-gray-900 p-2.5 rounded-full backdrop-blur-md transition-colors shadow-sm">
               <Share2 className="w-5 h-5" />
             </button>
           </div>
+        </div>
 
-          <div className="absolute bottom-6 left-6 right-6 text-white">
-            <div className="flex items-center gap-2 mb-2">
-              {isApproved && (
-                <span className="bg-[#22C55E] text-white text-xs font-bold px-2.5 py-1 rounded-md flex items-center gap-1 shadow-sm uppercase tracking-wide">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-white" /> Verified
-                </span>
-              )}
+        {/* Header Info Below Image */}
+        <div className="px-5 pt-4 pb-2 space-y-2.5 bg-white">
+          <h1 className="text-2xl sm:text-3xl font-black text-gray-900 flex items-center gap-2 leading-tight">
+            {isApproved && <CheckCircle2 className="w-6 h-6 text-[#22C55E] shrink-0" />}
+            {vendor.name}
+          </h1>
+          
+          <div className="flex flex-wrap items-center gap-2 text-sm text-gray-600">
+            <div className="flex items-center gap-1 bg-[#22C55E] text-white px-2 py-0.5 rounded text-xs font-bold shadow-sm">
+              {vendor.rating} <Star className="w-3 h-3 fill-white text-white" />
             </div>
-            
-            <h1 className="text-3xl sm:text-4xl font-black leading-tight mb-2 text-white drop-shadow-md">
-              {vendor.name}
-            </h1>
-            
-            <div className="flex flex-wrap items-center gap-4 text-sm sm:text-base font-medium text-gray-200">
-              <span className="bg-white/20 px-3 py-1 rounded-full backdrop-blur-sm border border-white/30 text-white">
-                {vendor.category}
-              </span>
-              <div className="flex items-center gap-1.5">
-                <Star className="w-5 h-5 text-yellow-400 fill-yellow-400" />
-                <span className="font-bold text-white text-lg">{vendor.rating}</span>
-                <span className="opacity-80">({vendor.reviewsCount} reviews)</span>
-              </div>
-            </div>
+            <span>{vendor.reviewsCount} Ratings</span>
+          </div>
+
+          <div className="text-sm text-gray-700 flex items-start gap-1">
+            <MapPin className="w-4 h-4 mt-0.5 text-gray-400 shrink-0" />
+            <span>{vendor.neighborhood}{vendor.neighborhood && vendor.address ? ', ' : ''}{vendor.address}</span>
+          </div>
+
+          <div className="text-sm text-gray-500 font-medium">
+            {vendor.category} • 10 Years in Business
+          </div>
+
+          <div className="text-sm">
+            <span className="text-[#22C55E] font-bold">Open Now</span> <span className="text-gray-500">: until 10:00 pm</span>
           </div>
         </div>
 
         {/* Content Body */}
-        <div className="p-6 sm:p-8 space-y-8">
+        <div className="px-5 pb-6 sm:px-8 space-y-8 mt-2">
           
           {/* Quick Actions */}
-          <div className="flex gap-3">
-            <a
-              href={callUrl}
-              onClick={() => onTrackCall(vendor.id)}
-              className="flex-1 bg-green-600 hover:bg-green-700 text-white py-4 rounded-xl flex flex-col items-center justify-center gap-1 shadow-md shadow-green-600/20 transition-all active:scale-95"
-            >
-              <Phone className="w-6 h-6 mb-1" />
-              <span className="font-bold text-sm">Call Now</span>
-            </a>
+          <div className="flex flex-col gap-4">
+            <div className="flex justify-between items-start w-full px-2">
+              <a
+                href={callUrl}
+                onClick={() => onTrackCall(vendor.id)}
+                className="flex flex-col items-center gap-1.5 flex-1 cursor-pointer active:scale-95 transition-transform"
+              >
+                <div className="w-12 h-12 rounded-xl bg-blue-600 text-white flex items-center justify-center shadow-sm">
+                  <Phone className="w-6 h-6 fill-current" />
+                </div>
+                <span className="text-[11px] font-bold text-gray-800">Call Now</span>
+              </a>
+              
+              <a
+                href={whatsappUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => onTrackWhatsApp(vendor.id)}
+                className="flex flex-col items-center gap-1.5 flex-1 cursor-pointer active:scale-95 transition-transform"
+              >
+                <div className="w-12 h-12 rounded-xl bg-white border border-gray-200 flex items-center justify-center shadow-sm">
+                  <WhatsAppLogo className="w-7 h-7" />
+                </div>
+                <span className="text-[11px] font-bold text-gray-800">WhatsApp</span>
+              </a>
+              
+              <a 
+                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(vendor.address + ' ' + (vendor.neighborhood || ''))}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex flex-col items-center gap-1.5 flex-1 cursor-pointer active:scale-95 transition-transform"
+              >
+                <div className="w-12 h-12 rounded-xl bg-white border border-gray-200 text-gray-700 flex items-center justify-center shadow-sm">
+                  <Navigation className="w-6 h-6" />
+                </div>
+                <span className="text-[11px] font-bold text-gray-800">Direction</span>
+              </a>
+              
+              <button 
+                onClick={handleShare}
+                className="flex flex-col items-center gap-1.5 flex-1 cursor-pointer active:scale-95 transition-transform"
+              >
+                <div className="w-12 h-12 rounded-xl bg-white border border-gray-200 text-gray-700 flex items-center justify-center shadow-sm">
+                  <Share2 className="w-6 h-6" />
+                </div>
+                <span className="text-[11px] font-bold text-gray-800">Share</span>
+              </button>
+            </div>
             
-            <a
-              href={whatsappUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={() => onTrackWhatsApp(vendor.id)}
-              className="flex-1 bg-[#25D366] hover:bg-[#128C7E] text-white py-4 rounded-xl flex flex-col items-center justify-center gap-1 shadow-md shadow-[#25D366]/20 transition-all active:scale-95"
+            <button 
+              onClick={() => { window.location.href = callUrl; }} 
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl shadow-sm transition-colors text-sm"
             >
-              <WhatsAppLogo className="w-7 h-7 mb-0.5" />
-              <span className="font-bold text-sm">WhatsApp</span>
-            </a>
+              Enquire Now
+            </button>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
