@@ -147,6 +147,32 @@ export const SearchBar: React.FC<SearchBarProps> = ({
     setSelectedLang(currentLang === 'te' ? 'te-IN' : currentLang === 'hi' ? 'hi-IN' : 'en-IN');
   }, [currentLang]);
 
+  const PREDICTIVE_TAGS: Record<string, string[]> = {
+    'sound system': ['Dealer', 'Rent', 'Repair', 'Installation'],
+    'ac': ['Repair', 'Installation', 'Gas Filling', 'Service'],
+    'car': ['Mechanic', 'Wash', 'Accessories', 'Detailing'],
+    'gym': ['Trainer', 'Equipment', 'Membership', 'Yoga'],
+    'plumber': ['Emergency', 'Installation', 'Leakage', 'Pipe Fitting'],
+    'electrician': ['Wiring', 'Appliance Repair', 'Installation'],
+    'laptop': ['Repair', 'Screen Replacement', 'SSD Upgrade', 'Battery'],
+    'mobile': ['Screen Repair', 'Battery', 'Accessories', 'Water Damage'],
+    'ro': ['Service', 'Installation', 'Filter Change', 'Repair'],
+    'cctv': ['Installation', 'Repair', 'AMC', 'Dealer'],
+  };
+
+  const getPredictiveTags = () => {
+    if (!searchQuery || searchQuery.length < 2) return [];
+    const q = searchQuery.toLowerCase();
+    for (const [key, tags] of Object.entries(PREDICTIVE_TAGS)) {
+      if (q.includes(key)) {
+        // filter out tags already in the query
+        return tags.filter(t => !q.includes(t.toLowerCase()));
+      }
+    }
+    return [];
+  };
+
+  const predictiveTags = getPredictiveTags();
 
 
   const handleVoiceSearch = () => {
@@ -248,6 +274,22 @@ export const SearchBar: React.FC<SearchBarProps> = ({
               {isListening ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
             </button>
           </div>
+
+          {/* Predictive Search Chips */}
+          {predictiveTags.length > 0 && (
+            <div className="flex flex-wrap items-center gap-2 mt-2 px-2 animate-fade-in">
+              <span className="text-xs text-gray-500 font-medium">Suggestions:</span>
+              {predictiveTags.map((tag) => (
+                <button
+                  key={tag}
+                  onClick={() => onSearchChange(`${searchQuery.trim()} ${tag}`)}
+                  className="px-2.5 py-1 bg-white border border-gray-200 hover:border-indigo-300 hover:bg-indigo-50 hover:text-indigo-700 text-gray-600 text-xs font-semibold rounded-full transition-colors shadow-sm"
+                >
+                  +{tag}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Listening / Audio Feedback Overlay Modal */}

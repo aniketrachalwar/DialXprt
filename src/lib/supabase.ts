@@ -36,7 +36,7 @@ export function calculateDistanceKm(
   return Math.round(d * 10) / 10; // Round to 1 decimal place
 }
 
-const STORAGE_KEY_VENDORS = 'dialxprt_vendors_db';
+const STORAGE_KEY_VENDORS = 'dialxprt_vendors_db_v2';
 const STORAGE_KEY_ANALYTICS = 'dialxprt_analytics';
 
 // Local storage persistent database helper
@@ -72,7 +72,8 @@ export async function fetchNearbyVendors(
   categoryFilter: string = 'all',
   searchQuery: string = '',
   includePending: boolean = false,
-  subCategoryFilter: string | null = null
+  subCategoryFilter: string | null = null,
+  radiusKm: number = 50.0
 ): Promise<Vendor[]> {
   // 1. Try Supabase RPC if configured
   if (supabase) {
@@ -80,7 +81,7 @@ export async function fetchNearbyVendors(
       const { data, error } = await supabase.rpc('get_nearby_vendors', {
         user_lat: userLat,
         user_lng: userLng,
-        radius_km: 50.0,
+        radius_km: radiusKm,
         cat_filter: categoryFilter || null,
         search_query: searchQuery || null,
         only_approved: !includePending,
@@ -175,6 +176,7 @@ export async function fetchNearbyVendors(
         distanceKm: distance,
       };
     })
+    .filter((v) => v.distanceKm <= radiusKm)
     .sort((a, b) => (a.distanceKm || 0) - (b.distanceKm || 0));
 }
 
@@ -191,8 +193,8 @@ export async function registerVendor(vendorData: Omit<Vendor, 'id' | 'slug' | 'c
     slug,
     isVerified: false,
     status: 'pending',
-    rating: 4.8,
-    reviewsCount: 1,
+    rating: 0,
+    reviewsCount: 0,
     viewsCount: 0,
     callsCount: 0,
     whatsappClicksCount: 0,

@@ -35,13 +35,13 @@ export const Footer = () => {
               <li><Link to="/free-listing" className="hover:text-[#1A9E9E] transition-colors">Free Listing</Link></li>
               <li><Link to="/privacy" className="hover:text-[#1A9E9E] transition-colors">Privacy Policy</Link></li>
               <li><Link to="/terms" className="hover:text-[#1A9E9E] transition-colors">Terms of Service</Link></li>
+              <li><a href="/sitemap.html" className="hover:text-[#1A9E9E] transition-colors">HTML Site Map</a></li>
             </ul>
           </div>
           
           <div>
             <h3 className="font-bold text-gray-800 mb-4 uppercase text-xs tracking-wider">DialXprt Verticals</h3>
             <ul className="space-y-2 text-xs text-gray-500">
-              <li><Link to="/b2b" className="hover:text-[#1A9E9E] transition-colors">B2B & Manufacturers</Link></li>
               <li><Link to="/hyderabad/all/real-estate" className="hover:text-[#1A9E9E] transition-colors">Real Estate & Properties</Link></li>
               <li><Link to="/hyderabad/all/travel-agents" className="hover:text-[#1A9E9E] transition-colors">Travel & Bookings</Link></li>
               <li><Link to="/hyderabad/all/hospitals" className="hover:text-[#1A9E9E] transition-colors">Health & Medical</Link></li>

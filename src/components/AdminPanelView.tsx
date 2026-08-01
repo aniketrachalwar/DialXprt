@@ -1,29 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import { Crown, Plus, Users, LayoutDashboard, Store } from 'lucide-react';
-import { UserRoleAssignment, fetchUserRoles, grantUserRole, fetchCategories, addCategory, fetchB2BProducts, addB2BProduct, B2BProduct } from '../lib/adminApi';
-import { Category } from '../types';
+import { Crown, Users, Store, Map } from 'lucide-react';
+import { UserRoleAssignment, fetchUserRoles, grantUserRole } from '../lib/adminApi';
+import { Vendor } from '../types';
+import { SiteMapTowers } from './SiteMapTowers';
 
-export const AdminPanelView: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'roles' | 'categories' | 'products'>('roles');
+interface AdminPanelViewProps {
+  vendors?: Vendor[];
+  onUpdateVendorStatus?: (vendorId: string, status: "approved" | "pending" | "rejected", volunteerName: string, notes: string) => void;
+  onExportCSV?: () => void;
+}
+
+export const AdminPanelView: React.FC<AdminPanelViewProps> = ({ vendors = [], onUpdateVendorStatus, onExportCSV }) => {
+  const [activeTab, setActiveTab] = useState<'vendors' | 'roles' | 'sitemap'>('sitemap');
   
   // Data State
   const [roles, setRoles] = useState<UserRoleAssignment[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [products, setProducts] = useState<B2BProduct[]>([]);
   const [loading, setLoading] = useState(true);
 
   // Form State
   const [newEmail, setNewEmail] = useState('');
   const [newRole, setNewRole] = useState<'volunteer' | 'vendor' | 'customer' | 'admin'>('volunteer');
-  
-  const [newCatName, setNewCatName] = useState('');
-  const [newCatSlug, setNewCatSlug] = useState('');
-  const [newCatIcon, setNewCatIcon] = useState('Box');
-  const [newCatDesc, setNewCatDesc] = useState('');
-  
-  const [newProdName, setNewProdName] = useState('');
-  const [newProdSlug, setNewProdSlug] = useState('sports');
-  const [newProdImage, setNewProdImage] = useState('');
 
   useEffect(() => {
     loadData();
@@ -31,14 +27,8 @@ export const AdminPanelView: React.FC = () => {
 
   const loadData = async () => {
     setLoading(true);
-    const [fetchedRoles, fetchedCats, fetchedProds] = await Promise.all([
-      fetchUserRoles(),
-      fetchCategories(),
-      fetchB2BProducts()
-    ]);
+    const fetchedRoles = await fetchUserRoles();
     setRoles(fetchedRoles);
-    setCategories(fetchedCats);
-    setProducts(fetchedProds);
     setLoading(false);
   };
 
@@ -50,36 +40,56 @@ export const AdminPanelView: React.FC = () => {
     alert('Role updated successfully!');
   };
 
-  const handleAddCategory = async () => {
-    if (!newCatName || !newCatSlug) return;
-    await addCategory({
-      id: Math.random().toString(),
-      name: newCatName,
-      slug: newCatSlug,
-      iconName: newCatIcon as any,
-      description: newCatDesc,
-      activeProvidersCount: 0,
-      popularSearch: false
-    });
-    setNewCatName('');
-    setNewCatSlug('');
-    setNewCatDesc('');
-    loadData();
-    alert('Category added successfully!');
+
+  const handleExportUsers = () => {
+    const headers = ["Email", "Role"];
+    const rows = roles.map((r) => [`"${r.email}"`, `"${r.role}"`]);
+    const csvContent = [headers.join(","), ...rows.map(e => e.join(","))].join("\n");
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", `DialXprt_Users_Export_${Date.now()}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
-  const handleAddProduct = async () => {
-    if (!newProdName || !newProdImage) return;
-    await addB2BProduct({
-      name: newProdName,
-      category_slug: newProdSlug,
-      image_url: newProdImage
-    });
-    setNewProdName('');
-    setNewProdImage('');
-    loadData();
-    alert('Product added successfully!');
+  const handleExportVendors = () => {
+    const headers = [
+      "ID", "Name", "Category", "Owner", "Phone", "WhatsApp", 
+      "Address", "Neighborhood", "City", "Pincode", "Latitude", "Longitude", 
+      "Experience", "Status", "Verified"
+    ];
+    const rows = vendors.map((v) => [
+      v.id,
+      `"${v.name}"`,
+      `"${v.category}"`,
+      `"${v.ownerName}"`,
+      v.phone,
+      v.whatsapp,
+      `"${v.address}"`,
+      `"${v.neighborhood}"`,
+      `"${v.city}"`,
+      v.pincode,
+      v.lat,
+      v.lng,
+      `"${v.experience}"`,
+      v.status,
+      v.isVerified ? "Yes" : "No",
+    ]);
+
+    const csvContent = [headers.join(","), ...rows.map(e => e.join(","))].join("\n");
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", `DialXprt_Detailed_Vendors_Export_${Date.now()}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
+
 
   if (loading) return <div className="p-10 text-center font-bold text-gray-500">Loading Admin Data...</div>;
 
@@ -100,20 +110,89 @@ export const AdminPanelView: React.FC = () => {
 
       {/* Navigation Tabs */}
       <div className="flex gap-2 overflow-x-auto bg-white p-2 rounded-2xl shadow-sm border border-gray-100 no-scrollbar">
+        <button onClick={() => setActiveTab('sitemap')} className={`flex items-center gap-2 px-5 py-3 rounded-xl font-bold transition-colors whitespace-nowrap ${activeTab === 'sitemap' ? 'bg-purple-100 text-purple-700' : 'hover:bg-gray-50 text-gray-600'}`}>
+          <Map className="w-5 h-5" /> Site Map (Errors)
+        </button>
+        <button onClick={() => setActiveTab('vendors')} className={`flex items-center gap-2 px-5 py-3 rounded-xl font-bold transition-colors whitespace-nowrap ${activeTab === 'vendors' ? 'bg-purple-100 text-purple-700' : 'hover:bg-gray-50 text-gray-600'}`}>
+          <Store className="w-5 h-5" /> Vendor Leads & Data
+        </button>
         <button onClick={() => setActiveTab('roles')} className={`flex items-center gap-2 px-5 py-3 rounded-xl font-bold transition-colors whitespace-nowrap ${activeTab === 'roles' ? 'bg-purple-100 text-purple-700' : 'hover:bg-gray-50 text-gray-600'}`}>
           <Users className="w-5 h-5" /> User Roles & Volunteers
-        </button>
-        <button onClick={() => setActiveTab('categories')} className={`flex items-center gap-2 px-5 py-3 rounded-xl font-bold transition-colors whitespace-nowrap ${activeTab === 'categories' ? 'bg-purple-100 text-purple-700' : 'hover:bg-gray-50 text-gray-600'}`}>
-          <LayoutDashboard className="w-5 h-5" /> Global Categories
-        </button>
-        <button onClick={() => setActiveTab('products')} className={`flex items-center gap-2 px-5 py-3 rounded-xl font-bold transition-colors whitespace-nowrap ${activeTab === 'products' ? 'bg-purple-100 text-purple-700' : 'hover:bg-gray-50 text-gray-600'}`}>
-          <Store className="w-5 h-5" /> B2B Products
         </button>
       </div>
 
       {/* Main Content Area */}
       <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-200">
         
+        {/* SITEMAP TAB */}
+        {activeTab === 'sitemap' && (
+          <SiteMapTowers />
+        )}
+
+        {/* VENDORS TAB */}
+        {activeTab === 'vendors' && (
+          <div className="space-y-8">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <h2 className="text-xl font-bold text-gray-900">Manage Vendor Leads ({vendors.length})</h2>
+              <div className="flex gap-2">
+                <button onClick={handleExportVendors} className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-xl text-sm font-bold transition-colors">
+                  Export Detailed Vendors CSV
+                </button>
+                <button onClick={handleExportUsers} className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl text-sm font-bold transition-colors">
+                  Export Users CSV
+                </button>
+              </div>
+            </div>
+
+            <div className="border border-gray-200 rounded-xl overflow-hidden overflow-x-auto">
+              <table className="w-full text-left min-w-[800px]">
+                <thead className="bg-gray-50 border-b border-gray-200">
+                  <tr>
+                    <th className="px-4 py-3 font-bold text-gray-600 text-sm">Business Info</th>
+                    <th className="px-4 py-3 font-bold text-gray-600 text-sm">Owner & Contact</th>
+                    <th className="px-4 py-3 font-bold text-gray-600 text-sm">Status</th>
+                    <th className="px-4 py-3 font-bold text-gray-600 text-sm">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-100">
+                  {vendors.map((v, i) => (
+                    <tr key={i} className="hover:bg-gray-50">
+                      <td className="px-4 py-3">
+                        <div className="font-bold text-gray-900">{v.name}</div>
+                        <div className="text-xs text-gray-500">{v.category} • {v.neighborhood}</div>
+                      </td>
+                      <td className="px-4 py-3">
+                        <div className="font-medium text-gray-800">{v.ownerName}</div>
+                        <div className="text-xs text-gray-500">{v.phone}</div>
+                      </td>
+                      <td className="px-4 py-3">
+                        <span className={`px-2.5 py-1 rounded-md text-xs font-bold uppercase ${
+                          v.status === 'approved' ? 'bg-green-100 text-green-700' :
+                          v.status === 'pending' ? 'bg-amber-100 text-amber-700' : 'bg-red-100 text-red-700'
+                        }`}>
+                          {v.status}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 flex gap-2">
+                        {v.status !== 'approved' && (
+                          <button onClick={() => onUpdateVendorStatus && onUpdateVendorStatus(v.id, 'approved', 'Super Admin', 'Approved via Admin Panel')} className="text-xs bg-green-100 hover:bg-green-200 text-green-700 font-bold px-3 py-1.5 rounded-lg transition-colors">
+                            Approve
+                          </button>
+                        )}
+                        {v.status !== 'rejected' && (
+                          <button onClick={() => onUpdateVendorStatus && onUpdateVendorStatus(v.id, 'rejected', 'Super Admin', 'Rejected via Admin Panel')} className="text-xs bg-red-100 hover:bg-red-200 text-red-700 font-bold px-3 py-1.5 rounded-lg transition-colors">
+                            Reject
+                          </button>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
         {/* ROLES TAB */}
         {activeTab === 'roles' && (
           <div className="space-y-8">
@@ -177,65 +256,7 @@ export const AdminPanelView: React.FC = () => {
           </div>
         )}
 
-        {/* CATEGORIES TAB */}
-        {activeTab === 'categories' && (
-          <div className="space-y-8">
-            <div>
-              <h2 className="text-xl font-bold text-gray-900 mb-4">Add Global Category</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <input type="text" value={newCatName} onChange={e => setNewCatName(e.target.value)} placeholder="Category Name (e.g., HVAC Repair)" className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 font-medium outline-none focus:border-purple-500" />
-                <input type="text" value={newCatSlug} onChange={e => setNewCatSlug(e.target.value)} placeholder="Slug (e.g., hvac-repair)" className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 font-medium outline-none focus:border-purple-500" />
-                <input type="text" value={newCatIcon} onChange={e => setNewCatIcon(e.target.value)} placeholder="Icon Name (e.g., Wind)" className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 font-medium outline-none focus:border-purple-500" />
-                <input type="text" value={newCatDesc} onChange={e => setNewCatDesc(e.target.value)} placeholder="Short Description" className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 font-medium outline-none focus:border-purple-500" />
-              </div>
-              <button onClick={handleAddCategory} className="mt-4 bg-purple-600 hover:bg-purple-700 text-white font-bold px-6 py-3 rounded-xl transition-colors flex items-center gap-2">
-                <Plus className="w-5 h-5" /> Add Category
-              </button>
-            </div>
 
-            <div>
-              <h2 className="text-xl font-bold text-gray-900 mb-4">Live Categories ({categories.length})</h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                {categories.map((c, i) => (
-                  <div key={i} className="border border-gray-200 rounded-xl p-4 flex flex-col bg-gray-50">
-                    <span className="font-bold text-gray-900">{c.name}</span>
-                    <span className="text-xs text-gray-500 mt-1">Slug: {c.slug} | Icon: {c.iconName}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* B2B PRODUCTS TAB */}
-        {activeTab === 'products' && (
-          <div className="space-y-8">
-            <div>
-              <h2 className="text-xl font-bold text-gray-900 mb-4">Add B2B Product to Showcase</h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <input type="text" value={newProdName} onChange={e => setNewProdName(e.target.value)} placeholder="Product Name" className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 font-medium outline-none focus:border-purple-500" />
-                <input type="text" value={newProdSlug} onChange={e => setNewProdSlug(e.target.value)} placeholder="Category (e.g., sports, electronics)" className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 font-medium outline-none focus:border-purple-500" />
-                <input type="text" value={newProdImage} onChange={e => setNewProdImage(e.target.value)} placeholder="Image URL" className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 font-medium outline-none focus:border-purple-500" />
-              </div>
-              <button onClick={handleAddProduct} className="mt-4 bg-purple-600 hover:bg-purple-700 text-white font-bold px-6 py-3 rounded-xl transition-colors flex items-center gap-2">
-                <Plus className="w-5 h-5" /> Add Product
-              </button>
-            </div>
-
-            <div>
-              <h2 className="text-xl font-bold text-gray-900 mb-4">Live B2B Products ({products.length})</h2>
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-                {products.map((p, i) => (
-                  <div key={i} className="border border-gray-200 bg-gray-50 rounded-xl p-3 flex flex-col items-center text-center">
-                    <img src={p.image_url} alt={p.name} className="w-full h-24 object-cover rounded-lg mb-2 bg-white" />
-                    <span className="font-bold text-gray-900 text-sm line-clamp-2 mt-auto">{p.name}</span>
-                    <span className="text-xs text-purple-600 font-bold mt-1 bg-purple-100 px-2 py-0.5 rounded-md">{p.category_slug}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );

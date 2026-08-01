@@ -64,7 +64,7 @@ export const HomeDashboard = ({
             title="Wedding Requisites" 
             cards={[
               { title: 'Banquet Halls', imageUrl: 'https://images.unsplash.com/photo-1519167758481-83f550bb49b3?auto=format&fit=crop&q=80&w=400', onClick: () => onSelectCategory('wedding') },
-              { title: 'Bridal Requisite', imageUrl: 'https://images.unsplash.com/photo-1595954421407-b6f849b2cbaf?auto=format&fit=crop&q=80&w=400', onClick: () => onSelectCategory('wedding') },
+              { title: 'Bridal Requisite', imageUrl: 'https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&q=80&w=400', onClick: () => onSelectCategory('wedding') },
               { title: 'Caterers', imageUrl: 'https://images.unsplash.com/photo-1555244162-803834f70033?auto=format&fit=crop&q=80&w=400', onClick: () => onSelectCategory('veg-cook') },
             ]} 
           />
@@ -73,7 +73,7 @@ export const HomeDashboard = ({
             cards={[
               { title: 'Beauty Parlours', imageUrl: 'https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&q=80&w=400', onClick: () => onSelectCategory('beauty') },
               { title: 'Spa & Massages', imageUrl: 'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&q=80&w=400', onClick: () => onSelectCategory('beauty') },
-              { title: 'Salons', imageUrl: 'https://images.unsplash.com/photo-1521590832167-7bfcfaa6362f?auto=format&fit=crop&q=80&w=400', onClick: () => onSelectCategory('barber') },
+              { title: 'Salons', imageUrl: 'https://images.unsplash.com/photo-1527799820374-dcf8d9d4a388?auto=format&fit=crop&q=80&w=400', onClick: () => onSelectCategory('barber') },
             ]} 
           />
         </motion.div>
@@ -83,8 +83,8 @@ export const HomeDashboard = ({
             title="Repairs & Services" 
             cards={[
               { title: 'AC Service', imageUrl: 'https://images.unsplash.com/photo-1621905252507-b35492cc74b4?auto=format&fit=crop&q=80&w=400', onClick: () => onSelectCategory('ac-repair') },
-              { title: 'Car Service', imageUrl: 'https://images.unsplash.com/photo-1632823462943-26f0b6ce7a9d?auto=format&fit=crop&q=80&w=400', onClick: () => onSelectCategory('mechanic') },
-              { title: 'Bike Service', imageUrl: 'https://images.unsplash.com/photo-1589785507851-f404433d9c79?auto=format&fit=crop&q=80&w=400', onClick: () => onSelectCategory('mechanic') },
+              { title: 'Car Service', imageUrl: 'https://images.unsplash.com/photo-1625047509168-a7026f36de04?auto=format&fit=crop&q=80&w=400', onClick: () => onSelectCategory('mechanic') },
+              { title: 'Bike Service', imageUrl: 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&q=80&w=400', onClick: () => onSelectCategory('mechanic') },
             ]} 
           />
           <ImageCategorySection 

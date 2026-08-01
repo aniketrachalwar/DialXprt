@@ -5,14 +5,13 @@ export const TRANSLATIONS: Record<AppLanguage, Record<string, string>> = {
     // Header & Meta
     searchPlaceholder: "Search 'Electrician', 'Kirana', 'Raju Plumber'...",
     listBusiness: "List Business",
-    accountHub: "B2B",
+    accountHub: "Account",
     changeLocation: "Services near",
     hyderabad: "Hyderabad",
     notifications: "Notifications",
 
     // Bottom Navigation
     homeTab: "Home",
-    b2bTab: "B2B",
     addBusinessTab: "List your Business",
     accountTab: "Account",
     adminTab: "Admin",
@@ -216,7 +215,7 @@ export const TRANSLATIONS: Record<AppLanguage, Record<string, string>> = {
     // Telugu Translations
     searchPlaceholder: "'ఎలక్ట్రీషియన్', 'కిరాణా', 'ప్లంబర్' అని శోధించండి...",
     listBusiness: "వ్యాపారాన్ని జోడించండి",
-    accountHub: "B2B",
+    accountHub: "Account",
     changeLocation: "సమీప సేవలు",
     hyderabad: "హైదరాబాద్",
     notifications: "నోటిఫికేషన్లు",
@@ -224,7 +223,7 @@ export const TRANSLATIONS: Record<AppLanguage, Record<string, string>> = {
     // Bottom Navigation
     homeTab: "హోమ్",
     addBusinessTab: "వ్యాపారం జోడించు",
-    accountTab: "B2B",
+    accountTab: "Account",
     adminTab: "అడ్మిన్",
     volunteerTab: "వాలంటీర్",
     shopOwnerTab: "షాప్ యజమాని",
@@ -409,7 +408,7 @@ export const TRANSLATIONS: Record<AppLanguage, Record<string, string>> = {
     // Hindi Translations
     searchPlaceholder: "'इलेक्ट्रीशियन', 'किराना', 'प्लंबर' खोजें...",
     listBusiness: "व्यवसाय जोड़ें",
-    accountHub: "B2B",
+    accountHub: "Account",
     changeLocation: "निकटतम सेवाएं",
     hyderabad: "हैदराबाद",
     notifications: "सूचनाएं",
@@ -417,7 +416,7 @@ export const TRANSLATIONS: Record<AppLanguage, Record<string, string>> = {
     // Bottom Navigation
     homeTab: "होम",
     addBusinessTab: "बिजनेस जोड़ें",
-    accountTab: "B2B",
+    accountTab: "Account",
     adminTab: "एडमिन",
     volunteerTab: "वोलंटियर",
     shopOwnerTab: "दुकान मालिक",

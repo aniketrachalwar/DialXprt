@@ -6,7 +6,7 @@ import { BottomNav } from "./components/BottomNav";
 import { SearchBar } from "./components/SearchBar";
 import { VendorCard } from "./components/VendorCard";
 import { VendorRegistrationModal } from "./components/VendorRegistrationModal";
-import { B2BView } from "./components/B2BView";
+import { AccountView } from "./components/AccountView";
 import { LocationPickerModal } from "./components/LocationPickerModal";
 import { ProfileSidebar } from "./components/ProfileSidebar";
 import { SidebarPages } from "./components/SidebarPages";
@@ -47,6 +47,29 @@ import { fetchCategories } from "./lib/adminApi";
 import { HomeDashboard } from "./components/HomeDashboard";
 import { SubCategoryView } from "./components/SubCategoryView";
 import { MapPin, Search, ArrowLeft } from "lucide-react";
+
+const CATEGORY_BANNERS: Record<string, { imageUrl: string; title: string; subtitle: string }> = {
+  'gym': {
+    imageUrl: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&q=80&w=1200',
+    title: 'Transform Your Body Today',
+    subtitle: 'Get 50% off on premium annual gym memberships.'
+  },
+  'mechanic': {
+    imageUrl: 'https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?auto=format&fit=crop&q=80&w=1200',
+    title: 'Expert Auto Care',
+    subtitle: 'Trusted mechanics for all your car and bike repair needs.'
+  },
+  'plumber': {
+    imageUrl: 'https://images.unsplash.com/photo-1585704032915-c3400ca199e7?auto=format&fit=crop&q=80&w=1200',
+    title: '24/7 Emergency Plumbing',
+    subtitle: 'Fast and reliable plumbing services at your doorstep.'
+  },
+  'electrician': {
+    imageUrl: 'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&q=80&w=1200',
+    title: 'Safe Electrical Repairs',
+    subtitle: 'Certified electricians for homes and businesses.'
+  }
+};
 
 export default function App() {
   // Global Language State
@@ -89,6 +112,7 @@ export default function App() {
   const [sortBy, setSortBy] = useState<"distance" | "rating" | "popular">(
     "distance",
   );
+  const [searchRadius, setSearchRadius] = useState<number>(50);
   const [openNowOnly, setOpenNowOnly] = useState<boolean>(false);
   const [verifiedOnly, setVerifiedOnly] = useState<boolean>(false);
 
@@ -105,11 +129,7 @@ export default function App() {
   const [userEmail, setUserEmail] = useState<string>("");
 
   const handleOpenRegistration = () => {
-    if (!userPhone && !userEmail) {
-      setIsAuthModalOpen(true);
-    } else {
-      setIsRegistrationOpen(true);
-    }
+    setIsRegistrationOpen(true);
   };
 
   // URL State Synchronization
@@ -139,15 +159,17 @@ export default function App() {
         if (selectedCategory !== decodedCategory) {
           setSelectedCategory(decodedCategory);
         }
+      } else {
+        if (selectedCategory !== "all") {
+          setSelectedCategory("all");
+        }
       }
     } else if (parts.length >= 2 && parts[0] === 'expert') {
       setSelectedVendorSlug(decodeURIComponent(parts[1]));
       setStaticRoute(null);
-    } else if (parts.length === 1 && ['about', 'investor-relations', 'careers', 'contact', 'free-listing', 'privacy', 'terms', 'b2b'].includes(parts[0])) {
+    } else if (parts.length === 1 && ['about', 'investor-relations', 'careers', 'contact', 'free-listing', 'privacy', 'terms'].includes(parts[0])) {
       setSelectedVendorSlug(null);
-      if (parts[0] === 'b2b') {
-        setActiveTab('account');
-      } else if (parts[0] === 'free-listing') {
+      if (parts[0] === 'free-listing') {
         handleOpenRegistration();
         navigate('/');
       } else {
@@ -156,18 +178,24 @@ export default function App() {
     } else if (parts.length === 0 || location.pathname === '/') {
       setStaticRoute(null);
       setSelectedVendorSlug(null);
+      setSelectedCategory("all");
+      setActiveTab("home");
     }
   }, [location.pathname]);
 
   // Update URL when state changes
   useEffect(() => {
-    if (currentNeighborhood && selectedCategory && selectedCategory !== "all") {
-      const newPath = `/hyderabad/${encodeURIComponent(currentNeighborhood.toLowerCase())}/${encodeURIComponent(selectedCategory)}`;
-      if (location.pathname !== newPath) {
-        navigate(newPath, { replace: true });
+    if (activeTab === 'home' && !staticRoute && !selectedVendorSlug) {
+      if (currentNeighborhood && selectedCategory && selectedCategory !== "all") {
+        const newPath = `/hyderabad/${encodeURIComponent(currentNeighborhood.toLowerCase())}/${encodeURIComponent(selectedCategory)}`;
+        if (location.pathname !== newPath) {
+          navigate(newPath);
+        }
+      } else if (selectedCategory === "all" && location.pathname !== "/") {
+        navigate("/");
       }
     }
-  }, [currentNeighborhood, selectedCategory]);
+  }, [currentNeighborhood, selectedCategory, activeTab, staticRoute, selectedVendorSlug, location.pathname, navigate]);
 
   // Dynamic SEO Service Name
   const serviceName = useMemo(() => {
@@ -284,7 +312,7 @@ export default function App() {
 
   const handleUpdateVendorDetailsSubmit = (updatedVendor: Vendor) => {
     updateVendorDetails(updatedVendor);
-    loadVendors();
+    loadData();
     addNotification({
       title: "Business Details Updated!",
       message: `Listing details for '${updatedVendor.name}' were saved.`,
@@ -324,7 +352,7 @@ export default function App() {
   // Load Vendors on Mount & Filter Change
   useEffect(() => {
     loadData();
-  }, [userLat, userLng, selectedCategory, selectedSubCategory, searchQuery]);
+  }, [userLat, userLng, selectedCategory, selectedSubCategory, searchQuery, searchRadius]);
 
   const loadData = async () => {
     setLoading(true);
@@ -335,7 +363,8 @@ export default function App() {
         selectedCategory,
         searchQuery,
         true, // Include pending for volunteer review visibility
-        selectedSubCategory
+        selectedSubCategory,
+        searchRadius
       );
       setVendors(data);
       
@@ -393,12 +422,12 @@ export default function App() {
     );
   };
 
-  // Auto-detect on initial load if not already detected
+  // Auto-detect on category selection if not already detected
   useEffect(() => {
-    if (!isAutoDetected && navigator.geolocation) {
+    if (!isAutoDetected && navigator.geolocation && selectedCategory !== "all") {
       handleAutoDetectGPS();
     }
-  }, []);
+  }, [selectedCategory, isAutoDetected]);
 
   const handleSelectNeighborhood = (n: Neighborhood) => {
     setUserLat(n.lat);
@@ -425,7 +454,7 @@ export default function App() {
     >,
   ) => {
     const newVendor = await registerVendor(vendorData);
-    await loadVendors();
+    await loadData();
 
     addNotification({
       title: "Store Submitted for Verification!",
@@ -444,7 +473,7 @@ export default function App() {
   ) => {
     const updated = updateVendorStatus(vendorId, status, volunteerName, notes);
     if (updated) {
-      loadVendors();
+      loadData();
       if (status === "approved") {
         addNotification({
           title: "Store Verified & Live!",
@@ -590,6 +619,9 @@ export default function App() {
           setSearchQuery("");
           setSelectedCategory("all");
           window.scrollTo({ top: 0, behavior: "smooth" });
+          if (location.pathname !== "/") {
+            navigate("/");
+          }
         }}
         currentRole={currentRole}
         onToggleRole={(role) => {
@@ -608,7 +640,10 @@ export default function App() {
               searchQuery={searchQuery}
               onSearchChange={setSearchQuery}
               selectedCategory={selectedCategory}
-              onSelectCategory={setSelectedCategory}
+              onSelectCategory={(cat) => {
+                setSelectedCategory(cat);
+                setSelectedSubCategory(null);
+              }}
               categories={categories}
               vendors={approvedVendors}
               onSelectVendor={(v) => navigate(`/expert/${v.slug}`)}
@@ -639,9 +674,30 @@ export default function App() {
         ) : staticRoute ? (
           <StaticPage route={staticRoute} />
         ) : activeTab === "account" ? (
-          <B2BView />
+          <AccountView
+            currentRole={currentRole}
+            onRoleChange={setCurrentRole}
+            userPhone={userPhone}
+            userName={userName}
+            userEmail={userEmail}
+            onUpdateUserProfile={handleUpdateUserProfile}
+            onUpdateVendorDetails={handleUpdateVendorDetailsSubmit}
+            onLogout={handleLogout}
+            vendors={vendors}
+            categories={categories}
+            currentNeighborhood={currentNeighborhood}
+            onUpdateVendorStatus={handleUpdateVendorStatus}
+            onOpenRegistration={handleOpenRegistration}
+            onExportCSV={handleExportCSV}
+            onSelectVendor={(v) => navigate(`/expert/${v.slug}`)}
+            currentLang={currentLang}
+          />
         ) : activeTab === "admin" ? (
-          <AdminPanelView />
+          <AdminPanelView 
+            vendors={vendors}
+            onUpdateVendorStatus={handleUpdateVendorStatus}
+            onExportCSV={handleExportCSV}
+          />
         ) : ["favorites", "saved", "transactions", "customer_service", "investor_relations", "policy", "feedback", "help"].includes(activeTab) ? (
           <SidebarPages activeTab={activeTab} onBack={() => setActiveTab("home")} />
         ) : (
@@ -652,17 +708,13 @@ export default function App() {
               <HomeDashboard
                 categories={categories}
                 onSelectCategory={(slug) => {
-                  if (slug === 'b2b') {
-                    setActiveTab('account');
-                  } else {
-                    setSelectedCategory(slug);
-                    setSelectedSubCategory(null);
-                  }
+                  setSelectedCategory(slug);
+                  setSelectedSubCategory(null);
                 }}
                 onSearchQuery={(q) => setSearchQuery(q)}
                 currentLang={currentLang}
               />
-            ) : selectedCategory !== "all" && !selectedSubCategory && searchQuery === "" ? (
+            ) : selectedCategory !== "all" && !selectedSubCategory && searchQuery === "" && (categories.find(c => c.slug === selectedCategory)?.subcategories?.length || 0) > 0 ? (
               /* SUBCATEGORY SELECTION VIEW */
               <SubCategoryView 
                 category={categories.find(c => c.slug === selectedCategory) || categories[0]}
@@ -676,6 +728,20 @@ export default function App() {
             ) : (
               /* SPECIFIC CATEGORY / SEARCH RESULTS VIEW - SORTED BY PROXIMITY */
               <div className="space-y-4 animate-fade-in">
+                {/* Category Ad Banner */}
+                {selectedCategory !== "all" && !searchQuery && CATEGORY_BANNERS[selectedCategory] && (
+                  <div className="w-full h-32 sm:h-40 rounded-2xl overflow-hidden relative shadow-sm">
+                    <img src={CATEGORY_BANNERS[selectedCategory].imageUrl} alt="Category Ad" className="w-full h-full object-cover" />
+                    <div className="absolute inset-0 bg-gradient-to-r from-black/70 to-transparent flex items-center p-5 sm:p-6">
+                      <div className="text-white max-w-xs sm:max-w-sm">
+                        <span className="text-[10px] font-bold bg-[#F36F21] px-2 py-1 rounded mb-2 inline-block uppercase tracking-wider">Sponsored</span>
+                        <h3 className="text-lg sm:text-xl font-extrabold leading-tight mb-1">{CATEGORY_BANNERS[selectedCategory].title}</h3>
+                        <p className="text-xs sm:text-sm text-gray-200">{CATEGORY_BANNERS[selectedCategory].subtitle}</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 {/* Location & Category Results Header Bar */}
                 <div className="flex flex-col gap-3 bg-white p-4 rounded-2xl border border-gray-200 shadow-sm">
                   <div className="flex items-center gap-3">
@@ -729,6 +795,18 @@ export default function App() {
                       <option value="distance">Sort by: Distance</option>
                       <option value="rating">Sort by: Rating</option>
                       <option value="popular">Sort by: Popularity</option>
+                    </select>
+
+                    <select
+                      value={searchRadius}
+                      onChange={(e) => setSearchRadius(Number(e.target.value))}
+                      className="px-3 py-1.5 bg-white border border-gray-200 rounded-full text-xs font-bold text-gray-700 outline-none focus:ring-2 focus:ring-[#1A9E9E] shrink-0"
+                    >
+                      <option value={1}>Within 1 km</option>
+                      <option value={2}>Within 2 km</option>
+                      <option value={5}>Within 5 km</option>
+                      <option value={10}>Within 10 km</option>
+                      <option value={50}>Anywhere (50km)</option>
                     </select>
 
                     <button
@@ -837,6 +915,12 @@ export default function App() {
             handleOpenRegistration();
           } else {
             setActiveTab(tab);
+            if (tab === "home") {
+              setSelectedCategory("all");
+              if (location.pathname !== "/") {
+                navigate("/");
+              }
+            }
           }
         }}
         currentRole={currentRole}

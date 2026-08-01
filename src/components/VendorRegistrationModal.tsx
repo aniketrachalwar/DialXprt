@@ -3,6 +3,28 @@ import { X, Camera, Mic, MapPin, CheckCircle2, ChevronRight, ChevronLeft, Buildi
 import { Category, Vendor } from '../types';
 import { HYDERABAD_NEIGHBORHOODS } from '../data/mockVendors';
 import { AppLanguage, getTranslation, getCategoryName } from '../lib/translations';
+import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
+import L from 'leaflet';
+
+// Fix Leaflet default marker icons in React
+delete (L.Icon.Default.prototype as any)._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+  iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+  shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+});
+
+function LocationMarker({ position, setPosition }: { position: [number, number]; setPosition: (pos: [number, number]) => void }) {
+  const map = useMapEvents({
+    click(e) {
+      setPosition([e.latlng.lat, e.latlng.lng]);
+    },
+  });
+
+  return (
+    <Marker position={position}></Marker>
+  );
+}
 
 interface VendorRegistrationModalProps {
   isOpen: boolean;
@@ -101,7 +123,7 @@ export const VendorRegistrationModal: React.FC<VendorRegistrationModalProps> = (
 
   const handleSubmitForm = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!ownerName || !categorySlug || !experience || !neighborhood || !pincode || !phone || !whatsapp) {
+    if (!ownerName || !categorySlug || !experience || !neighborhood || !pincode || !phone) {
       alert('Please fill in all required fields marked with *');
       return;
     }
@@ -141,9 +163,10 @@ export const VendorRegistrationModal: React.FC<VendorRegistrationModalProps> = (
       });
       setLoading(false);
       onClose();
-    } catch (err) {
+    } catch (err: any) {
+      console.error('Registration error:', err);
       setLoading(false);
-      alert('Error submitting store registration.');
+      alert(`Error submitting store registration: ${err.message || String(err)}`);
     }
   };
 
@@ -347,6 +370,22 @@ export const VendorRegistrationModal: React.FC<VendorRegistrationModalProps> = (
                     placeholder="Better if you provide Name."
                     className="w-full pl-9 pr-3 py-2.5 text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0F5C5C] focus:outline-none min-h-[48px]"
                   />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-gray-700 mb-1">
+                  Pin Location on Map *
+                </label>
+                <p className="text-[10px] text-gray-500 mb-2">Tap on the map to set exact shop location.</p>
+                <div className="h-48 w-full rounded-xl overflow-hidden border border-gray-300 z-0">
+                  <MapContainer center={[lat, lng]} zoom={15} scrollWheelZoom={false} style={{ height: '100%', width: '100%', zIndex: 0 }}>
+                    <TileLayer
+                      url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                      attribution='&copy; OpenStreetMap'
+                    />
+                    <LocationMarker position={[lat, lng]} setPosition={(pos) => { setLat(pos[0]); setLng(pos[1]); }} />
+                  </MapContainer>
                 </div>
               </div>
 

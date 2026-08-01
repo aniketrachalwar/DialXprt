@@ -1,5 +1,5 @@
 import React from 'react';
-import { Phone, MapPin, CheckCircle2, Star, MessageCircle } from 'lucide-react';
+import { Phone, MapPin, CheckCircle2, Star, MessageCircle, Navigation, Share2 } from 'lucide-react';
 import { Vendor } from '../types';
 import { WhatsAppLogo } from './WhatsAppLogo';
 import { AppLanguage, getTranslation } from '../lib/translations';
@@ -70,13 +70,19 @@ export const VendorCard: React.FC<VendorCardProps> = ({
 
           {/* Ratings & Reviews */}
           <div className="flex items-center gap-1.5 mb-1.5">
-            <div className="flex items-center gap-0.5">
-              {[1, 2, 3, 4, 5].map((s) => (
-                <Star key={s} className={`w-3.5 h-3.5 ${s <= (vendor.rating || 4.5) ? 'fill-[#FFA500] text-[#FFA500]' : 'fill-gray-200 text-gray-200'}`} />
-              ))}
-            </div>
-            <span className="font-bold text-gray-800 text-sm ml-1">{vendor.rating || '4.5'}</span>
-            <span className="text-gray-500 text-xs">({vendor.reviewsCount || 0})</span>
+            {vendor.reviewsCount === 0 || vendor.rating === 0 ? (
+              <span className="text-[10px] font-bold bg-[#22C55E]/10 text-[#22C55E] px-2 py-0.5 rounded-full uppercase tracking-wider">NEW</span>
+            ) : (
+              <>
+                <div className="flex items-center gap-0.5">
+                  {[1, 2, 3, 4, 5].map((s) => (
+                    <Star key={s} className={`w-3.5 h-3.5 ${s <= (vendor.rating || 4.5) ? 'fill-[#FFA500] text-[#FFA500]' : 'fill-gray-200 text-gray-200'}`} />
+                  ))}
+                </div>
+                <span className="font-bold text-gray-800 text-sm ml-1">{vendor.rating || '4.5'}</span>
+                <span className="text-gray-500 text-xs">({vendor.reviewsCount || 0})</span>
+              </>
+            )}
           </div>
 
           {/* Location / Distance */}
@@ -102,42 +108,79 @@ export const VendorCard: React.FC<VendorCardProps> = ({
         </div>
       </div>
 
-      {/* CTA Buttons Hierarchy */}
-      <div className="flex flex-col sm:flex-row gap-2 mt-2 pt-3 border-t border-gray-50">
-        <div className="flex gap-2 w-full">
-          {/* Primary CTA: Call Now */}
-          <a 
-            href={callUrl} 
-            onClick={(e) => { e.stopPropagation(); if (onTrackCall) onTrackCall(vendor.id); }} 
-            className="flex-1 bg-[#22C55E] hover:bg-green-600 text-white font-bold py-2.5 rounded-xl flex items-center justify-center gap-2 shadow-sm transition-colors min-h-[44px]"
-          >
-            <Phone className="w-4 h-4 fill-white" />
-            <span className="text-[14px]">Call Now</span>
-          </a>
+      {/* Interaction Icons Row */}
+      <div className="flex justify-between items-center mt-4 pt-4 border-t border-gray-100 px-2 sm:px-6">
+        {/* Call Now */}
+        <a 
+          href={callUrl} 
+          onClick={(e) => { e.stopPropagation(); if (onTrackCall) onTrackCall(vendor.id); }}
+          className="flex flex-col items-center gap-2 group"
+        >
+          <div className="w-[48px] h-[48px] rounded-2xl bg-[#1C51FE] flex items-center justify-center shadow-sm group-hover:bg-blue-700 transition-colors">
+            <Phone className="w-5 h-5 fill-white text-white" />
+          </div>
+          <span className="text-[11px] font-bold text-gray-800">Call Now</span>
+        </a>
 
-          {/* Secondary CTA: WhatsApp */}
-          <a 
-            href={whatsappUrl} 
-            target="_blank" 
-            rel="noopener noreferrer" 
-            onClick={(e) => { e.stopPropagation(); if (onTrackWhatsApp) onTrackWhatsApp(vendor.id); }} 
-            className="flex-1 bg-white border border-[#22C55E] text-[#22C55E] hover:bg-green-50 font-bold py-2.5 rounded-xl flex items-center justify-center gap-2 shadow-sm transition-colors min-h-[44px]"
-          >
-            <WhatsAppLogo size="sm" />
-            <span className="text-[14px]">WhatsApp</span>
-          </a>
-        </div>
+        {/* WhatsApp */}
+        <a 
+          href={whatsappUrl} 
+          target="_blank" 
+          rel="noopener noreferrer"
+          onClick={(e) => { e.stopPropagation(); if (onTrackWhatsApp) onTrackWhatsApp(vendor.id); }}
+          className="flex flex-col items-center gap-2 group"
+        >
+          <div className="w-[48px] h-[48px] rounded-2xl bg-white border border-gray-200 flex items-center justify-center shadow-sm group-hover:bg-gray-50 transition-colors">
+            <WhatsAppLogo size="md" />
+          </div>
+          <span className="text-[11px] font-bold text-gray-800">WhatsApp</span>
+        </a>
 
-        {/* Tertiary CTA: Get Quote */}
+        {/* Direction */}
+        <a 
+          href={`https://www.google.com/maps/dir/?api=1&destination=${vendor.lat},${vendor.lng}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={(e) => e.stopPropagation()}
+          className="flex flex-col items-center gap-2 group"
+        >
+          <div className="w-[48px] h-[48px] rounded-2xl bg-white border border-gray-200 flex items-center justify-center shadow-sm group-hover:bg-gray-50 transition-colors transform -rotate-45">
+            <Navigation className="w-5 h-5 text-slate-700 ml-1 mt-1" />
+          </div>
+          <span className="text-[11px] font-bold text-gray-800">Direction</span>
+        </a>
+
+        {/* Share */}
+        <button 
+          onClick={(e) => {
+            e.stopPropagation();
+            if (navigator.share) {
+              navigator.share({
+                title: vendor.name,
+                text: `Check out ${vendor.name} on DialXprt`,
+                url: `${window.location.origin}/expert/${vendor.slug}`
+              }).catch(console.error);
+            }
+          }}
+          className="flex flex-col items-center gap-2 group cursor-pointer"
+        >
+          <div className="w-[48px] h-[48px] rounded-2xl bg-white border border-gray-200 flex items-center justify-center shadow-sm group-hover:bg-gray-50 transition-colors">
+            <Share2 className="w-5 h-5 text-slate-700" />
+          </div>
+          <span className="text-[11px] font-bold text-gray-800">Share</span>
+        </button>
+      </div>
+
+      {/* Enquire Now Button */}
+      <div className="mt-5">
         <button
           onClick={(e) => {
             e.stopPropagation();
             onGetBestDeal(vendor);
           }}
-          className="w-full sm:w-auto px-4 bg-gray-50 hover:bg-gray-100 text-gray-700 font-bold py-2.5 rounded-xl flex items-center justify-center gap-2 shadow-sm transition-colors border border-gray-200 min-h-[44px]"
+          className="w-full bg-[#1C51FE] hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl flex items-center justify-center shadow-sm transition-colors text-[14px]"
         >
-          <MessageCircle className="w-4 h-4" />
-          <span className="text-[14px]">Get Quote</span>
+          Enquire Now
         </button>
       </div>
     </article>
