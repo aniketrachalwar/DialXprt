@@ -168,8 +168,8 @@ export async function registerVendor(vendorData: Omit<Vendor, 'id' | 'slug' | 'c
     ...vendorData,
     id: `v-${Date.now()}`,
     slug,
-    isVerified: false,
-    status: 'pending',
+    isVerified: true,
+    status: 'approved',
     rating: 0,
     reviewsCount: 0,
     viewsCount: 0,
@@ -201,8 +201,8 @@ export async function registerVendor(vendorData: Omit<Vendor, 'id' | 'slug' | 'c
           suggestions: newVendor.suggestions,
           reference_name: newVendor.referenceName,
           reference_number: newVendor.referenceNumber,
-          status: 'pending',
-          is_verified: false,
+          status: 'approved',
+          is_verified: true,
         },
       ]);
       // Timeout after 2.5 seconds to prevent hanging if Supabase is down or slow

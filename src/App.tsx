@@ -547,9 +547,9 @@ export default function App() {
     loadData();
 
     addNotification({
-      title: "Store Submitted for Verification!",
-      message: `Your business '${newVendor.name}' is registered. DialXprt volunteer will verify offline shortly.`,
-      type: "new_store",
+      title: "Store Live Successfully!",
+      message: `Your business '${newVendor.name}' is registered and is now live on DialXprt instantly!`,
+      type: "approval",
       storeId: newVendor.id,
     });
   };
@@ -768,11 +768,20 @@ export default function App() {
           <div className="space-y-4">
             <SearchBar
               searchQuery={searchQuery}
-              onSearchChange={setSearchQuery}
+              onSearchChange={(q) => {
+                setSearchQuery(q);
+                if (q.trim().length > 0 && selectedCategory !== "all") {
+                  setSelectedCategory("all");
+                  setSelectedSubCategory(null);
+                }
+              }}
               selectedCategory={selectedCategory}
               onSelectCategory={(cat) => {
                 setSelectedCategory(cat);
                 setSelectedSubCategory(null);
+                if (cat !== "all") {
+                  setSearchQuery("");
+                }
               }}
               categories={categories}
               vendors={approvedVendors}
@@ -942,8 +951,17 @@ export default function App() {
                 onSelectCategory={(slug) => {
                   setSelectedCategory(slug);
                   setSelectedSubCategory(null);
+                  if (slug !== "all") {
+                    setSearchQuery("");
+                  }
                 }}
-                onSearchQuery={(q) => setSearchQuery(q)}
+                onSearchQuery={(q) => {
+                  setSearchQuery(q);
+                  if (q.trim().length > 0 && selectedCategory !== "all") {
+                    setSelectedCategory("all");
+                    setSelectedSubCategory(null);
+                  }
+                }}
                 currentLang={currentLang}
                 onShowAllCategories={() => setActiveTab("all-categories")}
               />
