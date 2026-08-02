@@ -132,11 +132,11 @@ export const AdminPanelView: React.FC<AdminPanelViewProps> = ({ currentRole = "a
 
   const filteredAdminVendors = adminVendors.filter(v => 
     !vendorSearchQuery || 
-    v.name.toLowerCase().includes(vendorSearchQuery.toLowerCase()) || 
-    v.category.toLowerCase().includes(vendorSearchQuery.toLowerCase()) || 
-    v.ownerName.toLowerCase().includes(vendorSearchQuery.toLowerCase()) || 
+    (v.name && v.name.toLowerCase().includes(vendorSearchQuery.toLowerCase())) || 
+    (v.category && v.category.toLowerCase().includes(vendorSearchQuery.toLowerCase())) || 
+    (v.ownerName && v.ownerName.toLowerCase().includes(vendorSearchQuery.toLowerCase())) || 
     (v.phone && v.phone.includes(vendorSearchQuery)) || 
-    v.neighborhood.toLowerCase().includes(vendorSearchQuery.toLowerCase())
+    (v.neighborhood && v.neighborhood.toLowerCase().includes(vendorSearchQuery.toLowerCase()))
   );
 
   if (loading) return <div className="p-10 text-center font-bold text-gray-500">Loading Admin Data...</div>;

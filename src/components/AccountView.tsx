@@ -462,10 +462,10 @@ export const AccountView: React.FC<AccountViewProps> = ({
   const filteredAdminVendors = vendors.filter((v) => {
     const matchesStatus = statusFilter === 'all' || v.status === statusFilter;
     const matchesSearch =
-      v.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      v.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      v.neighborhood.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      v.phone.includes(searchTerm);
+      (v.name && v.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (v.category && v.category.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (v.neighborhood && v.neighborhood.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (v.phone && v.phone.includes(searchTerm));
     return matchesStatus && matchesSearch;
   });
 

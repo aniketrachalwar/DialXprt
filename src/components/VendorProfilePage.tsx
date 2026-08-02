@@ -119,7 +119,7 @@ export const VendorProfilePage: React.FC<VendorProfilePageProps> = ({
 
           <div className="text-xs">
             {vendor.operatingHours ? (
-              vendor.operatingHours.toLowerCase().includes('24/7') ? (
+              (vendor.operatingHours || "").toLowerCase().includes('24/7') ? (
                 <span className="text-[#22C55E] font-bold">Open Now: {vendor.operatingHours}</span>
               ) : (
                 <span className="text-gray-700 font-medium">Hours: {vendor.operatingHours}</span>
@@ -261,3 +261,4 @@ export const VendorProfilePage: React.FC<VendorProfilePageProps> = ({
     </div>
   );
 };
+

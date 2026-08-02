@@ -38,9 +38,9 @@ export const VolunteerAdminDashboard: React.FC<VolunteerAdminDashboardProps> = (
     if (!searchFilter) return true;
     const q = searchFilter.toLowerCase();
     return (
-      v.name.toLowerCase().includes(q) ||
-      v.category.toLowerCase().includes(q) ||
-      v.neighborhood.toLowerCase().includes(q) ||
+      (v.name || "").toLowerCase().includes(q) ||
+      (v.category || "").toLowerCase().includes(q) ||
+      (v.neighborhood || "").toLowerCase().includes(q) ||
       v.phone.includes(q)
     );
   });
@@ -500,3 +500,5 @@ RETURNS TABLE(...) AS $$ ... $$ LANGUAGE plpgsql;`}
     </div>
   );
 };
+
+

@@ -109,7 +109,7 @@ export async function fetchNearbyVendors(
       return false;
     }
     // Filter by category
-    if (cat && cat !== 'all' && v.categorySlug.toLowerCase() !== cat) {
+    if (cat && cat !== 'all' && v.categorySlug && (v.categorySlug || "").toLowerCase() !== cat) {
       return false;
     }
     // Filter by subcategory
@@ -118,10 +118,10 @@ export async function fetchNearbyVendors(
     }
     // Filter by search query
     if (q) {
-      const matchesName = v.name.toLowerCase().includes(q);
-      const matchesCat = v.category.toLowerCase().includes(q) || v.categorySlug.toLowerCase().includes(q);
-      const matchesLoc = v.neighborhood.toLowerCase().includes(q) || v.address.toLowerCase().includes(q) || (v.pincode || '').includes(q);
-      const matchesOwner = v.ownerName.toLowerCase().includes(q);
+      const matchesName = (v.name || "").toLowerCase().includes(q);
+      const matchesCat = (v.category || "").toLowerCase().includes(q) || (v.categorySlug || "").toLowerCase().includes(q);
+      const matchesLoc = (v.neighborhood || "").toLowerCase().includes(q) || (v.address || "").toLowerCase().includes(q) || (v.pincode || '').includes(q);
+      const matchesOwner = (v.ownerName || "").toLowerCase().includes(q);
       const matchesPhone = (v.phone || '').includes(q) || (v.whatsapp || '').includes(q);
       const matchesDesc = (v.description || '').toLowerCase().includes(q);
       return matchesName || matchesCat || matchesLoc || matchesOwner || matchesPhone || matchesDesc;
@@ -133,10 +133,10 @@ export async function fetchNearbyVendors(
   if (q && filtered.length === 0 && cat && cat !== 'all') {
     filtered = allVendors.filter((v) => {
       if (!includePending && v.status !== 'approved') return false;
-      const matchesName = v.name.toLowerCase().includes(q);
-      const matchesCat = v.category.toLowerCase().includes(q) || v.categorySlug.toLowerCase().includes(q);
-      const matchesLoc = v.neighborhood.toLowerCase().includes(q) || v.address.toLowerCase().includes(q) || (v.pincode || '').includes(q);
-      const matchesOwner = v.ownerName.toLowerCase().includes(q);
+      const matchesName = (v.name || "").toLowerCase().includes(q);
+      const matchesCat = (v.category || "").toLowerCase().includes(q) || (v.categorySlug || "").toLowerCase().includes(q);
+      const matchesLoc = (v.neighborhood || "").toLowerCase().includes(q) || (v.address || "").toLowerCase().includes(q) || (v.pincode || '').includes(q);
+      const matchesOwner = (v.ownerName || "").toLowerCase().includes(q);
       const matchesPhone = (v.phone || '').includes(q) || (v.whatsapp || '').includes(q);
       const matchesDesc = (v.description || '').toLowerCase().includes(q);
       return matchesName || matchesCat || matchesLoc || matchesOwner || matchesPhone || matchesDesc;
@@ -392,3 +392,5 @@ export async function deleteVendor(vendorId: string): Promise<boolean> {
   }
   return true;
 }
+
+

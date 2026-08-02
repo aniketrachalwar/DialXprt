@@ -85,7 +85,10 @@ export async function fetchCategories(): Promise<Category[]> {
         // Merge Supabase categories with local INITIAL_CATEGORIES to retain emoji and group
         const merged = [...INITIAL_CATEGORIES];
         data.forEach((d: any) => {
-           const existingIndex = merged.findIndex(c => c.slug === d.slug || c.name.toLowerCase().trim() === d.name.toLowerCase().trim());
+           const existingIndex = merged.findIndex(c => 
+             c.slug === d.slug || 
+             (c.name && d.name && c.name.toLowerCase().trim() === d.name.toLowerCase().trim())
+           );
            if (existingIndex >= 0) {
               merged[existingIndex] = { ...merged[existingIndex], ...d, emoji: merged[existingIndex].emoji || d.emoji, group: merged[existingIndex].group || d.group };
            } else {

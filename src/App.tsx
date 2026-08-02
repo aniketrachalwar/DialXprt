@@ -1205,7 +1205,7 @@ export default function App() {
           }
         }}
         currentRole={currentRole}
-        pendingCount={pendingCount}
+        pendingCount={vendors.filter(v => v.status === "pending").length}
         currentLang={currentLang}
       />
 
@@ -1276,3 +1276,4 @@ export default function App() {
     </div>
   );
 }
+

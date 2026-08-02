@@ -118,7 +118,7 @@ export const VendorCard: React.FC<VendorCardProps> = ({
           {/* Key Tags */}
           <div className="flex flex-wrap gap-1 mt-auto">
             {vendor.operatingHours ? (
-              vendor.operatingHours.toLowerCase().includes('24/7') ? (
+              (vendor.operatingHours || "").toLowerCase().includes('24/7') ? (
                 <span className="bg-green-50 text-green-700 text-[10px] font-bold px-2 py-0.5 rounded flex items-center gap-1 border border-green-100">
                   <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span> {vendor.operatingHours}
                 </span>
@@ -213,3 +213,4 @@ export const VendorCard: React.FC<VendorCardProps> = ({
     </article>
   );
 };
+
