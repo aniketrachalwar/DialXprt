@@ -13,9 +13,9 @@ const B2B_CATEGORIES = [
 export const B2BSection = ({ onSelectCategory }: { onSelectCategory: (slug: string) => void }) => {
   return (
     <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
-      <div className="p-4 border-[#1A9E9E] border-gray-100 flex items-center justify-between">
+      <div className="p-4 border-cyan-500 border-gray-100 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Warehouse className="w-5 h-5 text-[#1A9E9E]" />
+          <Warehouse className="w-5 h-5 text-cyan-500" />
           <h3 className="font-extrabold text-gray-900 text-lg">B2B & Manufacturing</h3>
         </div>
         <button 
@@ -31,10 +31,10 @@ export const B2BSection = ({ onSelectCategory }: { onSelectCategory: (slug: stri
           <div
             key={cat.id}
             onClick={() => onSelectCategory(cat.slug)}
-            className="p-4 flex flex-col items-center justify-center gap-3 cursor-pointer hover:bg-indigo-50/50 transition-colors group border-[#1A9E9E] border-r border-gray-100"
+            className="p-4 flex flex-col items-center justify-center gap-3 cursor-pointer hover:bg-indigo-50/50 transition-colors group border-cyan-500 border-r border-gray-100"
           >
             <div className="w-12 h-12 rounded-full bg-gray-50 flex items-center justify-center group-hover:bg-indigo-100 group-hover:-translate-y-1 group-hover:shadow-md transition-all duration-300">
-              <cat.icon className="w-6 h-6 text-gray-600 group-hover:text-[#1A9E9E] group-hover:scale-110 transition-transform duration-300" />
+              <cat.icon className="w-6 h-6 text-gray-600 group-hover:text-cyan-500 group-hover:scale-110 transition-transform duration-300" />
             </div>
             <span className="text-[11px] sm:text-xs font-semibold text-gray-700 text-center leading-tight">
               {cat.title}
@@ -45,3 +45,4 @@ export const B2BSection = ({ onSelectCategory }: { onSelectCategory: (slug: stri
     </div>
   );
 };
+

@@ -68,6 +68,22 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overscroll-behavior-y: none;
+  background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #312e81 100%); /* Dark premium vibrant backdrop */
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
+}
+
+#root {
+  width: 100%;
+  max-width: 440px;
+  background: #ffffff;
+  min-height: 100vh;
+  box-shadow: 0 0 50px rgba(0,0,0,0.5);
+  transform: translateZ(0); /* Constrains fixed elements */
+  position: relative;
+  overflow-x: hidden;
 }
 
 button, a, input, select, textarea {
@@ -85,4 +101,5 @@ button, a, input, select, textarea {
 img {
   content-visibility: auto;
 }
+
 

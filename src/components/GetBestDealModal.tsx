@@ -132,3 +132,4 @@ export const GetBestDealModal: React.FC<GetBestDealModalProps> = ({
     </div>
   );
 };
+

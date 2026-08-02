@@ -34,3 +34,4 @@ export const WhatsAppLogo: React.FC<WhatsAppLogoProps> = ({ className = '', size
     </svg>
   );
 };
+

@@ -52,7 +52,7 @@ export const LanguageModal: React.FC<LanguageModalProps> = ({
 
           <div className="flex items-center justify-between border-b pb-3">
             <div className="flex items-center gap-2">
-              <Globe className="w-5 h-5 text-[#1A9E9E]" />
+              <Globe className="w-5 h-5 text-cyan-500" />
               <div>
                 <h3 className="font-black text-base text-gray-900">Select Language</h3>
                 <p className="text-[11px] text-gray-500 font-medium">భాషను ఎంచుకోండి / भाषा चुनें</p>
@@ -76,7 +76,7 @@ export const LanguageModal: React.FC<LanguageModalProps> = ({
                 }}
                 className={`w-full p-3.5 rounded-2xl flex items-center justify-between transition-all text-left border active:scale-98 ${
                   currentLang === langItem.code
-                    ? 'bg-indigo-50/90 border-[#1A9E9E] text-[#1A9E9E] shadow-xs'
+                    ? 'bg-indigo-50/90 border-cyan-500 text-cyan-500 shadow-xs'
                     : 'bg-gray-50/80 border-gray-200 text-gray-800 hover:bg-gray-100'
                 }`}
               >
@@ -88,7 +88,7 @@ export const LanguageModal: React.FC<LanguageModalProps> = ({
                   </div>
                 </div>
                 {currentLang === langItem.code ? (
-                  <div className="w-6 h-6 rounded-full bg-[#1A9E9E] text-white flex items-center justify-center">
+                  <div className="w-6 h-6 rounded-full bg-cyan-500 text-white flex items-center justify-center">
                     <Check className="w-4 h-4 stroke-[3]" />
                   </div>
                 ) : (
@@ -108,3 +108,4 @@ export const LanguageModal: React.FC<LanguageModalProps> = ({
     </>
   );
 };
+

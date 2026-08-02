@@ -35,3 +35,4 @@ export const PopularSearches = ({ onSearchQuery }: { onSearchQuery: (query: stri
     </div>
   );
 };
+

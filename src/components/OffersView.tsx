@@ -41,7 +41,7 @@ export const OffersView: React.FC = () => {
             <h3 className="text-lg font-bold text-gray-900 leading-tight mb-1">Need Emergency Repair?</h3>
             <p className="text-xs text-gray-500 mb-3">Get verified experts in 30 mins.</p>
             <div className="flex items-center justify-between">
-              <span className="text-[#1A9E9E] font-extrabold text-sm">Save ₹100</span>
+              <span className="text-cyan-500 font-extrabold text-sm">Save ₹100</span>
               <button className="bg-gray-900 text-white text-xs font-bold px-3 py-1.5 rounded-lg active:scale-95">Book Now</button>
             </div>
           </div>
@@ -67,3 +67,4 @@ export const OffersView: React.FC = () => {
     </div>
   );
 };
+

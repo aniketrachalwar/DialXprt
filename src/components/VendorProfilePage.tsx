@@ -27,7 +27,7 @@ export const VendorProfilePage: React.FC<VendorProfilePageProps> = ({
       <div className="bg-white p-8 rounded-2xl shadow-sm text-center max-w-md">
         <h1 className="text-xl font-bold text-gray-900 mb-2">Expert Not Found</h1>
         <p className="text-gray-500 mb-6">The business you are looking for may have been removed or the link is invalid.</p>
-        <button onClick={() => navigate('/')} className="bg-[#1A9E9E] text-white px-6 py-2.5 rounded-xl font-bold">Go Back Home</button>
+        <button onClick={() => navigate('/')} className="bg-cyan-500 text-white px-6 py-2.5 rounded-xl font-bold">Go Back Home</button>
       </div>
     </div>
   );
@@ -193,7 +193,7 @@ export const VendorProfilePage: React.FC<VendorProfilePageProps> = ({
             <div className="space-y-6">
               <div>
                 <h3 className="font-bold text-gray-900 text-base mb-2 flex items-center gap-2">
-                  <Building2 className="w-4 h-4 text-[#1A9E9E]" /> About Business
+                  <Building2 className="w-4 h-4 text-cyan-500" /> About Business
                 </h3>
                 <p className="text-gray-600 text-xs leading-relaxed whitespace-pre-wrap">
                   {vendor.description}
@@ -218,7 +218,7 @@ export const VendorProfilePage: React.FC<VendorProfilePageProps> = ({
                     <h4 className="font-bold text-gray-900 text-sm">{vendor.neighborhood}, Hyderabad</h4>
                     <p className="text-gray-500 text-sm mt-0.5">{vendor.fullAddress || vendor.address}</p>
                     <p className="text-gray-500 text-sm">{vendor.city} - {vendor.pincode}</p>
-                    <a href={mapUrl} target="_blank" rel="noopener noreferrer" className="text-[#1A9E9E] text-sm font-bold mt-2 inline-block hover:underline">Get Directions</a>
+                    <a href={mapUrl} target="_blank" rel="noopener noreferrer" className="text-cyan-500 text-sm font-bold mt-2 inline-block hover:underline">Get Directions</a>
                   </div>
                 </div>
 
@@ -261,4 +261,5 @@ export const VendorProfilePage: React.FC<VendorProfilePageProps> = ({
     </div>
   );
 };
+
 

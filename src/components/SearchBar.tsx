@@ -236,7 +236,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
     <div className="w-full">
       <div className="max-w-4xl mx-auto" ref={containerRef}>
         <div className="relative">
-          <div className="relative flex items-center bg-white rounded-full shadow-sm border border-gray-200 focus-within:border-indigo-400 focus-within:ring-2 focus-within:ring-indigo-100 transition-all overflow-hidden h-12 md:h-14">
+          <div className="relative flex items-center bg-white/90 backdrop-blur-md rounded-full shadow-md border border-cyan-100 focus-within:border-cyan-400 focus-within:ring-4 focus-within:ring-cyan-100/50 transition-all overflow-hidden h-12 md:h-14">
             
             <div className="pl-4 pr-2 text-gray-500 shrink-0">
               <Search className="w-5 h-5" />
@@ -267,7 +267,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
               className={`mr-2 w-8 h-8 rounded-full flex items-center justify-center transition-all shrink-0 ${
                 isListening
                   ? 'bg-red-100 text-red-500 animate-pulse'
-                  : 'bg-indigo-50 text-indigo-500 hover:bg-indigo-100'
+                  : 'bg-cyan-50 text-cyan-600 hover:bg-cyan-100'
               }`}
               title="Speak into microphone to search"
             >
@@ -283,7 +283,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
                 <button
                   key={tag}
                   onClick={() => onSearchChange(`${searchQuery.trim()} ${tag}`)}
-                  className="px-2.5 py-1 bg-white border border-gray-200 hover:border-indigo-300 hover:bg-indigo-50 hover:text-indigo-700 text-gray-600 text-xs font-semibold rounded-full transition-colors shadow-sm"
+                  className="px-2.5 py-1 bg-white border border-gray-200 hover:border-cyan-300 hover:bg-cyan-50 hover:text-cyan-700 text-gray-600 text-xs font-semibold rounded-full transition-colors shadow-sm"
                 >
                   +{tag}
                 </button>
@@ -338,4 +338,6 @@ export const SearchBar: React.FC<SearchBarProps> = ({
     </div>
   );
 };
+
+
 

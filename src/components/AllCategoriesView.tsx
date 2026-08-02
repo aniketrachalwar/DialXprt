@@ -110,7 +110,7 @@ export const AllCategoriesView: React.FC<AllCategoriesViewProps> = ({
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="What are you looking for?"
-              className="w-full h-11 pl-10 pr-10 bg-white border border-gray-300 rounded-xl text-[15px] focus:outline-none focus:border-[#1A9E9E] focus:ring-1 focus:ring-[#1A9E9E] shadow-xs placeholder-gray-500 font-semibold text-gray-800"
+              className="w-full h-11 pl-10 pr-10 bg-white border border-gray-300 rounded-xl text-[15px] focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 shadow-xs placeholder-gray-500 font-semibold text-gray-800"
             />
             <Mic className="w-5 h-5 text-blue-600 absolute right-3" />
           </div>
@@ -208,3 +208,4 @@ export const AllCategoriesView: React.FC<AllCategoriesViewProps> = ({
     </div>
   );
 };
+

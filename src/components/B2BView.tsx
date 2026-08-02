@@ -210,3 +210,4 @@ export const B2BView: React.FC = () => {
     </div>
   );
 };
+

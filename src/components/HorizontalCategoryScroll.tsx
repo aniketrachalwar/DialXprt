@@ -14,7 +14,7 @@ import { CATEGORY_IMAGE_MAP } from '../lib/categoryImages';
 
 const CATEGORY_ICON_MAP: Record<string, React.ReactNode> = {
   Zap: <Zap className="w-6 h-6 text-amber-500" />,
-  Wrench: <Wrench className="w-6 h-6 text-[#1A9E9E]lue-500" />,
+  Wrench: <Wrench className="w-6 h-6 text-cyan-500" />,
   ShoppingBag: <ShoppingBag className="w-6 h-6 text-emerald-500" />,
   Wind: <Wind className="w-6 h-6 text-cyan-500" />,
   Car: <Car className="w-6 h-6 text-red-500" />,
@@ -24,14 +24,14 @@ const CATEGORY_ICON_MAP: Record<string, React.ReactNode> = {
   Scissors: <Scissors className="w-6 h-6 text-pink-500" />,
   Navigation: <Navigation className="w-6 h-6 text-teal-500" />,
   Sparkles: <Sparkles className="w-6 h-6 text-indigo-500" />,
-  Tv: <Tv className="w-6 h-6 text-[#1A9E9E]" />,
+  Tv: <Tv className="w-6 h-6 text-cyan-500" />,
   Shirt: <Shirt className="w-6 h-6 text-fuchsia-500" />,
   Bug: <Bug className="w-6 h-6 text-emerald-600" />,
   Camera: <Camera className="w-6 h-6 text-sky-500" />,
   Utensils: <Utensils className="w-6 h-6 text-orange-500" />,
   Flame: <Flame className="w-6 h-6 text-rose-500" />,
   Briefcase: <Briefcase className="w-6 h-6 text-indigo-500" />,
-  Activity: <Activity className="w-6 h-6 text-[#1A9E9E]lue-500" />,
+  Activity: <Activity className="w-6 h-6 text-cyan-500" />,
   Plane: <Plane className="w-6 h-6 text-sky-500" />,
   Star: <Star className="w-6 h-6 text-yellow-500" />,
   Heart: <Heart className="w-6 h-6 text-rose-500" />,
@@ -41,7 +41,7 @@ const CATEGORY_ICON_MAP: Record<string, React.ReactNode> = {
   DollarSign: <DollarSign className="w-6 h-6 text-emerald-600" />,
   Home: <Home className="w-6 h-6 text-indigo-600" />,
   Video: <Video className="w-6 h-6 text-red-600" />,
-  Coffee: <Coffee className="w-6 h-6 text-[#1A9E9E]lue-400" />,
+  Coffee: <Coffee className="w-6 h-6 text-cyan-500" />,
   PlusSquare: <PlusSquare className="w-6 h-6 text-red-600" />,
   Pill: <Pill className="w-6 h-6 text-teal-500" />,
   Building: <Building className="w-6 h-6 text-indigo-600" />,
@@ -73,7 +73,7 @@ export const HorizontalCategoryScroll = ({
   return (
     <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-x-2 gap-y-4 py-2 px-1">
       {categories.map((cat) => {
-        const icon = CATEGORY_ICON_MAP[cat.iconName] || <Wrench className="w-6 h-6 text-[#1A9E9E]" />;
+        const icon = CATEGORY_ICON_MAP[cat.iconName] || <Wrench className="w-6 h-6 text-cyan-500" />;
         const imageUrl = CATEGORY_IMAGE_MAP[cat.slug];
         const catTitle = getCategoryName(cat.slug, cat.name, currentLang);
         return (
@@ -100,3 +100,4 @@ export const HorizontalCategoryScroll = ({
     </div>
   );
 };
+

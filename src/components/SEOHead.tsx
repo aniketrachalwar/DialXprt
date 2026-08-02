@@ -78,3 +78,4 @@ export const SEOHead: React.FC<SEOHeadProps> = ({ title, description, locality, 
     </Helmet>
   );
 };
+

@@ -76,3 +76,4 @@ export const HeroBanners = ({ onSelectCategory }: { onSelectCategory: (slug: str
     </div>
   );
 };
+

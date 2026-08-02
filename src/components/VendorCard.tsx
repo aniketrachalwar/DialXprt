@@ -37,7 +37,7 @@ export const VendorCard: React.FC<VendorCardProps> = ({
     <article
       id={`vendor-card-${vendor.id}`}
       onClick={() => onSelectVendor(vendor)}
-      className="bg-white rounded-2xl shadow-sm border border-gray-100 p-3 mb-4 flex flex-col gap-3 cursor-pointer hover:shadow-lg hover:border-gray-200 transition-all overflow-hidden relative"
+      className="bg-white/90 backdrop-blur-md rounded-[20px] shadow-md border border-white/60 p-3.5 mb-4 flex flex-col gap-3 cursor-pointer hover:shadow-xl transition-all overflow-hidden relative"
     >
       {/* Promoted Badge */}
       {vendor.isSponsored && (
@@ -140,7 +140,7 @@ export const VendorCard: React.FC<VendorCardProps> = ({
           onClick={(e) => { e.stopPropagation(); if (onTrackCall) onTrackCall(vendor.id); }}
           className="flex flex-col items-center gap-2 group"
         >
-          <div className="w-[40px] h-[40px] rounded-2xl bg-[#1C51FE] flex items-center justify-center shadow-sm group-hover:bg-blue-700 transition-colors">
+          <div className="w-[40px] h-[40px] rounded-2xl bg-gradient-to-r from-[#06b6d4] to-[#3b82f6] flex items-center justify-center shadow-sm group-hover:bg-blue-700 transition-colors">
             <Phone className="w-4 h-4 fill-white text-white" />
           </div>
           <span className="text-[10px] font-bold text-gray-800">Call Now</span>
@@ -154,7 +154,7 @@ export const VendorCard: React.FC<VendorCardProps> = ({
           onClick={(e) => { e.stopPropagation(); if (onTrackWhatsApp) onTrackWhatsApp(vendor.id); }}
           className="flex flex-col items-center gap-1 group"
         >
-          <div className="w-[40px] h-[40px] rounded-2xl bg-white border border-gray-200 flex items-center justify-center shadow-sm group-hover:bg-gray-50 transition-colors">
+          <div className="w-[40px] h-[40px] rounded-2xl bg-white shadow-sm border border-gray-100 flex items-center justify-center shadow-sm group-hover:bg-gray-50 transition-colors">
             <WhatsAppLogo className="w-5 h-5" />
           </div>
           <span className="text-[10px] font-bold text-gray-800">WhatsApp</span>
@@ -168,7 +168,7 @@ export const VendorCard: React.FC<VendorCardProps> = ({
           onClick={(e) => e.stopPropagation()}
           className="flex flex-col items-center gap-1 group"
         >
-          <div className="w-[40px] h-[40px] rounded-2xl bg-white border border-gray-200 flex items-center justify-center shadow-sm group-hover:bg-gray-50 transition-colors">
+          <div className="w-[40px] h-[40px] rounded-2xl bg-white shadow-sm border border-gray-100 flex items-center justify-center shadow-sm group-hover:bg-gray-50 transition-colors">
             <Navigation className="w-4 h-4 text-gray-600" />
           </div>
           <span className="text-[10px] font-bold text-gray-800">Direction</span>
@@ -191,7 +191,7 @@ export const VendorCard: React.FC<VendorCardProps> = ({
           }}
           className="flex flex-col items-center gap-1 group"
         >
-          <div className="w-[40px] h-[40px] rounded-2xl bg-white border border-gray-200 flex items-center justify-center shadow-sm group-hover:bg-gray-50 transition-colors">
+          <div className="w-[40px] h-[40px] rounded-2xl bg-white shadow-sm border border-gray-100 flex items-center justify-center shadow-sm group-hover:bg-gray-50 transition-colors">
             <Share2 className="w-4 h-4 text-gray-600" />
           </div>
           <span className="text-[10px] font-bold text-gray-800">Share</span>
@@ -205,7 +205,7 @@ export const VendorCard: React.FC<VendorCardProps> = ({
             e.stopPropagation();
             onGetBestDeal(vendor);
           }}
-          className="w-full bg-[#1C51FE] hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl flex items-center justify-center shadow-sm transition-colors text-[14px]"
+          className="w-full bg-gradient-to-r from-[#06b6d4] to-[#3b82f6] hover:opacity-90 shadow-md shadow-blue-500/30 text-white font-bold py-3.5 rounded-xl flex items-center justify-center shadow-sm transition-colors text-[14px]"
         >
           Enquire Now
         </button>
@@ -213,4 +213,6 @@ export const VendorCard: React.FC<VendorCardProps> = ({
     </article>
   );
 };
+
+
 

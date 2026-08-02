@@ -3,7 +3,7 @@ import { ChevronLeft, ChevronRight, Star, Heart, BookOpen, Truck, Key, Search, D
 import { Category } from '../types';
 
 const ICON_MAP: Record<string, React.ReactNode> = {
-  Activity: <Activity className="w-5 h-5 text-[#1A9E9E]lue-500" />,
+  Activity: <Activity className="w-5 h-5 text-cyan-500" />,
   Heart: <Heart className="w-5 h-5 text-rose-500" />,
   Sparkles: <Sparkles className="w-5 h-5 text-amber-500" />,
   Plane: <Plane className="w-5 h-5 text-sky-500" />,
@@ -11,7 +11,7 @@ const ICON_MAP: Record<string, React.ReactNode> = {
   Building: <Building className="w-5 h-5 text-indigo-500" />,
   Scissors: <Scissors className="w-5 h-5 text-pink-500" />,
   BookOpen: <BookOpen className="w-5 h-5 text-purple-500" />,
-  Edit2: <Edit2 className="w-5 h-5 text-[#1A9E9E]lue-400" />,
+  Edit2: <Edit2 className="w-5 h-5 text-cyan-500" />,
   GraduationCap: <GraduationCap className="w-5 h-5 text-indigo-600" />,
   Smile: <Smile className="w-5 h-5 text-yellow-500" />,
   ClipboardList: <ClipboardList className="w-5 h-5 text-emerald-600" />,
@@ -32,7 +32,7 @@ export const SubCategoryMenu = ({
   return (
     <div className="bg-white min-h-[70vh] rounded-2xl shadow-sm border border-gray-100 overflow-hidden animate-slide-up">
       {/* Header */}
-      <div className="flex items-center px-4 py-4 border-[#1A9E9E] border-gray-100 bg-white sticky top-0 z-10 shadow-sm">
+      <div className="flex items-center px-4 py-4 border-cyan-500 border-gray-100 bg-white sticky top-0 z-10 shadow-sm">
         <button 
           onClick={onBack}
           className="p-2 -ml-2 mr-2 hover:bg-gray-100 rounded-full transition-colors"
@@ -66,3 +66,4 @@ export const SubCategoryMenu = ({
     </div>
   );
 };
+

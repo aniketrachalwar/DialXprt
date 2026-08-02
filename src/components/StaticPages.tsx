@@ -46,3 +46,4 @@ export const StaticPage = ({ route }: { route: string }) => {
     </div>
   );
 };
+

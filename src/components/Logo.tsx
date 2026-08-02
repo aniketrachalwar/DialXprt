@@ -28,3 +28,4 @@ export const Logo: React.FC<LogoProps> = ({ variant = 'full', className = '', si
     </div>
   );
 };
+

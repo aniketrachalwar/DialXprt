@@ -86,7 +86,7 @@ export const PullToRefresh: React.FC<PullToRefreshProps> = ({ onRefresh, childre
       >
         <div className="mt-4 bg-white shadow-md border border-gray-100 rounded-full w-10 h-10 flex items-center justify-center shrink-0">
           {isRefreshing ? (
-            <Loader2 className="w-5 h-5 text-[#1A9E9E] animate-spin" />
+            <Loader2 className="w-5 h-5 text-cyan-500 animate-spin" />
           ) : (
             <ArrowDown
               className="w-5 h-5 text-gray-500 transition-transform duration-200"
@@ -108,3 +108,4 @@ export const PullToRefresh: React.FC<PullToRefreshProps> = ({ onRefresh, childre
     </div>
   );
 };
+

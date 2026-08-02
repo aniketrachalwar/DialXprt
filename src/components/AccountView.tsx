@@ -553,7 +553,7 @@ export const AccountView: React.FC<AccountViewProps> = ({
               onClick={onOpenEditProfile}
               className="bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold px-3.5 py-2.5 rounded-2xl text-xs flex items-center justify-center gap-1.5 shadow-xs transition-transform active:scale-95 min-h-[44px]"
             >
-              <Pencil className="w-3.5 h-3.5 text-[#1A9E9E]" />
+              <Pencil className="w-3.5 h-3.5 text-cyan-500" />
               <span>Edit Profile</span>
             </button>
 
@@ -611,7 +611,7 @@ export const AccountView: React.FC<AccountViewProps> = ({
                     <div className="flex items-center gap-2 mt-2">
                       <button
                         onClick={() => onOpenEditVendor?.(shop)}
-                        className="text-xs font-bold text-[#1A9E9E] bg-teal-50 hover:bg-teal-100 px-3 py-1.5 rounded-lg flex items-center gap-1 transition-colors border border-teal-100"
+                        className="text-xs font-bold text-cyan-500 bg-teal-50 hover:bg-teal-100 px-3 py-1.5 rounded-lg flex items-center gap-1 transition-colors border border-teal-100"
                       >
                         <Pencil className="w-3.5 h-3.5" /> Edit Details
                       </button>
@@ -634,3 +634,4 @@ export const AccountView: React.FC<AccountViewProps> = ({
     </div>
   );
 };
+

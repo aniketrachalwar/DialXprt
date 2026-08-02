@@ -128,3 +128,4 @@ export const SidebarPages: React.FC<SidebarPagesProps> = ({ activeTab, onBack })
     </div>
   );
 };
+

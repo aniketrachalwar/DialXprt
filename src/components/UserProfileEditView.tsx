@@ -52,7 +52,7 @@ export const UserProfileEditView: React.FC<UserProfileEditViewProps> = ({
   return (
     <div className="min-h-screen bg-gray-50 pb-24 font-sans animate-fade-in flex flex-col">
       {/* Header */}
-      <div className="bg-[#1A9E9E] text-white px-4 py-3 flex items-center gap-3 sticky top-0 z-40 shadow-md">
+      <div className="bg-cyan-500 text-white px-4 py-3 flex items-center gap-3 sticky top-0 z-40 shadow-md">
         <button 
           onClick={onBack}
           className="p-1.5 -ml-1.5 hover:bg-white/10 rounded-full transition-colors active:scale-95"
@@ -82,7 +82,7 @@ export const UserProfileEditView: React.FC<UserProfileEditViewProps> = ({
                 className="absolute inset-0 opacity-0 cursor-pointer"
               />
             </div>
-            <span className="text-xs font-bold text-[#1A9E9E] flex items-center gap-1">
+            <span className="text-xs font-bold text-cyan-500 flex items-center gap-1">
               <Camera className="w-3.5 h-3.5" />
               Change Photo
             </span>
@@ -96,7 +96,7 @@ export const UserProfileEditView: React.FC<UserProfileEditViewProps> = ({
               value={editName}
               onChange={(e) => setEditName(e.target.value)}
               placeholder="e.g. Rahul Sharma"
-              className="w-full px-3.5 py-2.5 text-xs border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1A9E9E] font-bold min-h-[44px]"
+              className="w-full px-3.5 py-2.5 text-xs border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500 font-bold min-h-[44px]"
             />
           </div>
 
@@ -110,7 +110,7 @@ export const UserProfileEditView: React.FC<UserProfileEditViewProps> = ({
                 value={editPhone}
                 onChange={(e) => setEditPhone(e.target.value)}
                 placeholder="9849012345"
-                className="flex-1 px-3.5 py-2.5 text-xs border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1A9E9E] font-bold min-h-[44px]"
+                className="flex-1 px-3.5 py-2.5 text-xs border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500 font-bold min-h-[44px]"
               />
             </div>
           </div>
@@ -122,7 +122,7 @@ export const UserProfileEditView: React.FC<UserProfileEditViewProps> = ({
               value={editEmail}
               onChange={(e) => setEditEmail(e.target.value)}
               placeholder="rahul.sharma@example.com"
-              className="w-full px-3.5 py-2.5 text-xs border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1A9E9E] font-bold min-h-[44px]"
+              className="w-full px-3.5 py-2.5 text-xs border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500 font-bold min-h-[44px]"
             />
           </div>
 
@@ -131,7 +131,7 @@ export const UserProfileEditView: React.FC<UserProfileEditViewProps> = ({
             <select
               value={editNeighborhood}
               onChange={(e) => setEditNeighborhood(e.target.value)}
-              className="w-full px-3.5 py-2.5 text-xs border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1A9E9E] font-bold min-h-[44px]"
+              className="w-full px-3.5 py-2.5 text-xs border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyan-500 font-bold min-h-[44px]"
             >
               {HYDERABAD_NEIGHBORHOODS.map((n) => (
                 <option key={n.id} value={n.name}>{n.name}</option>
@@ -149,7 +149,7 @@ export const UserProfileEditView: React.FC<UserProfileEditViewProps> = ({
             </button>
             <button
               type="submit"
-              className="bg-[#1A9E9E] hover:bg-teal-700 text-white font-bold px-5 py-2.5 rounded-xl text-xs shadow-md flex items-center gap-1.5 min-h-[44px] transition-transform active:scale-95"
+              className="bg-cyan-500 hover:bg-teal-700 text-white font-bold px-5 py-2.5 rounded-xl text-xs shadow-md flex items-center gap-1.5 min-h-[44px] transition-transform active:scale-95"
             >
               <Save className="w-4 h-4" />
               <span>Save Profile</span>
@@ -160,3 +160,4 @@ export const UserProfileEditView: React.FC<UserProfileEditViewProps> = ({
     </div>
   );
 };
+

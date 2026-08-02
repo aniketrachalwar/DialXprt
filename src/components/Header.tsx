@@ -73,7 +73,7 @@ export const Header: React.FC<HeaderProps> = ({
   }, []);
 
   return (
-    <header className={`sticky top-0 z-40 bg-[#1E2875] text-white shadow-md transition-all pt-safe rounded-b-2xl group ${isScrolled ? 'is-scrolled' : ''}`}>
+    <header className={`sticky top-0 z-40 bg-white/90 backdrop-blur-md text-gray-900 shadow-sm border-b border-gray-100 transition-all pt-safe group ${isScrolled ? 'is-scrolled' : ''}`}>
       {/* Top Banner Bar */}
       <div className="max-w-7xl mx-auto px-2.5 sm:px-4 py-3">
         {!isScrolled && (
@@ -85,7 +85,7 @@ export const Header: React.FC<HeaderProps> = ({
               onClick={onGoHome}
               title={t('homeTab')}
             >
-              <Logo variant="white" size="md" />
+              <Logo variant="default" size="md" />
               <span className="text-[9px] sm:text-[10px] bg-[#F36F21] text-white font-black px-1.5 py-0.5 rounded uppercase tracking-wider self-start mt-0.5">
                 HYD
               </span>
@@ -104,7 +104,7 @@ export const Header: React.FC<HeaderProps> = ({
               <button
                 id="user-auth-btn"
                 onClick={onOpenAccount}
-                className={`flex items-center justify-center ${userPhone ? 'bg-white/10 hover:bg-white/20 rounded-lg sm:px-2.5 gap-1 min-h-[38px] min-w-[38px]' : 'bg-[#F36F21] hover:bg-orange-600 rounded-full w-10 h-10'} text-white shadow-sm transition-all`}
+                className={`flex items-center justify-center ${userPhone ? 'bg-gray-100 hover:bg-gray-200 rounded-lg sm:px-2.5 gap-1 min-h-[38px] min-w-[38px]' : 'bg-gradient-to-r from-[#06b6d4] to-[#3b82f6] hover:opacity-90 rounded-full w-10 h-10'} text-white shadow-sm transition-all`}
                 title={userPhone ? t('accountHub') : 'Login'}
               >
                 <User className={`w-5 h-5 ${userPhone ? 'text-[#F36F21]' : 'text-white'}`} />
@@ -124,3 +124,6 @@ export const Header: React.FC<HeaderProps> = ({
     </header>
   );
 };
+
+
+

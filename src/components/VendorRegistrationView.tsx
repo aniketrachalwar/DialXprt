@@ -793,3 +793,4 @@ export const VendorRegistrationView: React.FC<VendorRegistrationViewProps> = ({
     </div>
   );
 };
+

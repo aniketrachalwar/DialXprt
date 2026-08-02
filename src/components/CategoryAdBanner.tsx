@@ -65,7 +65,7 @@ export const CategoryAdBanner: React.FC<CategoryAdBannerProps> = ({ selectedCate
       {/* Content */}
       <div className="flex-1 py-3 px-4 sm:px-6 relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="text-gray-900">
-          <h3 className="font-black text-sm sm:text-[#1A9E9E]ase leading-tight">{adData.name}</h3>
+          <h3 className="font-black text-sm sm:text-cyan-500ase leading-tight">{adData.name}</h3>
           <p className="text-xs font-medium mt-1 text-gray-900/80">{adData.address}</p>
         </div>
         
@@ -81,3 +81,4 @@ export const CategoryAdBanner: React.FC<CategoryAdBannerProps> = ({ selectedCate
     </div>
   );
 };
+

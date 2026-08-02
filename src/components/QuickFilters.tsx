@@ -22,7 +22,7 @@ export const QuickFilters: React.FC<QuickFiltersProps> = ({ onSelectFilter }) =>
             onClick={() => onSelectFilter(filter.query)}
             className="flex items-center gap-1.5 shrink-0 px-4 py-2 bg-[#F3F4F6] text-gray-700 rounded-full text-[13px] font-bold hover:bg-gray-200 transition-colors shadow-sm border border-gray-100"
           >
-            <filter.icon className="w-3.5 h-3.5 text-[#1A9E9E]" />
+            <filter.icon className="w-3.5 h-3.5 text-cyan-500" />
             {filter.label}
           </button>
         ))}
@@ -30,3 +30,4 @@ export const QuickFilters: React.FC<QuickFiltersProps> = ({ onSelectFilter }) =>
     </div>
   );
 };
+

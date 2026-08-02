@@ -256,3 +256,4 @@ export const VendorDetailModal: React.FC<VendorDetailModalProps> = ({
     </div>
   );
 };
+

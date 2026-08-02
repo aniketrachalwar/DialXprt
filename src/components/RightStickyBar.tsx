@@ -35,3 +35,4 @@ export const RightStickyBar: React.FC<RightStickyBarProps> = ({ onOpenRegistrati
     </div>
   );
 };
+

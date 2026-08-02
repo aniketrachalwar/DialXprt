@@ -18,9 +18,9 @@ const ADS = [
     subtitle: "24/7 Verified Experts Near You",
     cta: "Find Experts Now",
     bgClass: "bg-gradient-to-r from-blue-50 to-cyan-100",
-    textClass: "text-[#1A9E9E]lue-900",
-    ctaClass: "bg-[#1A9E9E] text-white",
-    icon: <BadgeCheck className="w-16 h-16 sm:w-24 sm:h-24 text-[#1A9E9E]lue-400 opacity-80" />,
+    textClass: "text-cyan-500",
+    ctaClass: "bg-cyan-500 text-white",
+    icon: <BadgeCheck className="w-16 h-16 sm:w-24 sm:h-24 text-cyan-500 opacity-80" />,
   },
   {
     id: 3,
@@ -62,7 +62,7 @@ export const AdCarousel = () => {
             </div>
 
             <div className="relative z-10 max-w-[60%] sm:max-w-[50%]">
-              <h2 className={`text-[#1A9E9E]ase sm:text-[#1A9E9E]xl font-black ${ad.textClass} leading-tight`}>
+              <h2 className={`text-cyan-500ase sm:text-cyan-500xl font-black ${ad.textClass} leading-tight`}>
                 {ad.title}
               </h2>
               <p className={`text-xs sm:text-sm font-semibold mt-1 mb-3 ${ad.textClass} opacity-80`}>
@@ -74,7 +74,7 @@ export const AdCarousel = () => {
             </div>
             
             {/* Image Placeholder (Mocking the person with crossed arms) */}
-            <div className="relative z-10 w-24 h-24 sm:w-32 sm:h-32 rounded-full bg-white/30 backdrop-blur-sm border-[#1A9E9E] border-white flex items-center justify-center shadow-lg overflow-hidden">
+            <div className="relative z-10 w-24 h-24 sm:w-32 sm:h-32 rounded-full bg-white/30 backdrop-blur-sm border-cyan-500 border-white flex items-center justify-center shadow-lg overflow-hidden">
                 <img src="https://images.unsplash.com/photo-1556157382-97eda2d62296?auto=format&fit=crop&w=300&q=80" alt="Professional" className="w-full h-full object-cover mix-blend-multiply" />
             </div>
 
@@ -113,3 +113,4 @@ export const AdCarousel = () => {
     </div>
   );
 };
+

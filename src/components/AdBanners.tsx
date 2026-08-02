@@ -53,7 +53,7 @@ export const AdBanners: React.FC = () => {
               <span className="bg-white/20 w-fit px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider mb-2 backdrop-blur-sm border border-white/30">
                 Sponsored
               </span>
-              <h2 className="text-xl sm:text-[#1A9E9E]xl font-black mb-1 sm:mb-2">{banner.title}</h2>
+              <h2 className="text-xl sm:text-cyan-500xl font-black mb-1 sm:mb-2">{banner.title}</h2>
               <p className="text-xs sm:text-sm font-medium text-white/90 max-w-xs">{banner.subtitle}</p>
               <button className="mt-4 bg-white text-gray-900 text-xs font-bold px-4 py-2 rounded-lg w-fit shadow-md hover:bg-gray-50 transition-colors">
                 Book Now
@@ -70,13 +70,13 @@ export const AdBanners: React.FC = () => {
         {/* Navigation Buttons */}
         <button 
           onClick={prevSlide}
-          className="absolute left-2 top-1/2 -translate-y-1/2 z-30 bg-black/30 hover:bg-[#1A9E9E]lack/50 text-white p-1.5 rounded-full backdrop-blur-sm transition-colors opacity-0 group-hover:opacity-100"
+          className="absolute left-2 top-1/2 -translate-y-1/2 z-30 bg-black/30 hover:bg-cyan-500lack/50 text-white p-1.5 rounded-full backdrop-blur-sm transition-colors opacity-0 group-hover:opacity-100"
         >
           <ChevronLeft className="w-5 h-5" />
         </button>
         <button 
           onClick={nextSlide}
-          className="absolute right-2 top-1/2 -translate-y-1/2 z-30 bg-black/30 hover:bg-[#1A9E9E]lack/50 text-white p-1.5 rounded-full backdrop-blur-sm transition-colors opacity-0 group-hover:opacity-100"
+          className="absolute right-2 top-1/2 -translate-y-1/2 z-30 bg-black/30 hover:bg-cyan-500lack/50 text-white p-1.5 rounded-full backdrop-blur-sm transition-colors opacity-0 group-hover:opacity-100"
         >
           <ChevronRight className="w-5 h-5" />
         </button>
@@ -95,3 +95,4 @@ export const AdBanners: React.FC = () => {
     </div>
   );
 };
+

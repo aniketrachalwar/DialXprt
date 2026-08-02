@@ -73,7 +73,7 @@ const CATEGORY_ICON_MAP: Record<string, React.ReactNode> = {
   Scissors: <Scissors className="w-6 h-6 text-pink-500" />,
   Navigation: <Navigation className="w-6 h-6 text-teal-500" />,
   Sparkles: <Sparkles className="w-6 h-6 text-indigo-500" />,
-  Tv: <Tv className="w-6 h-6 text-[#1A9E9E]" />,
+  Tv: <Tv className="w-6 h-6 text-cyan-500" />,
   Shirt: <Shirt className="w-6 h-6 text-fuchsia-500" />,
   Bug: <Bug className="w-6 h-6 text-emerald-600" />,
   Camera: <Camera className="w-6 h-6 text-sky-500" />,
@@ -169,7 +169,7 @@ export const CategoryGrid: React.FC<CategoryGridProps & { onShowAllCategories?: 
           className="bg-transparent rounded-xl p-2 sm:p-3 hover:bg-gray-50 transition-all flex flex-col items-center justify-center gap-1.5 min-h-[90px] cursor-pointer active:scale-95"
         >
           <div 
-            className="w-10 h-10 rounded-full bg-[#1A9E9E] flex items-center justify-center text-white shadow-md transition-colors animate-bounce mt-1 mb-1"
+            className="w-10 h-10 rounded-full bg-cyan-500 flex items-center justify-center text-white shadow-md transition-colors animate-bounce mt-1 mb-1"
             style={{ animationDelay: `0.6s`, animationDuration: '2s' }}
           >
             <ChevronDown className="w-5 h-5" strokeWidth={3} />
@@ -182,3 +182,4 @@ export const CategoryGrid: React.FC<CategoryGridProps & { onShowAllCategories?: 
     </section>
   );
 };
+

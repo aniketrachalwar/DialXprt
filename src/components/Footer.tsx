@@ -7,7 +7,7 @@ export const Footer = () => {
     <footer className="bg-white border-t border-gray-200 mt-8 pt-10 pb-6 px-4 md:px-8 shadow-inner">
       <div className="max-w-7xl mx-auto">
         {/* Top Info Section */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 pb-8 border-[#1A9E9E] border-gray-100">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 pb-8 border-cyan-500 border-gray-100">
           <div className="md:col-span-2">
             <h2 className="text-xl font-bold text-gray-800 mb-4">DialXprt</h2>
             <p className="text-xs text-gray-500 leading-relaxed max-w-lg mb-6">
@@ -28,24 +28,24 @@ export const Footer = () => {
           <div>
             <h3 className="font-bold text-gray-800 mb-4 uppercase text-xs tracking-wider">Corporate</h3>
             <ul className="space-y-2 text-xs text-gray-500">
-              <li><Link to="/about" className="hover:text-[#1A9E9E] transition-colors">About Us</Link></li>
-              <li><Link to="/investor-relations" className="hover:text-[#1A9E9E] transition-colors">Investor Relations</Link></li>
-              <li><Link to="/careers" className="hover:text-[#1A9E9E] transition-colors">We're Hiring</Link></li>
-              <li><Link to="/contact" className="hover:text-[#1A9E9E] transition-colors">Contact Us</Link></li>
-              <li><Link to="/list-business" className="hover:text-[#1A9E9E] transition-colors">Free Listing</Link></li>
-              <li><Link to="/privacy" className="hover:text-[#1A9E9E] transition-colors">Privacy Policy</Link></li>
-              <li><Link to="/terms" className="hover:text-[#1A9E9E] transition-colors">Terms of Service</Link></li>
-              <li><a href="/sitemap.html" className="hover:text-[#1A9E9E] transition-colors">HTML Site Map</a></li>
+              <li><Link to="/about" className="hover:text-cyan-500 transition-colors">About Us</Link></li>
+              <li><Link to="/investor-relations" className="hover:text-cyan-500 transition-colors">Investor Relations</Link></li>
+              <li><Link to="/careers" className="hover:text-cyan-500 transition-colors">We're Hiring</Link></li>
+              <li><Link to="/contact" className="hover:text-cyan-500 transition-colors">Contact Us</Link></li>
+              <li><Link to="/list-business" className="hover:text-cyan-500 transition-colors">Free Listing</Link></li>
+              <li><Link to="/privacy" className="hover:text-cyan-500 transition-colors">Privacy Policy</Link></li>
+              <li><Link to="/terms" className="hover:text-cyan-500 transition-colors">Terms of Service</Link></li>
+              <li><a href="/sitemap.html" className="hover:text-cyan-500 transition-colors">HTML Site Map</a></li>
             </ul>
           </div>
           
           <div>
             <h3 className="font-bold text-gray-800 mb-4 uppercase text-xs tracking-wider">DialXprt Verticals</h3>
             <ul className="space-y-2 text-xs text-gray-500">
-              <li><Link to="/hyderabad/all/real-estate" className="hover:text-[#1A9E9E] transition-colors">Real Estate & Properties</Link></li>
-              <li><Link to="/hyderabad/all/travel-agents" className="hover:text-[#1A9E9E] transition-colors">Travel & Bookings</Link></li>
-              <li><Link to="/hyderabad/all/hospitals" className="hover:text-[#1A9E9E] transition-colors">Health & Medical</Link></li>
-              <li><Link to="/hyderabad/all/electrician" className="hover:text-[#1A9E9E] transition-colors">Home Services</Link></li>
+              <li><Link to="/hyderabad/all/real-estate" className="hover:text-cyan-500 transition-colors">Real Estate & Properties</Link></li>
+              <li><Link to="/hyderabad/all/travel-agents" className="hover:text-cyan-500 transition-colors">Travel & Bookings</Link></li>
+              <li><Link to="/hyderabad/all/hospitals" className="hover:text-cyan-500 transition-colors">Health & Medical</Link></li>
+              <li><Link to="/hyderabad/all/electrician" className="hover:text-cyan-500 transition-colors">Home Services</Link></li>
             </ul>
           </div>
         </div>
@@ -59,7 +59,7 @@ export const Footer = () => {
             <div className="flex flex-wrap gap-x-2 gap-y-1 text-xs text-gray-500">
               {['Madhapur', 'Gachibowli', 'Jubilee Hills', 'Banjara Hills', 'Kukatpally', 'Hitech City', 'Kondapur', 'Begumpet', 'Secunderabad', 'Miyapur', 'Ameerpet', 'Mehdipatnam', 'Manikonda', 'Dilsukhnagar', 'L.B. Nagar'].map((loc, i, arr) => (
                 <React.Fragment key={loc}>
-                  <Link to={`/hyderabad/${loc.toLowerCase()}/all`} className="hover:text-[#1A9E9E] transition-colors">{loc}</Link>
+                  <Link to={`/hyderabad/${loc.toLowerCase()}/all`} className="hover:text-cyan-500 transition-colors">{loc}</Link>
                   {i < arr.length - 1 && <span className="text-gray-300">|</span>}
                 </React.Fragment>
               ))}
@@ -86,7 +86,7 @@ export const Footer = () => {
                 { name: 'Hospitals', slug: 'hospitals' }
               ].map((cat, i, arr) => (
                 <React.Fragment key={cat.slug}>
-                  <Link to={`/hyderabad/all/${cat.slug}`} className="hover:text-[#1A9E9E] transition-colors">{cat.name}</Link>
+                  <Link to={`/hyderabad/all/${cat.slug}`} className="hover:text-cyan-500 transition-colors">{cat.name}</Link>
                   {i < arr.length - 1 && <span className="text-gray-300">|</span>}
                 </React.Fragment>
               ))}
@@ -107,3 +107,4 @@ const SocialIcon = ({ icon, bg }: { icon: React.ReactNode, bg: string }) => (
     {icon}
   </div>
 );
+

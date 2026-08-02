@@ -5,7 +5,7 @@ const PROMO_BANNERS = [
     id: 1,
     title: 'Up to 50% Off Home Deep Cleaning',
     subtitle: 'Limited Time Offer',
-    bgColor: 'bg-[#1A9E9E]',
+    bgColor: 'bg-cyan-500',
     textColor: 'text-white',
     imgUrl: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=800&q=80',
     link: 'cleaning'
@@ -85,3 +85,4 @@ export const PromoCarousel: React.FC<PromoCarouselProps> = ({ onBannerClick }) =
     </div>
   );
 };
+

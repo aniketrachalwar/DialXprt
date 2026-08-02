@@ -754,7 +754,7 @@ export default function App() {
   const approvedVendors = processedVendors;
 
   return (
-    <div className="min-h-screen bg-[#F4F7FA] text-gray-900 font-sans pb-[calc(5rem+env(safe-area-inset-bottom))] md:pb-10">
+    <div className="min-h-screen bg-[#F8FAFC] text-gray-900 font-sans pb-[calc(5rem+env(safe-area-inset-bottom))] md:pb-10">
       <SEOHead
         title={
           selectedCategory === "all" && !searchQuery
@@ -850,10 +850,10 @@ export default function App() {
                     }}
                     className="bg-white hover:bg-gray-100 active:scale-95 transition-all text-gray-900 font-extrabold text-[11px] sm:text-xs leading-tight py-2 px-1 rounded-lg shadow-sm flex items-center justify-center min-h-[44px] gap-1"
                   >
-                    {link.icon && <link.icon className="w-4 h-4 text-[#1A9E9E] shrink-0" />}
+                    {link.icon && <link.icon className="w-4 h-4 text-cyan-500 shrink-0" />}
                     <span className="line-clamp-2">{link.label}</span>
                     {link.slug === 'all-categories' && (
-                      <div className="w-4 h-4 rounded-full bg-[#1A9E9E] flex items-center justify-center text-white shrink-0 mt-0.5">
+                      <div className="w-4 h-4 rounded-full bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center text-white shrink-0 mt-0.5">
                         <ChevronDown className="w-3 h-3" strokeWidth={3} />
                       </div>
                     )}
@@ -868,7 +868,7 @@ export default function App() {
 
 
       {/* MAIN BODY DISPLAY */}
-      <main className="max-w-7xl mx-auto px-3 sm:px-6 py-5">
+      <main className="w-full mx-auto px-3 py-4">
         {/* VIEW 1: ROLE-TAILORED ACCOUNT DASHBOARD */}
         {selectedVendorSlug ? (
           <VendorProfilePage
@@ -1276,4 +1276,6 @@ export default function App() {
     </div>
   );
 }
+
+
 
