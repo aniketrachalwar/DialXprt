@@ -1,5 +1,5 @@
 import React from 'react';
-import { Home, PlusCircle, User, ShieldCheck, Store, Crown } from 'lucide-react';
+import { Home, PlusCircle, User, ShieldCheck, Store, Crown, Tag } from 'lucide-react';
 import { UserRole } from '../types';
 import { AppLanguage, getTranslation } from '../lib/translations';
 
@@ -55,7 +55,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
         {/* TAB 2: ADD YOUR BUSINESS (Prominent Center Button) */}
         <button
           id="bottom-nav-add-btn"
-          onClick={() => onTabChange('add')}
+          onClick={() => onTabChange('register-vendor')}
           className="flex flex-col items-center justify-center h-full min-h-[48px] py-1 group relative active:scale-90 transition-transform"
         >
           <div className="w-12 h-12 rounded-full bg-[#F36F21] hover:bg-orange-600 text-white flex items-center justify-center shadow-lg -mt-5 border-2 border-white">
@@ -64,27 +64,28 @@ export const BottomNav: React.FC<BottomNavProps> = ({
           <span className="text-[10px] font-extrabold text-[#F36F21] mt-0.5">{t('addBusinessTab')}</span>
         </button>
 
-        {/* TAB 3: ACCOUNT (Role-Tailored Hub) */}
+        {/* TAB 3: OFFERS */}
         <button
-          id="bottom-nav-account-btn"
-          onClick={() => onTabChange('account')}
+          id="bottom-nav-offers-btn"
+          onClick={() => onTabChange('offers' as any)}
           className={`flex flex-col items-center justify-center h-full min-h-[48px] py-1 transition-all active:scale-95 ${
-            activeTab === 'account'
+            activeTab === 'offers' as any
               ? 'text-[#1A9E9E] font-bold'
               : 'text-gray-500 hover:text-gray-900 font-medium'
           }`}
         >
           <div className="relative">
-            {getRoleIcon()}
+            <Tag className="w-5 h-5" />
             {(currentRole === 'admin' || currentRole === 'volunteer') && pendingCount > 0 && (
               <span className="absolute -top-1 -right-2 bg-[#F36F21] text-white text-[9px] font-extrabold px-1.5 py-0.2 rounded-full border border-white">
                 {pendingCount}
               </span>
             )}
           </div>
-          <span className="text-[11px] mt-0.5">{getRoleBadgeLabel()}</span>
+          <span className="text-[11px] mt-0.5">Offers</span>
         </button>
       </div>
     </nav>
   );
 };
+

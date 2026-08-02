@@ -25,6 +25,7 @@ export interface Vendor {
   subCategorySlug?: string;
   ownerName: string;
   phone: string;
+  email?: string;
   whatsapp: string;
   address: string;
   neighborhood: string;
@@ -32,7 +33,9 @@ export interface Vendor {
   pincode: string;
   lat: number;
   lng: number;
+  additionalLocations?: {lat: number, lng: number}[];
   imageUrl: string;
+  images?: string[];
   isVerified: boolean;
   isSponsored?: boolean;
   status: VendorStatus;
@@ -68,6 +71,8 @@ export interface Category {
   name: string;
   slug: string;
   iconName: string;
+  emoji?: string;
+  group?: string;
   imageUrl?: string;
   subcategories?: SubCategory[];
   description: string;

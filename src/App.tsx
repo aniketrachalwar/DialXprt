@@ -5,8 +5,9 @@ import { Header } from "./components/Header";
 import { BottomNav } from "./components/BottomNav";
 import { SearchBar } from "./components/SearchBar";
 import { VendorCard } from "./components/VendorCard";
-import { VendorRegistrationModal } from "./components/VendorRegistrationModal";
+import { VendorRegistrationView } from "./components/VendorRegistrationView";
 import { AccountView } from "./components/AccountView";
+import { UserProfileEditView } from "./components/UserProfileEditView";
 import { LocationPickerModal } from "./components/LocationPickerModal";
 import { ProfileSidebar } from "./components/ProfileSidebar";
 import { SidebarPages } from "./components/SidebarPages";
@@ -45,8 +46,10 @@ import {
 } from "./lib/supabase";
 import { fetchCategories } from "./lib/adminApi";
 import { HomeDashboard } from "./components/HomeDashboard";
+import { AllCategoriesView } from "./components/AllCategoriesView";
 import { SubCategoryView } from "./components/SubCategoryView";
-import { MapPin, Search, ArrowLeft } from "lucide-react";
+import { OffersView } from "./components/OffersView";
+import { MapPin, Search, ArrowLeft, ChevronDown } from "lucide-react";
 
 const CATEGORY_BANNERS: Record<string, { imageUrl: string; title: string; subtitle: string }> = {
   'gym': {
@@ -92,27 +95,31 @@ export default function App() {
 
   // Search & Clean 3-Tab Bottom Navigation
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState<string>("all");
-  const [selectedSubCategory, setSelectedSubCategory] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<
-    | "home"
-    | "add"
-    | "account"
-    | "favorites"
-    | "saved"
-    | "transactions"
-    | "customer_service"
-    | "investor_relations"
-    | "policy"
-    | "feedback"
-    | "help"
-  >("home");
+  const [selectedCategory, setSelectedCategory] = useState<string>(() => sessionStorage.getItem('selectedCategory') || "all");
+  const [selectedSubCategory, setSelectedSubCategory] = useState<string | null>(() => sessionStorage.getItem('selectedSubCategory') || null);
+  const [activeTab, setActiveTab] = useState<any>(() => sessionStorage.getItem('activeTab') || "home");
+
+  useEffect(() => {
+    sessionStorage.setItem('activeTab', activeTab);
+  }, [activeTab]);
+
+  useEffect(() => {
+    sessionStorage.setItem('selectedCategory', selectedCategory);
+  }, [selectedCategory]);
+
+  useEffect(() => {
+    if (selectedSubCategory) {
+      sessionStorage.setItem('selectedSubCategory', selectedSubCategory);
+    } else {
+      sessionStorage.removeItem('selectedSubCategory');
+    }
+  }, [selectedSubCategory]);
 
   // UI/UX Filter & Sort State
   const [sortBy, setSortBy] = useState<"distance" | "rating" | "popular">(
     "distance",
   );
-  const [searchRadius, setSearchRadius] = useState<number>(50);
+  const [searchRadius, setSearchRadius] = useState<number>(5);
   const [openNowOnly, setOpenNowOnly] = useState<boolean>(false);
   const [verifiedOnly, setVerifiedOnly] = useState<boolean>(false);
 
@@ -127,9 +134,16 @@ export default function App() {
   const [userPhone, setUserPhone] = useState<string>("");
   const [userName, setUserName] = useState<string>("Guest User");
   const [userEmail, setUserEmail] = useState<string>("");
+  const [userAvatar, setUserAvatar] = useState<string>("");
+  const [selectedVendorToEdit, setSelectedVendorToEdit] = useState<Vendor | null>(null);
 
   const handleOpenRegistration = () => {
-    setIsRegistrationOpen(true);
+    if (!userEmail) {
+      alert("Please login or verify your phone number to register a business.");
+      setIsAuthModalOpen(true);
+    } else {
+      setActiveTab("register-vendor");
+    }
   };
 
   // URL State Synchronization
@@ -178,14 +192,26 @@ export default function App() {
     } else if (parts.length === 0 || location.pathname === '/') {
       setStaticRoute(null);
       setSelectedVendorSlug(null);
-      setSelectedCategory("all");
-      setActiveTab("home");
+      
+      const savedTab = sessionStorage.getItem('activeTab');
+      const savedCategory = sessionStorage.getItem('selectedCategory');
+      
+      if (savedTab && savedTab !== "home") {
+        setActiveTab(savedTab as any);
+        if (savedCategory) setSelectedCategory(savedCategory);
+      } else {
+        setSelectedCategory("all");
+        setActiveTab("home");
+      }
     }
   }, [location.pathname]);
 
   // Update URL when state changes
   useEffect(() => {
-    if (activeTab === 'home' && !staticRoute && !selectedVendorSlug) {
+    const isExpertRoute = location.pathname.startsWith('/expert/');
+    const isStaticRoute = ['/about', '/contact', '/careers', '/investor-relations', '/privacy', '/terms'].includes(location.pathname);
+    
+    if (activeTab === 'home' && !staticRoute && !selectedVendorSlug && !isExpertRoute && !isStaticRoute) {
       if (currentNeighborhood && selectedCategory && selectedCategory !== "all") {
         const newPath = `/hyderabad/${encodeURIComponent(currentNeighborhood.toLowerCase())}/${encodeURIComponent(selectedCategory)}`;
         if (location.pathname !== newPath) {
@@ -207,17 +233,13 @@ export default function App() {
     return t("services");
   }, [searchQuery, selectedCategory, currentLang]);
 
-  // Modals
+  // UI/UX Modals & Sidebars
   const [selectedVendor, setSelectedVendor] = useState<Vendor | null>(null);
-  const [isRegistrationOpen, setIsRegistrationOpen] = useState<boolean>(false);
-  const [isLocationModalOpen, setIsLocationModalOpen] =
-    useState<boolean>(false);
-  const [isAuthModalOpen, setIsAuthModalOpen] = useState<boolean>(false);
-  const [isNotificationsModalOpen, setIsNotificationsModalOpen] =
-    useState<boolean>(false);
-  const [isProfileSidebarOpen, setIsProfileSidebarOpen] =
-    useState<boolean>(false);
+  const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [isNotificationsModalOpen, setIsNotificationsModalOpen] = useState(false);
   const [isLangModalOpen, setIsLangModalOpen] = useState<boolean>(false);
+  const [isProfileSidebarOpen, setIsProfileSidebarOpen] = useState<boolean>(false);
   const [isScrolled, setIsScrolled] = useState<boolean>(false);
 
   // Scroll listener for sticky search bar
@@ -250,15 +272,34 @@ export default function App() {
           "Active Supabase session found on load for:",
           session.user.email,
         );
-        setUserEmail(session.user.email || "");
-        setUserPhone(session.user.phone || session.user.email || "");
-        setUserName(
-          session.user.user_metadata?.full_name ||
-            session.user.email?.split("@")[0] ||
-            "User",
-        );
-        if (session.user.email === "aniketrachalwar073@gmail.com") {
+        const userEmail = session.user.email || "";
+        setUserEmail(userEmail);
+
+        // Load profile from local storage if available
+        const savedProfilesStr = localStorage.getItem('dialxprt_profiles_v1');
+        const profiles = savedProfilesStr ? JSON.parse(savedProfilesStr) : {};
+        const savedProfile = profiles[userEmail];
+
+        if (savedProfile) {
+          setUserPhone(savedProfile.phone || session.user.phone || userEmail);
+          setUserName(savedProfile.name || session.user.user_metadata?.full_name || userEmail.split("@")[0] || "User");
+          if (savedProfile.avatar) setUserAvatar(savedProfile.avatar);
+          if (savedProfile.neighborhood) setCurrentNeighborhood(savedProfile.neighborhood);
+        } else {
+          setUserPhone(session.user.phone || userEmail);
+          setUserName(session.user.user_metadata?.full_name || userEmail.split("@")[0] || "User");
+        }
+        if (userEmail === "aniketrachalwar073@gmail.com" || userEmail === "aniketrachalwar1@gmail.com") {
           setCurrentRole("admin");
+        } else {
+          const rolesStr = localStorage.getItem('dialxprt_roles_v1');
+          if (rolesStr) {
+            const savedRoles = JSON.parse(rolesStr);
+            const userRole = savedRoles.find((r: any) => r.email === userEmail || (session.user.phone && r.email === session.user.phone));
+            if (userRole) {
+              setCurrentRole(userRole.role);
+            }
+          }
         }
       }
     });
@@ -268,18 +309,46 @@ export default function App() {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event, session) => {
       console.log("Supabase Auth Event:", event);
+      
+      // Clear hash from URL if it contains access_token to make it clean
+      if (window.location.hash.includes('access_token')) {
+        window.history.replaceState(null, '', window.location.pathname + window.location.search);
+      }
+      
       if (session?.user) {
-        setUserEmail(session.user.email || "");
-        setUserPhone(session.user.phone || session.user.email || "");
-        setUserName(
-          session.user.user_metadata?.full_name ||
-            session.user.email?.split("@")[0] ||
-            "User",
-        );
-        if (session.user.email === "aniketrachalwar073@gmail.com") {
+        const userEmail = session.user.email || "";
+        setUserEmail(userEmail);
+
+        // Load profile from local storage if available
+        const savedProfilesStr = localStorage.getItem('dialxprt_profiles_v1');
+        const profiles = savedProfilesStr ? JSON.parse(savedProfilesStr) : {};
+        const savedProfile = profiles[userEmail];
+
+        if (savedProfile) {
+          setUserPhone(savedProfile.phone || session.user.phone || userEmail);
+          setUserName(savedProfile.name || session.user.user_metadata?.full_name || userEmail.split("@")[0] || "User");
+          if (savedProfile.avatar) setUserAvatar(savedProfile.avatar);
+          if (savedProfile.neighborhood) setCurrentNeighborhood(savedProfile.neighborhood);
+        } else {
+          setUserPhone(session.user.phone || userEmail);
+          setUserName(session.user.user_metadata?.full_name || userEmail.split("@")[0] || "User");
+        }
+        if (userEmail === "aniketrachalwar073@gmail.com" || userEmail === "aniketrachalwar1@gmail.com") {
           setCurrentRole("admin");
         } else {
-          setCurrentRole("customer"); // reset if different user logs in
+          // Check if they were granted a role by the admin
+          const rolesStr = localStorage.getItem('dialxprt_roles_v1');
+          if (rolesStr) {
+            const savedRoles = JSON.parse(rolesStr);
+            const userRole = savedRoles.find((r: any) => r.email === userEmail || (session.user.phone && r.email === session.user.phone));
+            if (userRole) {
+              setCurrentRole(userRole.role);
+            } else {
+              setCurrentRole("customer");
+            }
+          } else {
+            setCurrentRole("customer"); // reset if different user logs in
+          }
         }
       } else {
         setUserEmail("");
@@ -296,12 +365,29 @@ export default function App() {
     phone: string,
     email: string,
     neighborhood: string,
+    avatar?: string
   ) => {
     setUserName(name);
     setUserPhone(phone);
     setUserEmail(email);
+    if (avatar !== undefined) {
+      setUserAvatar(avatar);
+    }
     if (neighborhood) {
       setCurrentNeighborhood(neighborhood);
+    }
+
+    // Save profile to local storage keyed by email so it persists
+    if (email) {
+      const savedProfilesStr = localStorage.getItem('dialxprt_profiles_v1');
+      const profiles = savedProfilesStr ? JSON.parse(savedProfilesStr) : {};
+      profiles[email] = {
+        name,
+        phone,
+        neighborhood,
+        avatar: avatar !== undefined ? avatar : userAvatar
+      };
+      localStorage.setItem('dialxprt_profiles_v1', JSON.stringify(profiles));
     }
     addNotification({
       title: "Profile Updated!",
@@ -310,8 +396,8 @@ export default function App() {
     });
   };
 
-  const handleUpdateVendorDetailsSubmit = (updatedVendor: Vendor) => {
-    updateVendorDetails(updatedVendor);
+  const handleUpdateVendorDetailsSubmit = async (updatedVendor: Vendor) => {
+    await updateVendorDetails(updatedVendor);
     loadData();
     addNotification({
       title: "Business Details Updated!",
@@ -352,7 +438,7 @@ export default function App() {
   // Load Vendors on Mount & Filter Change
   useEffect(() => {
     loadData();
-  }, [userLat, userLng, selectedCategory, selectedSubCategory, searchQuery, searchRadius]);
+  }, [userLat, userLng, selectedCategory, selectedSubCategory, searchQuery, searchRadius, currentRole]);
 
   const loadData = async () => {
     setLoading(true);
@@ -362,9 +448,9 @@ export default function App() {
         userLng,
         selectedCategory,
         searchQuery,
-        true, // Include pending for volunteer review visibility
+        currentRole === "admin" || currentRole === "volunteer", // ONLY include pending if admin or volunteer
         selectedSubCategory,
-        searchRadius
+        1000 // Always fetch a large radius (1000km) so we don't limit results, we just sort/group them
       );
       setVendors(data);
       
@@ -453,8 +539,14 @@ export default function App() {
       | "whatsappClicksCount"
     >,
   ) => {
-    const newVendor = await registerVendor(vendorData);
-    await loadData();
+    const finalVendorData = { ...vendorData };
+    if (userEmail) {
+      finalVendorData.email = userEmail;
+    }
+    const newVendor = await registerVendor(finalVendorData);
+    
+    // Do NOT await loadData, let it run in background so UI unblocks instantly
+    loadData();
 
     addNotification({
       title: "Store Submitted for Verification!",
@@ -573,18 +665,25 @@ export default function App() {
       result = result.filter((v) => (v.rating || 4.5) > 4.2);
     }
 
-    // Sorting
-    result.sort((a, b) => {
-      if (sortBy === "distance")
-        return (a.distanceKm || 0) - (b.distanceKm || 0);
-      if (sortBy === "rating") return (b.rating || 0) - (a.rating || 0);
-      if (sortBy === "popular")
-        return (b.reviewsCount || 0) - (a.reviewsCount || 0);
-      return 0;
-    });
+    // Split vendors into 'within radius' and 'outside radius' based on searchRadius
+    // This ensures vendors within the selected radius are shown first.
+    const withinRadius = result.filter(v => (v.distanceKm || 0) <= searchRadius);
+    const outsideRadius = result.filter(v => (v.distanceKm || 0) > searchRadius);
 
-    return result;
-  }, [vendors, verifiedOnly, openNowOnly, sortBy]);
+    // Sorting function
+    const sortFn = (a: Vendor, b: Vendor) => {
+      if (sortBy === "distance") return (a.distanceKm || 0) - (b.distanceKm || 0);
+      if (sortBy === "rating") return (b.rating || 0) - (a.rating || 0);
+      if (sortBy === "popular") return (b.reviewsCount || 0) - (a.reviewsCount || 0);
+      return 0;
+    };
+
+    withinRadius.sort(sortFn);
+    outsideRadius.sort(sortFn);
+
+    // Return within radius first, then outside radius
+    return [...withinRadius, ...outsideRadius];
+  }, [vendors, verifiedOnly, openNowOnly, sortBy, searchRadius]);
 
   const approvedVendors = processedVendors;
 
@@ -599,6 +698,7 @@ export default function App() {
         description={`Find the best ${serviceName} in ${currentNeighborhood}. Get quotes, chat on WhatsApp, or call now.`}
       />
       {/* 1. STICKY TOP HEADER */}
+      {activeTab !== "all-categories" && (
       <Header
         currentNeighborhood={currentNeighborhood}
         isAutoDetected={isAutoDetected}
@@ -607,11 +707,7 @@ export default function App() {
         onOpenAuth={() => setIsAuthModalOpen(true)}
         onOpenNotifications={() => setIsNotificationsModalOpen(true)}
         onOpenAccount={() => {
-          if (!userPhone) {
-            setIsAuthModalOpen(true);
-          } else {
-            setIsProfileSidebarOpen(true);
-          }
+          setIsProfileSidebarOpen(true);
         }}
         onOpenLanguage={() => setIsLangModalOpen(true)}
         onGoHome={() => {
@@ -656,9 +752,43 @@ export default function App() {
               onOpenLocation={() => setIsLocationModalOpen(true)}
             />
 
+            {/* Quick Link Category Pills (Only on pure home screen) */}
+            {selectedCategory === "all" && !searchQuery && (
+              <div className="grid grid-cols-3 gap-2 pb-1 pt-1 px-0.5">
+                {[
+                  { label: 'Electrician', slug: 'electrician' },
+                  { label: 'Plumber', slug: 'plumber' },
+                  { label: 'Car Mechanic', slug: 'mechanic' },
+                  { label: 'Carpenter', slug: 'carpenter' },
+                  { label: 'AC Repair & Services', slug: 'ac-repair' },
+                  { label: 'Show More', slug: 'all-categories' }
+                ].map(link => (
+                  <button
+                    key={link.slug}
+                    onClick={() => {
+                      if (link.slug === 'all-categories') {
+                        setActiveTab('all-categories');
+                      } else {
+                        setSelectedCategory(link.slug);
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                      }
+                    }}
+                    className="bg-white hover:bg-gray-100 active:scale-95 transition-all text-gray-900 font-extrabold text-[11px] sm:text-xs leading-tight py-2 px-1 rounded-lg shadow-sm flex items-center justify-center min-h-[44px] gap-1"
+                  >
+                    <span className="line-clamp-2">{link.label}</span>
+                    {link.slug === 'all-categories' && (
+                      <div className="w-4 h-4 rounded-full bg-[#1A9E9E] flex items-center justify-center text-white shrink-0 mt-0.5">
+                        <ChevronDown className="w-3 h-3" strokeWidth={3} />
+                      </div>
+                    )}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         )}
       </Header>
+      )}
 
 
       {/* MAIN BODY DISPLAY */}
@@ -680,7 +810,13 @@ export default function App() {
             userPhone={userPhone}
             userName={userName}
             userEmail={userEmail}
+            userAvatar={userAvatar}
             onUpdateUserProfile={handleUpdateUserProfile}
+            onOpenEditProfile={() => setActiveTab("edit-profile")}
+            onOpenEditVendor={(vendor) => {
+              setSelectedVendorToEdit(vendor);
+              setActiveTab("edit-vendor");
+            }}
             onUpdateVendorDetails={handleUpdateVendorDetailsSubmit}
             onLogout={handleLogout}
             vendors={vendors}
@@ -695,8 +831,65 @@ export default function App() {
         ) : activeTab === "admin" ? (
           <AdminPanelView 
             vendors={vendors}
+            currentRole={currentRole}
             onUpdateVendorStatus={handleUpdateVendorStatus}
             onExportCSV={handleExportCSV}
+          />
+        ) : activeTab === "offers" ? (
+          <OffersView />
+        ) : activeTab === "all-categories" ? (
+          <AllCategoriesView
+            categories={categories}
+            onSelectCategory={(slug) => {
+              setSelectedCategory(slug);
+              setActiveTab("home");
+            }}
+            onBack={() => setActiveTab("home")}
+            currentLang={currentLang}
+          />
+        ) : activeTab === "register-vendor" ? (
+          <VendorRegistrationView
+            onBack={() => setActiveTab("home")}
+            categories={categories}
+            userLat={userLat}
+            userLng={userLng}
+            currentNeighborhood={currentNeighborhood}
+            onSubmit={async (vendorData) => {
+              await handleRegisterVendorSubmit(vendorData);
+              setActiveTab('home');
+            }}
+            currentLang={currentLang}
+          />
+        ) : activeTab === "edit-vendor" && selectedVendorToEdit ? (
+          <VendorRegistrationView
+            onBack={() => {
+              setActiveTab("account");
+              setSelectedVendorToEdit(null);
+            }}
+            categories={categories}
+            userLat={userLat}
+            userLng={userLng}
+            currentNeighborhood={currentNeighborhood}
+            initialData={selectedVendorToEdit}
+            isEditMode={true}
+            onSubmit={async (vendorData) => {
+              // Call the existing update handler
+              handleUpdateVendorDetailsSubmit({ ...selectedVendorToEdit, ...vendorData } as Vendor);
+              setActiveTab("account");
+              setSelectedVendorToEdit(null);
+            }}
+            currentLang={currentLang}
+          />
+        ) : activeTab === "edit-profile" ? (
+          <UserProfileEditView
+            onBack={() => setActiveTab("account")}
+            userName={userName}
+            userPhone={userPhone}
+            userEmail={userEmail}
+            userAvatar={userAvatar}
+            currentNeighborhood={currentNeighborhood}
+            onUpdateUserProfile={handleUpdateUserProfile}
+            currentLang={currentLang}
           />
         ) : ["favorites", "saved", "transactions", "customer_service", "investor_relations", "policy", "feedback", "help"].includes(activeTab) ? (
           <SidebarPages activeTab={activeTab} onBack={() => setActiveTab("home")} />
@@ -713,17 +906,7 @@ export default function App() {
                 }}
                 onSearchQuery={(q) => setSearchQuery(q)}
                 currentLang={currentLang}
-              />
-            ) : selectedCategory !== "all" && !selectedSubCategory && searchQuery === "" && (categories.find(c => c.slug === selectedCategory)?.subcategories?.length || 0) > 0 ? (
-              /* SUBCATEGORY SELECTION VIEW */
-              <SubCategoryView 
-                category={categories.find(c => c.slug === selectedCategory) || categories[0]}
-                currentNeighborhood={currentNeighborhood}
-                onSelectSubCategory={(slug) => setSelectedSubCategory(slug)}
-                onBack={() => {
-                  setSelectedCategory("all");
-                  setSelectedSubCategory(null);
-                }}
+                onShowAllCategories={() => setActiveTab("all-categories")}
               />
             ) : (
               /* SPECIFIC CATEGORY / SEARCH RESULTS VIEW - SORTED BY PROXIMITY */
@@ -747,13 +930,9 @@ export default function App() {
                   <div className="flex items-center gap-3">
                     <button
                       onClick={() => {
-                        if (searchQuery) {
-                          setSelectedCategory("all");
-                          setSelectedSubCategory(null);
-                          setSearchQuery("");
-                        } else {
-                          setSelectedSubCategory(null);
-                        }
+                        setSelectedCategory("all");
+                        setSelectedSubCategory(null);
+                        setSearchQuery("");
                       }}
                       className="p-2.5 bg-gray-100 hover:bg-[#1A9E9E] hover:text-white text-gray-700 rounded-xl transition-all shrink-0 min-h-[44px] min-w-[44px] flex items-center justify-center font-bold"
                       title={searchQuery ? "Back to All Services Grid" : "Back to Subcategories"}
@@ -762,26 +941,23 @@ export default function App() {
                     </button>
 
                     <div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs font-bold text-[#F36F21] bg-orange-50 px-2.5 py-0.5 rounded-md border border-orange-200">
-                          {selectedCategory !== "all"
-                            ? categories.find(
-                                (c) => c.slug === selectedCategory,
-                              )?.name || selectedCategory
-                            : "Search Results"}
-                        </span>
-                        <span className="text-xs text-gray-400">•</span>
-                        <span className="text-xs text-gray-500 font-semibold flex items-center gap-1">
+                      <div className="flex items-center gap-2 mt-2">
+                        {selectedCategory !== "all" && (
+                          <>
+                            <span className="text-xs font-bold text-[#F36F21] bg-orange-50 px-2.5 py-0.5 rounded-md border border-orange-200">
+                              {categories.find((c) => c.slug === selectedCategory)?.name || selectedCategory}
+                            </span>
+                            <span className="text-xs text-gray-400">•</span>
+                          </>
+                        )}
+                        <button 
+                          onClick={() => setIsLocationModalOpen(true)}
+                          className="text-xs text-gray-500 font-semibold flex items-center gap-1 hover:text-gray-900 transition-colors bg-white px-2 py-1 rounded-md border border-gray-200 shadow-sm"
+                        >
                           <MapPin className="w-3.5 h-3.5 text-[#F36F21]" />{" "}
                           {currentNeighborhood}, Hyderabad
-                        </span>
+                        </button>
                       </div>
-
-                      <h1 className="font-extrabold text-base sm:text-lg text-gray-900 mt-0.5">
-                        {selectedCategory !== "all"
-                          ? `Nearest ${categories.find((c) => c.slug === selectedCategory)?.name || selectedCategory} Experts`
-                          : `Search results for "${searchQuery}"`}
-                      </h1>
                     </div>
                   </div>
 
@@ -802,11 +978,9 @@ export default function App() {
                       onChange={(e) => setSearchRadius(Number(e.target.value))}
                       className="px-3 py-1.5 bg-white border border-gray-200 rounded-full text-xs font-bold text-gray-700 outline-none focus:ring-2 focus:ring-[#1A9E9E] shrink-0"
                     >
-                      <option value={1}>Within 1 km</option>
-                      <option value={2}>Within 2 km</option>
-                      <option value={5}>Within 5 km</option>
-                      <option value={10}>Within 10 km</option>
-                      <option value={50}>Anywhere (50km)</option>
+                      <option value={2}>2 km</option>
+                      <option value={5}>5 km</option>
+                      <option value={10}>10 km</option>
                     </select>
 
                     <button
@@ -823,20 +997,6 @@ export default function App() {
                       Open Now
                     </button>
 
-                    <button
-                      onClick={() => setVerifiedOnly(!verifiedOnly)}
-                      className={`px-3 py-1.5 rounded-full text-xs font-bold shrink-0 transition-colors border ${
-                        verifiedOnly
-                          ? "bg-[#1A9E9E]/10 border-[#1A9E9E]/30 text-[#1A9E9E]"
-                          : "bg-white border-gray-200 text-gray-700 hover:bg-gray-50"
-                      }`}
-                    >
-                      ✓ Verified
-                    </button>
-
-                    <button className="px-3 py-1.5 bg-white border border-gray-200 rounded-full text-xs font-bold text-gray-700 hover:bg-gray-50 shrink-0 flex items-center gap-1 ml-auto">
-                      Filter
-                    </button>
                   </div>
                 </div>
 
@@ -878,7 +1038,7 @@ export default function App() {
                   </div>
                 ) : (
                   <div className="flex flex-col gap-4 sm:gap-5 max-w-4xl mx-auto w-full">
-                    {approvedVendors.map((vendor) => (
+                    {approvedVendors.filter(v => v.distanceKm === undefined || v.distanceKm <= searchRadius).map((vendor) => (
                       <VendorCard
                         key={vendor.id}
                         vendor={vendor}
@@ -897,6 +1057,36 @@ export default function App() {
                         currentLang={currentLang}
                       />
                     ))}
+
+                    {approvedVendors.filter(v => v.distanceKm !== undefined && v.distanceKm > searchRadius).length > 0 && (
+                      <>
+                        <div className="flex items-center gap-4 py-4 opacity-60">
+                          <div className="flex-1 h-px bg-gray-300"></div>
+                          <span className="text-xs font-bold text-gray-500 uppercase tracking-wider">Further Away</span>
+                          <div className="flex-1 h-px bg-gray-300"></div>
+                        </div>
+
+                        {approvedVendors.filter(v => v.distanceKm !== undefined && v.distanceKm > searchRadius).map((vendor) => (
+                          <VendorCard
+                            key={vendor.id}
+                            vendor={vendor}
+                            onSelectVendor={(v) => navigate(`/expert/${v.slug}`)}
+                            onGetBestDeal={(v) => {
+                              const waMessage = encodeURIComponent(
+                                `Hi ${v.ownerName}, I'd like to get a quote for ${v.category} services.`,
+                              );
+                              window.open(
+                                `https://wa.me/${v.whatsapp}?text=${waMessage}`,
+                                "_blank",
+                              );
+                            }}
+                            onTrackCall={handleTrackCall}
+                            onTrackWhatsApp={handleTrackWhatsApp}
+                            currentLang={currentLang}
+                          />
+                        ))}
+                      </>
+                    )}
                   </div>
                 )}
               </div>
@@ -911,7 +1101,7 @@ export default function App() {
       <BottomNav
         activeTab={activeTab}
         onTabChange={(tab) => {
-          if (tab === "add") {
+          if (tab === "add" || tab === "register-vendor") {
             handleOpenRegistration();
           } else {
             setActiveTab(tab);
@@ -935,16 +1125,6 @@ export default function App() {
       <RightStickyBar onOpenRegistration={handleOpenRegistration} />
 
       {/* 5. MODALS */}
-      <VendorRegistrationModal
-        isOpen={isRegistrationOpen}
-        onClose={() => setIsRegistrationOpen(false)}
-        categories={categories}
-        userLat={userLat}
-        userLng={userLng}
-        currentNeighborhood={currentNeighborhood}
-        onSubmit={handleRegisterVendorSubmit}
-        currentLang={currentLang}
-      />
 
       <LocationPickerModal
         isOpen={isLocationModalOpen}
@@ -977,15 +1157,23 @@ export default function App() {
       <ProfileSidebar
         isOpen={isProfileSidebarOpen}
         onClose={() => setIsProfileSidebarOpen(false)}
-        userName={userName}
+        userName={userPhone ? userName : ''}
         onLogout={handleLogout}
         onEditProfile={() => {
           setActiveTab('account');
         }}
         onChangeLanguage={() => setIsLangModalOpen(true)}
         onOpenNotifications={() => setIsNotificationsModalOpen(true)}
-        onNavigate={(tab: any) => setActiveTab(tab)}
+        onNavigate={(tab: any) => {
+          setIsProfileSidebarOpen(false);
+          setActiveTab(tab);
+        }}
         isAdmin={currentRole === 'admin'}
+        currentRole={currentRole}
+        onLogin={() => {
+          setIsProfileSidebarOpen(false);
+          setIsAuthModalOpen(true);
+        }}
       />
 
       <LanguageModal

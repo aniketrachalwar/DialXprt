@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { MapPin, PlusCircle, Bell, User, ShieldCheck, Crown, Store, Globe, Home, ChevronDown, Check, X } from 'lucide-react';
 import { UserRole } from '../types';
 import { Logo } from './Logo';
@@ -62,82 +62,61 @@ export const Header: React.FC<HeaderProps> = ({
 
   const activeLangObj = languages.find((l) => l.code === currentLang) || languages[0];
 
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 40);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
     <header className="sticky top-0 z-40 bg-[#1E2875] text-white shadow-md transition-all pt-safe rounded-b-2xl">
       {/* Top Banner Bar */}
       <div className="max-w-7xl mx-auto px-2.5 sm:px-4 py-3">
-        <div className="flex items-center justify-between gap-1.5 sm:gap-2">
-          {/* Logo Section - Navigates Home */}
-          <div
-            id="header-logo-home-btn"
-            className="flex items-center gap-1.5 cursor-pointer hover:opacity-90 transition-opacity shrink-0"
-            onClick={onGoHome}
-            title={t('homeTab')}
-          >
-            <Logo variant="white" size="md" />
-            <span className="text-[9px] sm:text-[10px] bg-[#F36F21] text-white font-black px-1.5 py-0.5 rounded uppercase tracking-wider self-start mt-0.5">
-              HYD
-            </span>
-          </div>
-
-          {/* Optional Compact Search Bar (Sticky Mode) */}
-          {renderCompactSearch && (
-            <div className="hidden md:block flex-1 max-w-2xl mx-4">
-              {renderCompactSearch}
-            </div>
-          )}
-
-          {/* Language Switcher Section */}
-          <div className="flex items-center gap-1.5 shrink-0">
-            {/* Mobile Language Button (Visible on phone < sm) */}
-            <button
-              id="mobile-language-picker-btn"
-              onClick={onOpenLanguage}
-              className="flex sm:hidden items-center gap-1.5 bg-indigo-950/40 hover:bg-white/10 px-2 py-1.5 rounded-lg border border-indigo-500/20 active:scale-95 transition-all min-h-[38px] text-xs font-bold"
-              title="Change app language"
+        {!isScrolled && (
+          <div className="flex items-center justify-between gap-1.5 sm:gap-2 mb-3">
+            {/* Logo Section - Navigates Home */}
+            <div
+              id="header-logo-home-btn"
+              className="flex items-center gap-1.5 cursor-pointer hover:opacity-90 transition-opacity shrink-0"
+              onClick={onGoHome}
+              title={t('homeTab')}
             >
-              <Globe className="w-3.5 h-3.5 text-[#F36F21] shrink-0" />
-              <span className="text-xs font-black text-amber-300">{activeLangObj.shortLabel}</span>
-              <ChevronDown className="w-3 h-3 text-indigo-300 shrink-0" />
-            </button>
-
-            {/* Desktop Language Switcher Bar (Visible on sm and above) */}
-            <div className="hidden sm:flex items-center bg-indigo-950/80 p-1 rounded-xl border border-indigo-500/30 shrink-0">
-              <Globe className="w-3.5 h-3.5 text-indigo-300 ml-1.5 mr-1 shrink-0" />
-              {languages.map((lang) => (
-                <button
-                  key={lang.code}
-                  onClick={() => onLanguageChange(lang.code)}
-                  className={`px-2 py-1 rounded-lg text-[11px] font-black transition-all ${
-                    currentLang === lang.code
-                      ? 'bg-[#F36F21] text-white shadow-xs'
-                      : 'text-indigo-200 hover:text-white hover:bg-indigo-800/60'
-                  }`}
-                  title={lang.englishName}
-                >
-                  {lang.shortLabel}
-                </button>
-              ))}
+              <Logo variant="white" size="md" />
+              <span className="text-[9px] sm:text-[10px] bg-[#F36F21] text-white font-black px-1.5 py-0.5 rounded uppercase tracking-wider self-start mt-0.5">
+                HYD
+              </span>
             </div>
 
+            {/* Optional Compact Search Bar (Sticky Mode) */}
+            {renderCompactSearch && (
+              <div className="hidden md:block flex-1 max-w-2xl mx-4">
+                {renderCompactSearch}
+              </div>
+            )}
 
+            <div className="flex items-center gap-1.5 shrink-0">
 
-            {/* User Profile / Account Hub Button */}
-            <button
-              id="user-auth-btn"
-              onClick={onOpenAccount}
-              className={`flex items-center gap-1 ${userPhone ? 'bg-white/10 hover:bg-white/20' : 'bg-[#F36F21] hover:bg-orange-600 shadow-sm'} text-white p-1.5 sm:px-2.5 rounded-full sm:rounded-lg text-xs font-semibold min-w-[38px] min-h-[38px] justify-center transition-all`}
-              title={userPhone ? t('accountHub') : 'Login'}
-            >
-              <User className={`w-4 h-4 ${userPhone ? 'text-[#F36F21]' : 'text-white'}`} />
-              <span className="hidden sm:inline">{userPhone ? 'Profile' : 'Login'}</span>
-            </button>
+              {/* User Profile / Account Hub Button */}
+              <button
+                id="user-auth-btn"
+                onClick={onOpenAccount}
+                className={`flex items-center justify-center ${userPhone ? 'bg-white/10 hover:bg-white/20 rounded-lg sm:px-2.5 gap-1 min-h-[38px] min-w-[38px]' : 'bg-[#F36F21] hover:bg-orange-600 rounded-full w-10 h-10'} text-white shadow-sm transition-all`}
+                title={userPhone ? t('accountHub') : 'Login'}
+              >
+                <User className={`w-5 h-5 ${userPhone ? 'text-[#F36F21]' : 'text-white'}`} />
+                {userPhone && <span className="hidden sm:inline">Profile</span>}
+              </button>
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Children (SearchBar, Filters, etc.) */}
         {children && (
-          <div className="mt-3">
+          <div>
             {children}
           </div>
         )}

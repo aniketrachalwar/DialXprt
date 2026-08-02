@@ -28,12 +28,14 @@ export const HomeDashboard = ({
   categories,
   onSelectCategory,
   onSearchQuery,
-  currentLang
+  currentLang,
+  onShowAllCategories
 }: {
   categories: Category[];
   onSelectCategory: (slug: string) => void;
   onSearchQuery: (query: string) => void;
   currentLang: AppLanguage;
+  onShowAllCategories?: () => void;
 }) => {
   return (
     <motion.div 
@@ -55,9 +57,51 @@ export const HomeDashboard = ({
             onSelectCategory={onSelectCategory} 
             currentLang={currentLang}
             currentNeighborhood="Banjara Hills" 
+            onShowAllCategories={onShowAllCategories || (() => onSelectCategory('all-categories'))}
           />
         </motion.div>
         
+        {/* Promotional Ad Banner */}
+        <motion.div variants={itemVariants} className="px-1 py-1">
+          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#E6F4F8] to-[#E0F7FA] p-5 sm:p-6 shadow-sm flex items-center justify-between border border-blue-50">
+            {/* Decorative Cloud/Badge */}
+            <div className="absolute -right-4 -bottom-4 opacity-10">
+              <svg width="100" height="100" viewBox="0 0 24 24" fill="currentColor" className="text-[#1a237e]">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+              </svg>
+            </div>
+            
+            <div className="relative z-10 flex-1">
+              <h3 className="text-lg sm:text-xl font-bold text-[#1a237e] tracking-tight mb-1">
+                Need Emergency Repairs?
+              </h3>
+              <p className="text-xs sm:text-sm text-gray-600 mb-3 font-medium">
+                24/7 Verified Experts Near You
+              </p>
+              <button 
+                onClick={() => onSelectCategory('electrician')}
+                className="bg-[#1a237e] text-white px-4 py-1.5 rounded-lg text-[13px] font-semibold hover:bg-[#283593] transition-colors shadow-sm active:scale-95"
+              >
+                Find Experts Now
+              </button>
+            </div>
+            
+            <div className="relative z-10 w-20 h-20 sm:w-24 sm:h-24 flex-shrink-0 ml-2 rounded-full overflow-hidden border-[3px] border-white shadow-md">
+              <img 
+                src="https://images.unsplash.com/photo-1540569014015-19a7be504e3a?auto=format&fit=crop&q=80&w=200" 
+                alt="Expert"
+                className="w-full h-full object-cover"
+              />
+            </div>
+            
+            {/* Pagination Dots (Static for UI resemblance) */}
+            <div className="absolute bottom-1.5 left-1/2 transform -translate-x-1/2 flex gap-1">
+              <div className="w-1.5 h-1.5 rounded-full bg-gray-300/80"></div>
+              <div className="w-3.5 h-1.5 rounded-full bg-[#1a237e]"></div>
+              <div className="w-1.5 h-1.5 rounded-full bg-gray-300/80"></div>
+            </div>
+          </div>
+        </motion.div>
 
         <motion.div variants={itemVariants} className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <ImageCategorySection 

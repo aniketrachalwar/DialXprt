@@ -57,19 +57,24 @@ export const VendorProfilePage: React.FC<VendorProfilePageProps> = ({
     <div className="bg-[#F4F7FA] min-h-screen pb-24">
       <SEOHead
         title={`${vendor.name} - ${vendor.category} in ${vendor.neighborhood}, Hyderabad | DialXprt`}
-        description={`Contact ${vendor.ownerName} at ${vendor.name} for ${vendor.keywords || vendor.category} services in ${vendor.neighborhood}, Hyderabad. Call ${vendor.phone}. ${vendor.description.substring(0, 50)}...`}
+        description={`Contact ${vendor.ownerName} at ${vendor.name} for ${vendor.keywords || vendor.category} services in ${vendor.neighborhood}, Hyderabad. Call ${vendor.phone}. ${(vendor.description || '').substring(0, 50)}...`}
         vendors={[vendor]}
       />
 
       <div className="max-w-4xl mx-auto bg-white min-h-screen sm:min-h-0 sm:mt-6 sm:rounded-3xl shadow-sm overflow-hidden animate-fade-in">
         {/* Header / Hero */}
         <div className="relative h-64 sm:h-80 w-full bg-gray-900 shrink-0">
-          <img
-            src={vendor.imageUrl}
-            alt={`${vendor.name}`}
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent pointer-events-none"></div>
+          <div className="w-full h-full flex overflow-x-auto snap-x snap-mandatory scrollbar-hide">
+            {(vendor.images && vendor.images.length > 0 ? vendor.images : [vendor.imageUrl]).map((img, idx) => (
+              <img
+                key={idx}
+                src={img}
+                alt={`${vendor.name} - Photo ${idx + 1}`}
+                className="w-full h-full object-cover snap-center shrink-0"
+              />
+            ))}
+          </div>
+          <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent pointer-events-none"></div>
 
           <div className="absolute top-4 left-4 right-4 flex items-center justify-between z-10">
             <button onClick={() => navigate(-1)} className="bg-white/80 hover:bg-white text-gray-900 p-2.5 rounded-full backdrop-blur-md transition-colors shadow-sm">
@@ -113,7 +118,13 @@ export const VendorProfilePage: React.FC<VendorProfilePageProps> = ({
           </div>
 
           <div className="text-sm">
-            <span className="text-[#22C55E] font-bold">Open Now</span> <span className="text-gray-500">: until 10:00 pm</span>
+            {vendor.operatingHours ? (
+              vendor.operatingHours.toLowerCase().includes('24/7') ? (
+                <span className="text-[#22C55E] font-bold">Open Now: {vendor.operatingHours}</span>
+              ) : (
+                <span className="text-gray-700 font-medium">Hours: {vendor.operatingHours}</span>
+              )
+            ) : null}
           </div>
         </div>
 

@@ -204,7 +204,7 @@ export async function registerVendor(vendorData: Omit<Vendor, 'id' | 'slug' | 'c
 
   if (supabase) {
     try {
-      await supabase.from('vendors').insert([
+      const insertPromise = supabase.from('vendors').insert([
         {
           slug: newVendor.slug,
           name: newVendor.name,
@@ -228,6 +228,9 @@ export async function registerVendor(vendorData: Omit<Vendor, 'id' | 'slug' | 'c
           is_verified: false,
         },
       ]);
+      // Timeout after 2.5 seconds to prevent hanging if Supabase is down or slow
+      const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('Supabase request timed out')), 2500));
+      await Promise.race([insertPromise, timeoutPromise]);
     } catch (e) {
       console.warn('Failed to insert into Supabase directly:', e);
     }
@@ -240,10 +243,56 @@ export async function registerVendor(vendorData: Omit<Vendor, 'id' | 'slug' | 'c
   return newVendor;
 }
 
+export async function fetchAllVendors(): Promise<Vendor[]> {
+  if (supabase) {
+    try {
+      const { data, error } = await supabase
+        .from('vendors')
+        .select('*')
+        .order('created_at', { ascending: false });
+        
+      if (!error && data && Array.isArray(data) && data.length > 0) {
+        return data.map((v: any) => ({
+          id: v.id,
+          slug: v.slug,
+          name: v.name,
+          category: v.category_slug,
+          categorySlug: v.category_slug,
+          ownerName: v.owner_name,
+          phone: v.phone,
+          whatsapp: v.whatsapp,
+          address: v.address,
+          neighborhood: v.neighborhood,
+          city: v.city,
+          pincode: v.pincode,
+          lat: v.lat,
+          lng: v.lng,
+          imageUrl: v.image_url || 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&q=80&w=600',
+          isVerified: v.is_verified,
+          status: v.status as VendorStatus,
+          rating: v.rating || 4.8,
+          reviewsCount: v.reviews_count || 10,
+          description: v.description || '',
+          createdAt: v.created_at,
+          updatedAt: v.created_at,
+          distanceKm: 0,
+          viewsCount: v.views_count,
+          callsCount: v.calls_count,
+          whatsappClicksCount: v.whatsapp_clicks_count,
+        }));
+      }
+    } catch (e) {
+      console.warn('Supabase fetchAllVendors failed, falling back:', e);
+    }
+  }
+  
+  return getStoredVendors();
+}
+
 /**
  * Update full vendor details (Owner / Admin Edit)
  */
-export function updateVendorDetails(updatedVendor: Vendor): Vendor {
+export async function updateVendorDetails(updatedVendor: Vendor): Promise<Vendor> {
   const existing = getStoredVendors();
   const updatedList = existing.map((v) => {
     if (v.id === updatedVendor.id || v.slug === updatedVendor.slug) {
@@ -256,6 +305,38 @@ export function updateVendorDetails(updatedVendor: Vendor): Vendor {
   });
 
   saveStoredVendors(updatedList);
+
+  if (supabase) {
+    try {
+      const updatePromise = supabase
+        .from('vendors')
+        .update({
+          name: updatedVendor.name,
+          owner_name: updatedVendor.ownerName,
+          phone: updatedVendor.phone,
+          whatsapp: updatedVendor.whatsapp,
+          address: updatedVendor.address,
+          neighborhood: updatedVendor.neighborhood,
+          city: updatedVendor.city,
+          pincode: updatedVendor.pincode,
+          lat: updatedVendor.lat,
+          lng: updatedVendor.lng,
+          image_url: updatedVendor.imageUrl,
+          description: updatedVendor.description,
+          experience: updatedVendor.experience,
+          suggestions: updatedVendor.suggestions,
+          reference_name: updatedVendor.referenceName,
+          reference_number: updatedVendor.referenceNumber,
+        })
+        .eq('id', updatedVendor.id);
+        
+      const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('Supabase request timed out')), 2500));
+      await Promise.race([updatePromise, timeoutPromise]);
+    } catch (e) {
+      console.warn('Failed to update Supabase directly:', e);
+    }
+  }
+
   return updatedVendor;
 }
 

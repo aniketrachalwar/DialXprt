@@ -47,8 +47,11 @@ interface AccountViewProps {
   userPhone: string;
   userName?: string;
   userEmail?: string;
-  onUpdateUserProfile?: (name: string, phone: string, email: string, neighborhood: string) => void;
+  userAvatar?: string;
+  onUpdateUserProfile?: (name: string, phone: string, email: string, neighborhood: string, avatar?: string) => void;
+  onOpenEditProfile?: () => void;
   onUpdateVendorDetails?: (updatedVendor: Vendor) => void;
+  onOpenEditVendor?: (vendor: Vendor) => void;
   onLogout?: () => void;
   vendors: Vendor[];
   categories: Category[];
@@ -71,8 +74,11 @@ export const AccountView: React.FC<AccountViewProps> = ({
   userPhone,
   userName = 'Rahul Sharma',
   userEmail = 'rahul.sharma@example.com',
+  userAvatar = '',
   onUpdateUserProfile,
+  onOpenEditProfile,
   onUpdateVendorDetails,
+  onOpenEditVendor,
   onLogout,
   vendors,
   categories,
@@ -86,11 +92,6 @@ export const AccountView: React.FC<AccountViewProps> = ({
   const t = (key: string) => getTranslation(currentLang, key);
 
   // Profile editing state
-  const [isEditingProfile, setIsEditingProfile] = useState(false);
-  const [editName, setEditName] = useState(userName);
-  const [editPhone, setEditPhone] = useState(userPhone);
-  const [editEmail, setEditEmail] = useState(userEmail);
-  const [editNeighborhood, setEditNeighborhood] = useState(currentNeighborhood);
 
   // Business editing state
   const [editingVendor, setEditingVendor] = useState<Vendor | null>(null);
@@ -103,6 +104,7 @@ export const AccountView: React.FC<AccountViewProps> = ({
   const [editShopNeighborhood, setEditShopNeighborhood] = useState('');
   const [editDescription, setEditDescription] = useState('');
   const [editImageUrl, setEditImageUrl] = useState('');
+  const [editOperatingHours, setEditOperatingHours] = useState('');
 
   const openEditVendorModal = (vendor: Vendor) => {
     setEditingVendor(vendor);
@@ -113,8 +115,9 @@ export const AccountView: React.FC<AccountViewProps> = ({
     setEditShopWhatsapp(vendor.whatsapp || vendor.phone);
     setEditAddress(vendor.address);
     setEditShopNeighborhood(vendor.neighborhood);
-    setEditDescription(vendor.description);
+    setEditDescription(vendor.description || '');
     setEditImageUrl(vendor.imageUrl);
+    setEditOperatingHours(vendor.operatingHours || '');
   };
 
   const handleSaveVendorEdit = (e: React.FormEvent) => {
@@ -133,6 +136,7 @@ export const AccountView: React.FC<AccountViewProps> = ({
       address: editAddress,
       neighborhood: editShopNeighborhood,
       description: editDescription,
+      operatingHours: editOperatingHours,
       imageUrl: editImageUrl || editingVendor.imageUrl,
       updatedAt: new Date().toISOString(),
     };
@@ -143,13 +147,7 @@ export const AccountView: React.FC<AccountViewProps> = ({
     setEditingVendor(null);
   };
 
-  const handleSaveProfileEdit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (onUpdateUserProfile) {
-      onUpdateUserProfile(editName, editPhone, editEmail, editNeighborhood);
-    }
-    setIsEditingProfile(false);
-  };
+
 
   // Customer History & Worker Interactions State
   const [customerHistory, setCustomerHistory] = useState<CustomerWorkerInteraction[]>(() => {
@@ -437,8 +435,13 @@ export const AccountView: React.FC<AccountViewProps> = ({
     return matchesStatus && matchesSearch;
   });
 
-  // Shop Owner registered vendors
-  const myOwnedShops = vendors.slice(0, 2);
+  const myOwnedShops = vendors.filter(v => 
+    (v.phone && v.phone === userPhone) || 
+    (v.email && userEmail && v.email === userEmail) ||
+    (v.phone && userEmail && v.phone === userEmail) // Edge case where phone field contains the email string
+  );
+  
+  const isBusinessOwner = currentRole === 'vendor' || myOwnedShops.length > 0;
 
   return (
     <div className="max-w-5xl mx-auto space-y-6 pb-8 animate-fade-in">
@@ -446,25 +449,31 @@ export const AccountView: React.FC<AccountViewProps> = ({
       <div className="bg-white rounded-3xl p-5 sm:p-6 shadow-md border border-gray-200">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b pb-5">
           <div className="flex items-center gap-3.5">
-            <div className={`w-14 h-14 rounded-2xl flex items-center justify-center text-white font-black text-2xl shadow-md ${
-              currentRole === 'admin'
-                ? 'bg-gradient-to-tr from-purple-700 to-indigo-900'
-                : currentRole === 'volunteer'
-                ? 'bg-gradient-to-tr from-amber-500 to-orange-600'
-                : currentRole === 'vendor'
-                ? 'bg-gradient-to-tr from-blue-600 to-cyan-700'
-                : 'bg-gradient-to-tr from-emerald-600 to-teal-800'
-            }`}>
-              {currentRole === 'admin' ? (
-                <Crown className="w-8 h-8 text-amber-300" />
-              ) : currentRole === 'volunteer' ? (
-                <ShieldCheck className="w-8 h-8 text-white" />
-              ) : currentRole === 'vendor' ? (
-                <Store className="w-8 h-8 text-white" />
-              ) : (
-                <User className="w-8 h-8 text-white" />
-              )}
-            </div>
+            {userAvatar ? (
+              <div className="w-14 h-14 rounded-2xl overflow-hidden shadow-md">
+                <img src={userAvatar} alt={userName} className="w-full h-full object-cover" />
+              </div>
+            ) : (
+              <div className={`w-14 h-14 rounded-2xl flex items-center justify-center text-white font-black text-2xl shadow-md ${
+                currentRole === 'admin'
+                  ? 'bg-gradient-to-tr from-purple-700 to-indigo-900'
+                  : currentRole === 'volunteer'
+                  ? 'bg-gradient-to-tr from-amber-500 to-orange-600'
+                  : currentRole === 'vendor' || myOwnedShops.length > 0
+                  ? 'bg-gradient-to-tr from-blue-600 to-cyan-700'
+                  : 'bg-gradient-to-tr from-emerald-600 to-teal-800'
+              }`}>
+                {currentRole === 'admin' ? (
+                  <Crown className="w-8 h-8 text-amber-300" />
+                ) : currentRole === 'volunteer' ? (
+                  <ShieldCheck className="w-8 h-8 text-white" />
+                ) : currentRole === 'vendor' || myOwnedShops.length > 0 ? (
+                  <Store className="w-8 h-8 text-white" />
+                ) : (
+                  <User className="w-8 h-8 text-white" />
+                )}
+              </div>
+            )}
 
             <div>
               <div className="flex items-center gap-2 flex-wrap">
@@ -476,7 +485,7 @@ export const AccountView: React.FC<AccountViewProps> = ({
                     ? 'bg-purple-100 text-purple-900 border border-purple-300'
                     : currentRole === 'volunteer'
                     ? 'bg-amber-100 text-amber-900 border border-amber-300'
-                    : currentRole === 'vendor'
+                    : currentRole === 'vendor' || myOwnedShops.length > 0
                     ? 'bg-blue-100 text-blue-900 border border-blue-300'
                     : 'bg-emerald-100 text-emerald-900 border border-emerald-300'
                 }`}>
@@ -484,7 +493,7 @@ export const AccountView: React.FC<AccountViewProps> = ({
                     ? t('superAdmin')
                     : currentRole === 'volunteer'
                     ? t('volunteerAssessor')
-                    : currentRole === 'vendor'
+                    : currentRole === 'vendor' || myOwnedShops.length > 0
                     ? t('businessOwner')
                     : t('customerResident')}
                 </span>
@@ -507,13 +516,7 @@ export const AccountView: React.FC<AccountViewProps> = ({
 
           <div className="flex items-center gap-2 flex-wrap shrink-0">
             <button
-              onClick={() => {
-                setEditName(userName);
-                setEditPhone(userPhone);
-                setEditEmail(userEmail);
-                setEditNeighborhood(currentNeighborhood);
-                setIsEditingProfile(true);
-              }}
+              onClick={onOpenEditProfile}
               className="bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold px-3.5 py-2.5 rounded-2xl text-xs flex items-center justify-center gap-1.5 shadow-xs transition-transform active:scale-95 min-h-[44px]"
             >
               <Pencil className="w-3.5 h-3.5 text-[#1A9E9E]" />
@@ -525,7 +528,7 @@ export const AccountView: React.FC<AccountViewProps> = ({
               className="bg-[#F36F21] hover:bg-orange-600 text-white font-bold px-3.5 py-2.5 rounded-2xl text-xs flex items-center justify-center gap-1.5 shadow-sm transition-transform active:scale-95 min-h-[44px]"
             >
               <PlusCircle className="w-4 h-4" />
-              <span>+ {t('registerShopFree')}</span>
+              <span>{myOwnedShops.length > 0 ? '+ List One More Business' : '+ List Your Business'}</span>
             </button>
 
             {onLogout && (
@@ -542,244 +545,52 @@ export const AccountView: React.FC<AccountViewProps> = ({
         </div>
       </div>
 
-      {/* PROFILE EDIT MODAL */}
-      {isEditingProfile && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4 animate-fade-in">
-          <div className="bg-white w-full sm:max-w-lg rounded-t-3xl sm:rounded-3xl p-5 sm:p-6 space-y-4 shadow-2xl max-h-[90vh] overflow-y-auto no-scrollbar border border-gray-200">
-            <div className="w-12 h-1.5 bg-gray-300 rounded-full mx-auto sm:hidden mb-2" />
-            
-            <div className="flex items-center justify-between border-b pb-3">
-              <h3 className="font-extrabold text-lg text-gray-900 flex items-center gap-2">
-                <Pencil className="w-5 h-5 text-[#1A9E9E]" />
-                <span>Edit Account Profile</span>
-              </h3>
+      {/* 2. VENDOR DASHBOARD (MY BUSINESSES) */}
+      {(currentRole === 'vendor' || myOwnedShops.length > 0) && (
+        <div className="bg-white rounded-3xl p-5 sm:p-6 shadow-md border border-gray-200">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-black text-gray-900 flex items-center gap-2">
+              <Store className="w-5 h-5 text-[#F36F21]" />
+              My Businesses
+            </h2>
+          </div>
+          
+          {myOwnedShops.length === 0 ? (
+            <div className="text-center py-8 bg-gray-50 rounded-2xl border border-dashed border-gray-300">
+              <Store className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+              <p className="text-gray-500 font-medium mb-4 text-sm">You haven't listed any businesses yet.</p>
               <button
-                onClick={() => setIsEditingProfile(false)}
-                className="p-1.5 text-gray-400 hover:text-gray-700 rounded-xl"
+                onClick={onOpenRegistration}
+                className="bg-[#F36F21] hover:bg-orange-600 text-white font-bold px-4 py-2 rounded-xl text-sm inline-flex items-center gap-2 shadow-sm"
               >
-                <X className="w-5 h-5" />
+                <PlusCircle className="w-4 h-4" /> Add Your First Business
               </button>
             </div>
-
-            <form onSubmit={handleSaveProfileEdit} className="space-y-4">
-              <div>
-                <label className="block text-xs font-bold text-gray-700 mb-1">Full Display Name</label>
-                <input
-                  type="text"
-                  required
-                  value={editName}
-                  onChange={(e) => setEditName(e.target.value)}
-                  placeholder="e.g. Rahul Sharma"
-                  className="w-full px-3.5 py-2.5 text-xs border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1A9E9E] font-bold min-h-[44px]"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-gray-700 mb-1">10-Digit Mobile Phone</label>
-                <div className="flex items-center gap-2">
-                  <span className="text-xs font-bold bg-gray-100 border px-3 py-2.5 rounded-xl text-gray-600 min-h-[44px] flex items-center">+91</span>
-                  <input
-                    type="tel"
-                    required
-                    value={editPhone}
-                    onChange={(e) => setEditPhone(e.target.value)}
-                    placeholder="9849012345"
-                    className="flex-1 px-3.5 py-2.5 text-xs border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1A9E9E] font-bold min-h-[44px]"
-                  />
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {myOwnedShops.map((shop) => (
+                <div key={shop.id} className="border border-gray-200 rounded-2xl p-4 flex items-start gap-4 hover:border-orange-300 transition-colors">
+                  <img src={shop.imageUrl} alt={shop.name} className="w-16 h-16 rounded-xl object-cover border border-gray-100 shrink-0" />
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-bold text-gray-900 truncate">{shop.name}</h3>
+                    <p className="text-xs text-gray-500 mb-1">{shop.category}</p>
+                    <div className="flex items-center gap-2 mt-2">
+                      <button
+                        onClick={() => onOpenEditVendor?.(shop)}
+                        className="text-xs font-bold text-[#1A9E9E] bg-teal-50 hover:bg-teal-100 px-3 py-1.5 rounded-lg flex items-center gap-1 transition-colors border border-teal-100"
+                      >
+                        <Pencil className="w-3.5 h-3.5" /> Edit Details
+                      </button>
+                    </div>
+                  </div>
                 </div>
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-gray-700 mb-1">Email Address (Optional)</label>
-                <input
-                  type="email"
-                  value={editEmail}
-                  onChange={(e) => setEditEmail(e.target.value)}
-                  placeholder="rahul.sharma@example.com"
-                  className="w-full px-3.5 py-2.5 text-xs border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1A9E9E] font-bold min-h-[44px]"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-gray-700 mb-1">Primary Neighborhood in Hyderabad</label>
-                <select
-                  value={editNeighborhood}
-                  onChange={(e) => setEditNeighborhood(e.target.value)}
-                  className="w-full px-3.5 py-2.5 text-xs border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1A9E9E] font-bold min-h-[44px]"
-                >
-                  {HYDERABAD_NEIGHBORHOODS.map((n) => (
-                    <option key={n.id} value={n.name}>{n.name}</option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="flex justify-end gap-2 pt-3 border-t">
-                <button
-                  type="button"
-                  onClick={() => setIsEditingProfile(false)}
-                  className="px-4 py-2.5 text-xs font-bold text-gray-600 hover:text-gray-900 rounded-xl min-h-[44px]"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="bg-[#1A9E9E] hover:bg-teal-700 text-white font-bold px-5 py-2.5 rounded-xl text-xs shadow-md flex items-center gap-1.5 min-h-[44px]"
-                >
-                  <Save className="w-4 h-4" />
-                  <span>Save Profile</span>
-                </button>
-              </div>
-            </form>
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       )}
 
-      {/* BUSINESS EDIT MODAL */}
-      {editingVendor && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-end sm:items-center justify-center p-0 sm:p-4 animate-fade-in">
-          <div className="bg-white w-full sm:max-w-xl rounded-t-3xl sm:rounded-3xl p-5 sm:p-6 space-y-4 shadow-2xl max-h-[90vh] overflow-y-auto no-scrollbar border border-gray-200">
-            <div className="w-12 h-1.5 bg-gray-300 rounded-full mx-auto sm:hidden mb-2" />
 
-            <div className="flex items-center justify-between border-b pb-3">
-              <h3 className="font-extrabold text-lg text-gray-900 flex items-center gap-2">
-                <Building className="w-5 h-5 text-[#F36F21]" />
-                <span>Edit Business / Store Details</span>
-              </h3>
-              <button
-                onClick={() => setEditingVendor(null)}
-                className="p-1.5 text-gray-400 hover:text-gray-700 rounded-xl"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            <form onSubmit={handleSaveVendorEdit} className="space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs font-bold text-gray-700 mb-1">Business Name</label>
-                  <input
-                    type="text"
-                    required
-                    value={editShopName}
-                    onChange={(e) => setEditShopName(e.target.value)}
-                    className="w-full px-3 py-2 text-xs border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1A9E9E] font-bold min-h-[44px]"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-bold text-gray-700 mb-1">Service Category</label>
-                  <select
-                    value={editCategorySlug}
-                    onChange={(e) => setEditCategorySlug(e.target.value)}
-                    className="w-full px-3 py-2 text-xs border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1A9E9E] font-bold min-h-[44px]"
-                  >
-                    {categories.map((cat) => (
-                      <option key={cat.id} value={cat.slug}>{cat.name}</option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <div>
-                  <label className="block text-xs font-bold text-gray-700 mb-1">Owner Name</label>
-                  <input
-                    type="text"
-                    required
-                    value={editOwnerName}
-                    onChange={(e) => setEditOwnerName(e.target.value)}
-                    className="w-full px-3 py-2 text-xs border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1A9E9E] font-bold min-h-[44px]"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-bold text-gray-700 mb-1">Phone Number</label>
-                  <input
-                    type="tel"
-                    required
-                    value={editShopPhone}
-                    onChange={(e) => setEditShopPhone(e.target.value)}
-                    className="w-full px-3 py-2 text-xs border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1A9E9E] font-bold min-h-[44px]"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-bold text-gray-700 mb-1">WhatsApp Number</label>
-                  <input
-                    type="tel"
-                    value={editShopWhatsapp}
-                    onChange={(e) => setEditShopWhatsapp(e.target.value)}
-                    className="w-full px-3 py-2 text-xs border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1A9E9E] font-bold min-h-[44px]"
-                  />
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs font-bold text-gray-700 mb-1">Street Address</label>
-                  <input
-                    type="text"
-                    required
-                    value={editAddress}
-                    onChange={(e) => setEditAddress(e.target.value)}
-                    className="w-full px-3 py-2 text-xs border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1A9E9E] font-bold min-h-[44px]"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-bold text-gray-700 mb-1">Neighborhood Area</label>
-                  <select
-                    value={editShopNeighborhood}
-                    onChange={(e) => setEditShopNeighborhood(e.target.value)}
-                    className="w-full px-3 py-2 text-xs border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1A9E9E] font-bold min-h-[44px]"
-                  >
-                    {HYDERABAD_NEIGHBORHOODS.map((n) => (
-                      <option key={n.id} value={n.name}>{n.name}</option>
-                    ))}
-                  </select>
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-gray-700 mb-1">Business Description & Services</label>
-                <textarea
-                  rows={3}
-                  value={editDescription}
-                  onChange={(e) => setEditDescription(e.target.value)}
-                  className="w-full px-3 py-2 text-xs border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1A9E9E]"
-                ></textarea>
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-gray-700 mb-1">Image URL</label>
-                <input
-                  type="text"
-                  value={editImageUrl}
-                  onChange={(e) => setEditImageUrl(e.target.value)}
-                  className="w-full px-3 py-2 text-xs border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1A9E9E] min-h-[44px]"
-                />
-              </div>
-
-              <div className="flex justify-end gap-2 pt-3 border-t">
-                <button
-                  type="button"
-                  onClick={() => setEditingVendor(null)}
-                  className="px-4 py-2 text-xs font-bold text-gray-600 hover:text-gray-900 rounded-xl min-h-[44px]"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="bg-[#F36F21] hover:bg-orange-600 text-white font-bold px-5 py-2.5 rounded-xl text-xs shadow-md flex items-center gap-1.5 min-h-[44px]"
-                >
-                  <Save className="w-4 h-4" />
-                  <span>Save Business Details</span>
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

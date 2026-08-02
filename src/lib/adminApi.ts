@@ -65,11 +65,40 @@ export async function grantUserRole(email: string, role: 'admin' | 'volunteer' |
   return true;
 }
 
+export async function removeUserRole(email: string) {
+  if (isSupabaseConfigured && supabase) {
+    try {
+      const { error } = await supabase.from('user_roles').delete().eq('email', email);
+      if (!error) {
+        memoryUserRoles = memoryUserRoles.filter(r => r.email !== email);
+        return true;
+      }
+    } catch (e) {
+      console.warn('Supabase delete failed, using memory state.');
+    }
+  }
+  
+  memoryUserRoles = memoryUserRoles.filter(r => r.email !== email);
+  return true;
+}
+
 export async function fetchCategories(): Promise<Category[]> {
   if (isSupabaseConfigured && supabase) {
     try {
       const { data, error } = await supabase.from('categories').select('*');
-      if (!error && data && data.length > 0) return data as Category[];
+      if (!error && data && data.length > 0) {
+        // Merge Supabase categories with local INITIAL_CATEGORIES to retain emoji and group
+        const merged = [...INITIAL_CATEGORIES];
+        data.forEach((d: any) => {
+           const existingIndex = merged.findIndex(c => c.slug === d.slug || c.name.toLowerCase().trim() === d.name.toLowerCase().trim());
+           if (existingIndex >= 0) {
+              merged[existingIndex] = { ...merged[existingIndex], ...d, emoji: merged[existingIndex].emoji || d.emoji, group: merged[existingIndex].group || d.group };
+           } else {
+              merged.push(d as Category);
+           }
+        });
+        return merged;
+      }
     } catch (e) {
       console.warn('Supabase fetch failed, using memory state.');
     }

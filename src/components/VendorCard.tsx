@@ -49,13 +49,32 @@ export const VendorCard: React.FC<VendorCardProps> = ({
       {/* Top Section: Image + Details */}
       <div className="flex gap-4">
         {/* Left: Image (3:2 ratio style) */}
-        <div className="w-28 sm:w-36 h-28 sm:h-32 shrink-0 rounded-xl overflow-hidden relative bg-gray-100 shadow-inner">
-          <img
-            src={vendor.imageUrl}
-            alt={`${vendor.name} - ${vendor.category}`}
-            className="w-full h-full object-cover"
-            loading="lazy"
-          />
+        <div className="w-28 sm:w-36 h-28 sm:h-32 shrink-0 rounded-xl overflow-hidden relative bg-gray-100 shadow-inner group">
+          {vendor.images && vendor.images.length > 1 ? (
+            <div className="flex w-full h-full overflow-x-auto snap-x snap-mandatory scrollbar-hide">
+              {vendor.images.map((img, i) => (
+                <img
+                  key={i}
+                  src={img}
+                  alt={`${vendor.name} - ${i + 1}`}
+                  className="w-full h-full object-cover shrink-0 snap-center"
+                  loading="lazy"
+                />
+              ))}
+            </div>
+          ) : (
+            <img
+              src={vendor.imageUrl || (vendor.images && vendor.images[0])}
+              alt={`${vendor.name} - ${vendor.category}`}
+              className="w-full h-full object-cover"
+              loading="lazy"
+            />
+          )}
+          {vendor.images && vendor.images.length > 1 && (
+            <div className="absolute bottom-1.5 left-1/2 -translate-x-1/2 flex gap-1 z-10 bg-black/30 px-2 py-0.5 rounded-full pointer-events-none">
+              <span className="text-[8px] text-white font-bold">{vendor.images.length} Photos</span>
+            </div>
+          )}
         </div>
 
         {/* Right: Details */}
@@ -98,12 +117,17 @@ export const VendorCard: React.FC<VendorCardProps> = ({
 
           {/* Key Tags */}
           <div className="flex flex-wrap gap-1 mt-auto">
-            <span className="bg-green-50 text-green-700 text-[10px] font-bold px-2 py-0.5 rounded flex items-center gap-1 border border-green-100">
-              <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span> Open Now
-            </span>
-            <span className="bg-gray-50 text-gray-600 text-[10px] font-semibold px-2 py-0.5 rounded border border-gray-100">
-              24/7 Service
-            </span>
+            {vendor.operatingHours ? (
+              vendor.operatingHours.toLowerCase().includes('24/7') ? (
+                <span className="bg-green-50 text-green-700 text-[10px] font-bold px-2 py-0.5 rounded flex items-center gap-1 border border-green-100">
+                  <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span> {vendor.operatingHours}
+                </span>
+              ) : (
+                <span className="bg-gray-50 text-gray-700 text-[10px] font-semibold px-2 py-0.5 rounded border border-gray-200 line-clamp-1 max-w-[120px]">
+                  {vendor.operatingHours}
+                </span>
+              )
+            ) : null}
           </div>
         </div>
       </div>

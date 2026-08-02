@@ -23,6 +23,7 @@ import {
   Camera,
   Utensils,
   Flame,
+  ChevronDown,
   ArrowRight,
   ShieldCheck,
   MapPin,
@@ -125,76 +126,58 @@ const CATEGORY_COLOR_BG: Record<string, string> = {
   'non-veg-cook': 'bg-rose-50 group-hover:bg-rose-100/80 border-rose-200',
 };
 
-export const CategoryGrid: React.FC<CategoryGridProps> = ({
+export const CategoryGrid: React.FC<CategoryGridProps & { onShowAllCategories?: () => void }> = ({
   categories,
   onSelectCategory,
-  currentNeighborhood,
   currentLang = 'en',
+  onShowAllCategories
 }) => {
   const t = (key: string) => getTranslation(currentLang, key);
-  const [isExpanded, setIsExpanded] = useState(false);
-
-  const displayCategories = isExpanded ? categories : categories.slice(0, 7);
+  
+  // Show first 11 categories on the home page grid (matches Column D length)
+  const displayCategories = categories.slice(0, 11);
 
   return (
-    <section className="space-y-5 animate-fade-in">
-
-
-      {/* Grid of All Services */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4">
-        {displayCategories.map((cat) => {
-          const bgStyle = CATEGORY_COLOR_BG[cat.slug] || 'bg-indigo-50 group-hover:bg-indigo-100/80 border-indigo-200';
-          const imageUrl = CATEGORY_IMAGE_MAP[cat.slug] || `https://picsum.photos/seed/${cat.slug}/120/120`;
+    <section className="animate-fade-in">
+      <div className="grid grid-cols-4 gap-2 sm:gap-3">
+        {displayCategories.map((cat, index) => {
           const catTitle = getCategoryName(cat.slug, cat.name, currentLang);
-
+          
           return (
             <button
               key={cat.id}
               id={`service-card-${cat.slug}`}
               onClick={() => onSelectCategory(cat.slug)}
-              className="group bg-white rounded-2xl p-3.5 sm:p-4 border border-gray-200 hover:border-[#1A9E9E]/50 shadow-xs hover:shadow-md transition-all text-left flex flex-col justify-between min-h-[140px] cursor-pointer active:scale-98"
+              className="bg-transparent rounded-xl p-2 sm:p-3 hover:bg-gray-50 transition-all flex flex-col items-center justify-center gap-1.5 min-h-[90px] cursor-pointer active:scale-95"
             >
-              <div>
-                <div className={`w-14 h-14 rounded-2xl border flex items-center justify-center transition-transform group-hover:scale-110 mb-2.5 overflow-hidden relative border-gray-200`}>
-                  <img src={imageUrl} alt={catTitle} className="w-full h-full object-cover" loading="lazy" />
-                </div>
-
-                <h3 className="font-extrabold text-xs sm:text-sm text-gray-900 group-hover:text-[#1A9E9E] transition-colors line-clamp-1">
-                  {catTitle}
-                </h3>
-                <p className="text-[11px] text-gray-500 line-clamp-2 mt-0.5 leading-snug">
-                  {cat.description}
-                </p>
-              </div>
-
-              <div className="pt-2.5 mt-2 border-t border-gray-100 flex items-center justify-between text-[11px] font-bold">
-                <span className="text-[#1A9E9E] bg-indigo-50 group-hover:bg-indigo-100 px-2 py-0.5 rounded-full">
-                  {cat.activeProvidersCount} {t('expertsNear')}
-                </span>
-                <span className="text-gray-400 group-hover:text-[#F36F21] group-hover:translate-x-0.5 transition-all">
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </span>
-              </div>
+              <span 
+                className="text-3xl sm:text-4xl animate-bounce"
+                style={{ animationDelay: `${index * 0.1}s`, animationDuration: '2s' }}
+              >
+                {cat.emoji || '🔹'}
+              </span>
+              <span className="font-bold text-[10px] sm:text-[11px] text-gray-800 text-center leading-tight line-clamp-2">
+                {catTitle}
+              </span>
             </button>
           );
         })}
         
-        {!isExpanded && categories.length > 7 && (
-          <button
-            onClick={() => setIsExpanded(true)}
-            className="group bg-gray-50 hover:bg-white rounded-2xl p-3.5 sm:p-4 border border-dashed border-gray-300 hover:border-gray-400 shadow-xs hover:shadow-md transition-all text-center flex flex-col items-center justify-center min-h-[140px] cursor-pointer active:scale-98"
+        {/* Show More Button */}
+        <button
+          onClick={onShowAllCategories || (() => onSelectCategory('all-categories'))}
+          className="bg-transparent rounded-xl p-2 sm:p-3 hover:bg-gray-50 transition-all flex flex-col items-center justify-center gap-1.5 min-h-[90px] cursor-pointer active:scale-95"
+        >
+          <div 
+            className="w-10 h-10 rounded-full bg-[#1A9E9E] flex items-center justify-center text-white shadow-md transition-colors animate-bounce mt-1 mb-1"
+            style={{ animationDelay: `0.6s`, animationDuration: '2s' }}
           >
-            <div className="w-14 h-14 rounded-2xl bg-white border border-gray-200 flex items-center justify-center text-gray-500 group-hover:text-gray-900 group-hover:scale-110 transition-transform mb-2.5 shadow-sm">
-              <PlusSquare className="w-6 h-6" />
-            </div>
-            <h3 className="font-extrabold text-xs sm:text-sm text-gray-700 group-hover:text-gray-900 transition-colors">
-              Show More
-            </h3>
-            <p className="text-[11px] text-gray-500 mt-1">
-              {categories.length - 7} more categories
-            </p>
-          </button>
-        )}
+            <ChevronDown className="w-5 h-5" strokeWidth={3} />
+          </div>
+          <span className="font-extrabold text-[10px] sm:text-[11px] text-gray-700 text-center leading-tight">
+            Show More
+          </span>
+        </button>
       </div>
     </section>
   );
