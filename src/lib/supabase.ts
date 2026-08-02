@@ -13,7 +13,7 @@ export const supabase = isSupabaseConfigured
 
 import { calculateDistanceKm } from './geo';
 
-const STORAGE_KEY_VENDORS = 'dialxprt_vendors_db_v2';
+const STORAGE_KEY_VENDORS = 'dialxprt_vendors_db_prod_v1';
 const STORAGE_KEY_ANALYTICS = 'dialxprt_analytics';
 
 // Local storage persistent database helper
@@ -26,9 +26,7 @@ export function getStoredVendors(): Vendor[] {
   } catch (err) {
     console.error('Error reading local vendor store:', err);
   }
-  // Save initial seed data if empty
-  saveStoredVendors(INITIAL_VENDORS);
-  return INITIAL_VENDORS;
+  return [];
 }
 
 export function saveStoredVendors(vendors: Vendor[]): void {
@@ -64,7 +62,7 @@ export async function fetchNearbyVendors(
         only_approved: !includePending,
       });
 
-      if (!error && data && Array.isArray(data) && data.length > 0) {
+      if (!error && data && Array.isArray(data)) {
         return data.map((v: any) => ({
           id: v.id,
           slug: v.slug,
@@ -168,8 +166,8 @@ export async function registerVendor(vendorData: Omit<Vendor, 'id' | 'slug' | 'c
     ...vendorData,
     id: `v-${Date.now()}`,
     slug,
-    isVerified: true,
-    status: 'approved',
+    isVerified: false,
+    status: 'pending',
     rating: 0,
     reviewsCount: 0,
     viewsCount: 0,
@@ -201,8 +199,8 @@ export async function registerVendor(vendorData: Omit<Vendor, 'id' | 'slug' | 'c
           suggestions: newVendor.suggestions,
           reference_name: newVendor.referenceName,
           reference_number: newVendor.referenceNumber,
-          status: 'approved',
-          is_verified: true,
+          status: 'pending',
+          is_verified: false,
         },
       ]);
       // Timeout after 2.5 seconds to prevent hanging if Supabase is down or slow
@@ -228,7 +226,7 @@ export async function fetchAllVendors(): Promise<Vendor[]> {
         .select('*')
         .order('created_at', { ascending: false });
         
-      if (!error && data && Array.isArray(data) && data.length > 0) {
+      if (!error && data && Array.isArray(data)) {
         return data.map((v: any) => ({
           id: v.id,
           slug: v.slug,
@@ -368,4 +366,29 @@ export function trackInteraction(vendorId: string, eventType: 'call' | 'whatsapp
     return v;
   });
   saveStoredVendors(updated);
+}
+
+/**
+ * Delete a Vendor completely
+ */
+export async function deleteVendor(vendorId: string): Promise<boolean> {
+  const existing = getStoredVendors();
+  const updatedList = existing.filter(v => v.id !== vendorId && v.slug !== vendorId);
+  saveStoredVendors(updatedList);
+
+  if (supabase) {
+    try {
+      const deletePromise = supabase
+        .from('vendors')
+        .delete()
+        .eq('id', vendorId);
+      const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('Supabase request timed out')), 2500));
+      await Promise.race([deletePromise, timeoutPromise]);
+      return true;
+    } catch (e) {
+      console.warn('Failed to delete from Supabase directly:', e);
+      return false;
+    }
+  }
+  return true;
 }

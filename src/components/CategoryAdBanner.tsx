@@ -40,7 +40,8 @@ const CATEGORY_ADS: Record<string, { name: string; address: string; phone: strin
 };
 
 export const CategoryAdBanner: React.FC<CategoryAdBannerProps> = ({ selectedCategory, categories }) => {
-  if (selectedCategory === 'all') return null;
+  return null; // Disabled in production until dynamic ads are implemented
+
 
   const adData = CATEGORY_ADS[selectedCategory] || CATEGORY_ADS['default'];
   const categoryObj = categories.find(c => c.slug === selectedCategory);

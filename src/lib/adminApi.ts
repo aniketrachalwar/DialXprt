@@ -20,12 +20,7 @@ let memoryUserRoles: UserRoleAssignment[] = [
   { email: 'aniketrachalwar073@gmail.com', role: 'admin' }
 ];
 let memoryCategories: Category[] = [...INITIAL_CATEGORIES];
-let memoryB2BProducts: B2BProduct[] = [
-  { name: 'Sports T Shirt', category_slug: 'sports', image_url: 'https://images.unsplash.com/photo-1581655353564-df123a1eb820?auto=format&fit=crop&q=80&w=150&h=150' },
-  { name: 'Swimming Pools', category_slug: 'sports', image_url: 'https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?auto=format&fit=crop&q=80&w=150&h=150' },
-  { name: 'Exercise Equipment', category_slug: 'sports', image_url: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&q=80&w=150&h=150' },
-  { name: 'Flute', category_slug: 'sports', image_url: 'https://images.unsplash.com/photo-1562215801-4470559eb41e?auto=format&fit=crop&q=80&w=150&h=150' },
-];
+let memoryB2BProducts: B2BProduct[] = [];
 
 export async function fetchUserRoles(): Promise<UserRoleAssignment[]> {
   if (isSupabaseConfigured && supabase) {

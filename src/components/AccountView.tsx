@@ -91,6 +91,7 @@ interface AccountViewProps {
   ) => void;
   onOpenRegistration: () => void;
   onExportCSV: () => void;
+  onDeleteVendor?: (vendorId: string) => void;
   onSelectVendor: (vendor: Vendor) => void;
   currentLang?: AppLanguage;
 }
@@ -113,6 +114,7 @@ export const AccountView: React.FC<AccountViewProps> = ({
   onUpdateVendorStatus,
   onOpenRegistration,
   onExportCSV,
+  onDeleteVendor,
   onSelectVendor,
   currentLang = 'en',
 }) => {
@@ -174,6 +176,11 @@ export const AccountView: React.FC<AccountViewProps> = ({
     setEditingVendor(null);
   };
 
+  const handleDeleteMyBusiness = (vendor: Vendor) => {
+    if (onDeleteVendor && window.confirm(`Are you sure you want to permanently delete your business "${vendor.name}"?`)) {
+      onDeleteVendor(vendor.id);
+    }
+  };
 
 
   // Customer History & Worker Interactions State
@@ -607,6 +614,12 @@ export const AccountView: React.FC<AccountViewProps> = ({
                         className="text-xs font-bold text-[#1A9E9E] bg-teal-50 hover:bg-teal-100 px-3 py-1.5 rounded-lg flex items-center gap-1 transition-colors border border-teal-100"
                       >
                         <Pencil className="w-3.5 h-3.5" /> Edit Details
+                      </button>
+                      <button
+                        onClick={() => handleDeleteMyBusiness(shop)}
+                        className="text-xs font-bold text-red-600 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-lg flex items-center gap-1 transition-colors border border-red-100"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" /> Delete
                       </button>
                     </div>
                   </div>

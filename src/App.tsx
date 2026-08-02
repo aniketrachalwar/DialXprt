@@ -39,6 +39,7 @@ import {
   updateVendorStatus,
   updateVendorDetails,
   trackInteraction,
+  deleteVendor,
   supabase,
 } from "./lib/supabase";
 import { calculateDistanceKm } from "./lib/geo";
@@ -620,6 +621,11 @@ export default function App() {
     );
   };
 
+  const handleDeleteVendor = async (vendorId: string) => {
+    await deleteVendor(vendorId);
+    setVendors(vendors.filter(v => v.id !== vendorId && v.slug !== vendorId));
+  };
+
   const handleTrackCall = (id: string) => {
     trackInteraction(id, "call");
     setVendors((prev) =>
@@ -675,7 +681,6 @@ export default function App() {
   };
 
   const unreadCount = notifications.filter((n) => !n.read).length;
-  const pendingCount = vendors.filter((v) => v.status === "pending").length;
 
   const processedVendors = useMemo(() => {
     let result = vendors.filter((v) => v.status === "approved");
@@ -894,6 +899,7 @@ export default function App() {
             categories={categories}
             currentNeighborhood={currentNeighborhood}
             onUpdateVendorStatus={handleUpdateVendorStatus}
+            onDeleteVendor={handleDeleteVendor}
             onOpenRegistration={handleOpenRegistration}
             onExportCSV={handleExportCSV}
             onSelectVendor={(v) => navigate(`/expert/${v.slug}`)}
@@ -904,8 +910,9 @@ export default function App() {
             vendors={vendors}
             currentRole={currentRole}
             onUpdateVendorStatus={handleUpdateVendorStatus}
-            onOpenEditVendor={(vendor) => {
-              setSelectedVendorToEdit(vendor);
+            onDeleteVendor={handleDeleteVendor}
+            onOpenEditVendor={(v) => {
+              setSelectedVendorToEdit(v);
               setActiveTab("edit-vendor");
             }}
             onExportCSV={handleExportCSV}

@@ -10,16 +10,18 @@ interface AdminPanelViewProps {
   currentRole?: string;
   onUpdateVendorStatus?: (vendorId: string, status: "approved" | "pending" | "rejected", volunteerName: string, notes: string) => void;
   onOpenEditVendor?: (vendor: Vendor) => void;
+  onDeleteVendor?: (vendorId: string) => void;
   onExportCSV?: () => void;
 }
 
-export const AdminPanelView: React.FC<AdminPanelViewProps> = ({ currentRole = "admin", onUpdateVendorStatus, onOpenEditVendor }) => {
+export const AdminPanelView: React.FC<AdminPanelViewProps> = ({ currentRole = "admin", onUpdateVendorStatus, onOpenEditVendor, onDeleteVendor }) => {
   const [activeTab, setActiveTab] = useState<'vendors' | 'roles' | 'sitemap'>(currentRole === 'volunteer' ? 'vendors' : 'sitemap');
   
   // Data State
   const [roles, setRoles] = useState<UserRoleAssignment[]>([]);
   const [adminVendors, setAdminVendors] = useState<Vendor[]>([]);
   const [loading, setLoading] = useState(true);
+  const [vendorSearchQuery, setVendorSearchQuery] = useState('');
 
   // Form State
   const [newEmail, setNewEmail] = useState('');
@@ -72,6 +74,12 @@ export const AdminPanelView: React.FC<AdminPanelViewProps> = ({ currentRole = "a
     }
   };
 
+  const handleDeleteClick = async (vendorId: string, vendorName: string) => {
+    if (onDeleteVendor && window.confirm(`Are you sure you want to permanently delete the vendor "${vendorName}"?`)) {
+      onDeleteVendor(vendorId);
+      setAdminVendors(prev => prev.filter(v => v.id !== vendorId));
+    }
+  };
 
   const handleExportUsers = () => {
     const headers = ["Email", "Role"];
@@ -122,6 +130,14 @@ export const AdminPanelView: React.FC<AdminPanelViewProps> = ({ currentRole = "a
     document.body.removeChild(link);
   };
 
+  const filteredAdminVendors = adminVendors.filter(v => 
+    !vendorSearchQuery || 
+    v.name.toLowerCase().includes(vendorSearchQuery.toLowerCase()) || 
+    v.category.toLowerCase().includes(vendorSearchQuery.toLowerCase()) || 
+    v.ownerName.toLowerCase().includes(vendorSearchQuery.toLowerCase()) || 
+    (v.phone && v.phone.includes(vendorSearchQuery)) || 
+    v.neighborhood.toLowerCase().includes(vendorSearchQuery.toLowerCase())
+  );
 
   if (loading) return <div className="p-10 text-center font-bold text-gray-500">Loading Admin Data...</div>;
 
@@ -171,8 +187,15 @@ export const AdminPanelView: React.FC<AdminPanelViewProps> = ({ currentRole = "a
         {activeTab === 'vendors' && (
           <div className="space-y-8">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <h2 className="text-xl font-bold text-gray-900">Manage Vendor Leads ({adminVendors.length})</h2>
+              <h2 className="text-xl font-bold text-gray-900">Manage Vendor Leads ({filteredAdminVendors.length})</h2>
               <div className="flex gap-2">
+                <input 
+                  type="text"
+                  placeholder="Search businesses, owners, phones..."
+                  value={vendorSearchQuery}
+                  onChange={(e) => setVendorSearchQuery(e.target.value)}
+                  className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 font-medium outline-none focus:border-purple-500 text-sm"
+                />
                 <button onClick={handleExportVendors} className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-xl text-sm font-bold transition-colors">
                   Export Detailed Vendors CSV
                 </button>
@@ -192,7 +215,7 @@ export const AdminPanelView: React.FC<AdminPanelViewProps> = ({ currentRole = "a
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
-                  {adminVendors.map((v, i) => (
+                  {filteredAdminVendors.map((v, i) => (
                     <tr key={i} className="hover:bg-gray-50">
                       <td className="px-4 py-3">
                         <div className="font-bold text-gray-900">{v.name}</div>
@@ -228,6 +251,14 @@ export const AdminPanelView: React.FC<AdminPanelViewProps> = ({ currentRole = "a
                               className="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold rounded-lg border border-gray-200 transition-colors"
                             >
                               EDIT
+                            </button>
+                          )}
+                          {onDeleteVendor && (
+                            <button
+                              onClick={() => handleDeleteClick(v.id, v.name)}
+                              className="px-3 py-1.5 bg-red-50 hover:bg-red-100 text-red-600 text-xs font-bold rounded-lg border border-red-200 transition-colors ml-1"
+                            >
+                              DELETE
                             </button>
                           )}
                         </div>
