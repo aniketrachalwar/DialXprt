@@ -12,7 +12,7 @@ export const TRANSLATIONS: Record<AppLanguage, Record<string, string>> = {
 
     // Bottom Navigation
     homeTab: "Home",
-    addBusinessTab: "List your Business",
+    addBusinessTab: "List Your Business and get FREE Leads",
     accountTab: "Account",
     adminTab: "Admin",
     volunteerTab: "Volunteer",

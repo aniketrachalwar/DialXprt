@@ -9,10 +9,11 @@ interface AdminPanelViewProps {
   vendors?: Vendor[];
   currentRole?: string;
   onUpdateVendorStatus?: (vendorId: string, status: "approved" | "pending" | "rejected", volunteerName: string, notes: string) => void;
+  onOpenEditVendor?: (vendor: Vendor) => void;
   onExportCSV?: () => void;
 }
 
-export const AdminPanelView: React.FC<AdminPanelViewProps> = ({ currentRole = "admin", onUpdateVendorStatus }) => {
+export const AdminPanelView: React.FC<AdminPanelViewProps> = ({ currentRole = "admin", onUpdateVendorStatus, onOpenEditVendor }) => {
   const [activeTab, setActiveTab] = useState<'vendors' | 'roles' | 'sitemap'>(currentRole === 'volunteer' ? 'vendors' : 'sitemap');
   
   // Data State
@@ -187,7 +188,7 @@ export const AdminPanelView: React.FC<AdminPanelViewProps> = ({ currentRole = "a
                   <tr>
                     <th className="px-4 py-3 font-bold text-gray-600 text-sm">Business Info</th>
                     <th className="px-4 py-3 font-bold text-gray-600 text-sm">Owner & Contact</th>
-                    <th className="px-4 py-3 font-bold text-gray-600 text-sm">Status</th>
+                    <th className="px-4 py-3 font-bold text-gray-600 text-sm">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
@@ -202,22 +203,33 @@ export const AdminPanelView: React.FC<AdminPanelViewProps> = ({ currentRole = "a
                         <div className="text-xs text-gray-500">{v.phone}</div>
                       </td>
                       <td className="px-4 py-3">
-                        <div className="relative inline-block">
-                          <select 
-                            value={v.status}
-                            onChange={(e) => handleStatusChange(v.id, e.target.value as any)}
-                            className={`px-3 py-1.5 rounded-lg text-xs font-bold uppercase cursor-pointer appearance-none border shadow-sm outline-none transition-colors ${
-                              v.status === 'approved' ? 'bg-green-50 hover:bg-green-100 text-green-700 border-green-200' :
-                              v.status === 'pending' ? 'bg-amber-50 hover:bg-amber-100 text-amber-700 border-amber-200' : 'bg-red-50 hover:bg-red-100 text-red-700 border-red-200'
-                            }`}
-                          >
-                            <option value="pending" className="bg-white text-amber-700 font-bold">PENDING</option>
-                            <option value="approved" className="bg-white text-green-700 font-bold">APPROVED</option>
-                            <option value="rejected" className="bg-white text-red-700 font-bold">REJECTED</option>
-                          </select>
-                          <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-500">
-                            <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+                        <div className="flex items-center gap-2">
+                          <div className="relative inline-block">
+                            <select 
+                              value={v.status}
+                              onChange={(e) => handleStatusChange(v.id, e.target.value as any)}
+                              className={`px-3 py-1.5 rounded-lg text-xs font-bold uppercase cursor-pointer appearance-none border shadow-sm outline-none transition-colors ${
+                                v.status === 'approved' ? 'bg-green-50 hover:bg-green-100 text-green-700 border-green-200' :
+                                v.status === 'pending' ? 'bg-amber-50 hover:bg-amber-100 text-amber-700 border-amber-200' : 'bg-red-50 hover:bg-red-100 text-red-700 border-red-200'
+                              }`}
+                            >
+                              <option value="pending" className="bg-white text-amber-700 font-bold">PENDING</option>
+                              <option value="approved" className="bg-white text-green-700 font-bold">APPROVED</option>
+                              <option value="rejected" className="bg-white text-red-700 font-bold">REJECTED</option>
+                            </select>
+                            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-500">
+                              <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+                            </div>
                           </div>
+                          
+                          {onOpenEditVendor && (
+                            <button
+                              onClick={() => onOpenEditVendor(v)}
+                              className="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-bold rounded-lg border border-gray-200 transition-colors"
+                            >
+                              EDIT
+                            </button>
+                          )}
                         </div>
                       </td>
                     </tr>

@@ -2,10 +2,8 @@ import { createClient } from '@supabase/supabase-js';
 import { Vendor, Category, VendorStatus } from '../types';
 import { INITIAL_VENDORS, INITIAL_CATEGORIES } from '../data/mockVendors';
 
-// Read Supabase environment variables if configured
-const env = (import.meta as unknown as { env: Record<string, string> }).env || {};
-const supabaseUrl = env.VITE_SUPABASE_URL || '';
-const supabaseAnonKey = env.VITE_SUPABASE_ANON_KEY || '';
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
 
 export const isSupabaseConfigured = Boolean(supabaseUrl && supabaseAnonKey);
 
@@ -13,28 +11,7 @@ export const supabase = isSupabaseConfigured
   ? createClient(supabaseUrl, supabaseAnonKey)
   : null;
 
-/**
- * Haversine Formula for distance calculation (in Kilometers) between two coordinates
- */
-export function calculateDistanceKm(
-  lat1: number,
-  lon1: number,
-  lat2: number,
-  lon2: number
-): number {
-  const R = 6371; // Earth's radius in kilometers
-  const dLat = ((lat2 - lat1) * Math.PI) / 180;
-  const dLon = ((lon2 - lon1) * Math.PI) / 180;
-  const a =
-    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos((lat1 * Math.PI) / 180) *
-      Math.cos((lat2 * Math.PI) / 180) *
-      Math.sin(dLon / 2) *
-      Math.sin(dLon / 2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  const d = R * c;
-  return Math.round(d * 10) / 10; // Round to 1 decimal place
-}
+import { calculateDistanceKm } from './geo';
 
 const STORAGE_KEY_VENDORS = 'dialxprt_vendors_db_v2';
 const STORAGE_KEY_ANALYTICS = 'dialxprt_analytics';

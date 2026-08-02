@@ -614,8 +614,8 @@ export const HYDERABAD_NEIGHBORHOODS: Neighborhood[] = [
 
 export const INITIAL_CATEGORIES: Category[] = [
   { id: 'c1', name: 'AC Repair & Services', slug: 'ac-repair-services', iconName: 'Activity', emoji: '❄️', group: 'Repairs & Services', description: 'AC Repair & Services services', activeProvidersCount: Math.floor(Math.random() * 50) + 10, popularSearch: true },
-  { id: 'c2', name: 'Bike Machanic', slug: 'bike-machanic', iconName: 'Activity', emoji: '🏍️', group: 'Automobile', description: 'Bike Machanic services', activeProvidersCount: Math.floor(Math.random() * 50) + 10, popularSearch: true },
-  { id: 'c3', name: 'Car Machanic', slug: 'car-machanic', iconName: 'Activity', emoji: '🚗', group: 'Automobile', description: 'Car Machanic services', activeProvidersCount: Math.floor(Math.random() * 50) + 10, popularSearch: true },
+  { id: 'c2', name: 'Bike Mechanic', slug: 'bike-mechanic', iconName: 'Activity', emoji: '🏍️', group: 'Automobile', description: 'Bike Mechanic services', activeProvidersCount: Math.floor(Math.random() * 50) + 10, popularSearch: true },
+  { id: 'c3', name: 'Car Mechanic', slug: 'car-mechanic', iconName: 'Activity', emoji: '🚗', group: 'Automobile', description: 'Car Mechanic services', activeProvidersCount: Math.floor(Math.random() * 50) + 10, popularSearch: true },
   { id: 'c4', name: 'Electrician', slug: 'electrician', iconName: 'Activity', emoji: '🔌', group: 'Home Maintenance', description: 'Electrician services', activeProvidersCount: Math.floor(Math.random() * 50) + 10, popularSearch: true },
   { id: 'c5', name: 'Plumber', slug: 'plumber', iconName: 'Activity', emoji: '🔧', group: 'Home Maintenance', description: 'Plumber services', activeProvidersCount: Math.floor(Math.random() * 50) + 10, popularSearch: true },
   { id: 'c6', name: 'Carpenter', slug: 'carpenter', iconName: 'Activity', emoji: '🪚', group: 'Home Maintenance', description: 'Carpenter services', activeProvidersCount: Math.floor(Math.random() * 50) + 10, popularSearch: true },

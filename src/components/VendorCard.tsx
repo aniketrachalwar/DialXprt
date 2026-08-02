@@ -80,10 +80,10 @@ export const VendorCard: React.FC<VendorCardProps> = ({
         {/* Right: Details */}
         <div className="flex-1 flex flex-col justify-start pt-1">
           {/* Title */}
-          <h3 className="font-extrabold text-gray-900 text-[16px] sm:text-[18px] leading-tight mb-1 line-clamp-2">
+          <h3 className="font-extrabold text-gray-900 text-[14px] sm:text-[16px] leading-tight mb-1 line-clamp-2">
             {vendor.name}
             {isApproved && (
-              <CheckCircle2 className="w-4 h-4 fill-[#22C55E] text-white inline-block ml-1.5 -mt-0.5" />
+              <CheckCircle2 className="w-3.5 h-3.5 fill-[#22C55E] text-white inline-block ml-1.5 -mt-0.5" />
             )}
           </h3>
 
@@ -140,10 +140,10 @@ export const VendorCard: React.FC<VendorCardProps> = ({
           onClick={(e) => { e.stopPropagation(); if (onTrackCall) onTrackCall(vendor.id); }}
           className="flex flex-col items-center gap-2 group"
         >
-          <div className="w-[48px] h-[48px] rounded-2xl bg-[#1C51FE] flex items-center justify-center shadow-sm group-hover:bg-blue-700 transition-colors">
-            <Phone className="w-5 h-5 fill-white text-white" />
+          <div className="w-[40px] h-[40px] rounded-2xl bg-[#1C51FE] flex items-center justify-center shadow-sm group-hover:bg-blue-700 transition-colors">
+            <Phone className="w-4 h-4 fill-white text-white" />
           </div>
-          <span className="text-[11px] font-bold text-gray-800">Call Now</span>
+          <span className="text-[10px] font-bold text-gray-800">Call Now</span>
         </a>
 
         {/* WhatsApp */}
@@ -152,26 +152,26 @@ export const VendorCard: React.FC<VendorCardProps> = ({
           target="_blank" 
           rel="noopener noreferrer"
           onClick={(e) => { e.stopPropagation(); if (onTrackWhatsApp) onTrackWhatsApp(vendor.id); }}
-          className="flex flex-col items-center gap-2 group"
+          className="flex flex-col items-center gap-1 group"
         >
-          <div className="w-[48px] h-[48px] rounded-2xl bg-white border border-gray-200 flex items-center justify-center shadow-sm group-hover:bg-gray-50 transition-colors">
-            <WhatsAppLogo size="md" />
+          <div className="w-[40px] h-[40px] rounded-2xl bg-white border border-gray-200 flex items-center justify-center shadow-sm group-hover:bg-gray-50 transition-colors">
+            <WhatsAppLogo className="w-5 h-5" />
           </div>
-          <span className="text-[11px] font-bold text-gray-800">WhatsApp</span>
+          <span className="text-[10px] font-bold text-gray-800">WhatsApp</span>
         </a>
 
         {/* Direction */}
         <a 
-          href={`https://www.google.com/maps/dir/?api=1&destination=${vendor.lat},${vendor.lng}`}
+          href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(vendor.address + ' ' + (vendor.neighborhood || ''))}`}
           target="_blank"
           rel="noopener noreferrer"
           onClick={(e) => e.stopPropagation()}
-          className="flex flex-col items-center gap-2 group"
+          className="flex flex-col items-center gap-1 group"
         >
-          <div className="w-[48px] h-[48px] rounded-2xl bg-white border border-gray-200 flex items-center justify-center shadow-sm group-hover:bg-gray-50 transition-colors transform -rotate-45">
-            <Navigation className="w-5 h-5 text-slate-700 ml-1 mt-1" />
+          <div className="w-[40px] h-[40px] rounded-2xl bg-white border border-gray-200 flex items-center justify-center shadow-sm group-hover:bg-gray-50 transition-colors">
+            <Navigation className="w-4 h-4 text-gray-600" />
           </div>
-          <span className="text-[11px] font-bold text-gray-800">Direction</span>
+          <span className="text-[10px] font-bold text-gray-800">Direction</span>
         </a>
 
         {/* Share */}
@@ -180,23 +180,26 @@ export const VendorCard: React.FC<VendorCardProps> = ({
             e.stopPropagation();
             if (navigator.share) {
               navigator.share({
-                title: vendor.name,
-                text: `Check out ${vendor.name} on DialXprt`,
-                url: `${window.location.origin}/expert/${vendor.slug}`
-              }).catch(console.error);
+                title: `${vendor.name} - ${vendor.category} in ${vendor.neighborhood}`,
+                text: `Contact ${vendor.name} (${vendor.category}) in ${vendor.neighborhood}, Hyderabad: Call ${vendor.phone}`,
+                url: `${window.location.origin}/expert/${vendor.id}`,
+              }).catch(() => {});
+            } else {
+              navigator.clipboard.writeText(`Check out ${vendor.name} on DialXprt: Call ${vendor.phone}`);
+              alert('Link copied to clipboard!');
             }
           }}
-          className="flex flex-col items-center gap-2 group cursor-pointer"
+          className="flex flex-col items-center gap-1 group"
         >
-          <div className="w-[48px] h-[48px] rounded-2xl bg-white border border-gray-200 flex items-center justify-center shadow-sm group-hover:bg-gray-50 transition-colors">
-            <Share2 className="w-5 h-5 text-slate-700" />
+          <div className="w-[40px] h-[40px] rounded-2xl bg-white border border-gray-200 flex items-center justify-center shadow-sm group-hover:bg-gray-50 transition-colors">
+            <Share2 className="w-4 h-4 text-gray-600" />
           </div>
-          <span className="text-[11px] font-bold text-gray-800">Share</span>
+          <span className="text-[10px] font-bold text-gray-800">Share</span>
         </button>
       </div>
 
       {/* Enquire Now Button */}
-      <div className="mt-5">
+      <div className="mt-2">
         <button
           onClick={(e) => {
             e.stopPropagation();

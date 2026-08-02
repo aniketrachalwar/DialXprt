@@ -61,7 +61,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({
           <div className="w-12 h-12 rounded-full bg-[#F36F21] hover:bg-orange-600 text-white flex items-center justify-center shadow-lg -mt-5 border-2 border-white">
             <PlusCircle className="w-6 h-6 stroke-[2.5]" />
           </div>
-          <span className="text-[10px] font-extrabold text-[#F36F21] mt-0.5">{t('addBusinessTab')}</span>
+          <span className="text-[9px] sm:text-[10px] font-extrabold text-[#F36F21] mt-1 text-center leading-[1.1] px-1">{t('addBusinessTab')}</span>
         </button>
 
         {/* TAB 3: OFFERS */}

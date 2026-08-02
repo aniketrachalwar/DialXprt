@@ -2,7 +2,7 @@ import express from 'express';
 import path from 'path';
 import { createServer as createViteServer } from 'vite';
 import { INITIAL_VENDORS, INITIAL_CATEGORIES, HYDERABAD_NEIGHBORHOODS } from './src/data/mockVendors';
-import { calculateDistanceKm } from './src/lib/supabase';
+import { calculateDistanceKm } from './src/lib/geo';
 
 async function startServer() {
   const app = express();

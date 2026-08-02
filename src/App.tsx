@@ -41,15 +41,15 @@ import {
   updateVendorStatus,
   updateVendorDetails,
   trackInteraction,
-  calculateDistanceKm,
   supabase,
 } from "./lib/supabase";
+import { calculateDistanceKm } from "./lib/geo";
 import { fetchCategories } from "./lib/adminApi";
 import { HomeDashboard } from "./components/HomeDashboard";
 import { AllCategoriesView } from "./components/AllCategoriesView";
 import { SubCategoryView } from "./components/SubCategoryView";
 import { OffersView } from "./components/OffersView";
-import { MapPin, Search, ArrowLeft, ChevronDown } from "lucide-react";
+import { MapPin, Search, ArrowLeft, ChevronDown, Zap, Wrench, Car, Hammer, Snowflake } from "lucide-react";
 
 const CATEGORY_BANNERS: Record<string, { imageUrl: string; title: string; subtitle: string }> = {
   'gym': {
@@ -438,7 +438,7 @@ export default function App() {
   // Load Vendors on Mount & Filter Change
   useEffect(() => {
     loadData();
-  }, [userLat, userLng, selectedCategory, selectedSubCategory, searchQuery, searchRadius, currentRole]);
+  }, [userLat, userLng, selectedCategory, selectedSubCategory, searchRadius, currentRole]);
 
   const loadData = async () => {
     setLoading(true);
@@ -447,7 +447,7 @@ export default function App() {
         userLat,
         userLng,
         selectedCategory,
-        searchQuery,
+        "", // Client-side search filtering is used instead
         currentRole === "admin" || currentRole === "volunteer", // ONLY include pending if admin or volunteer
         selectedSubCategory,
         1000 // Always fetch a large radius (1000km) so we don't limit results, we just sort/group them
@@ -665,13 +665,50 @@ export default function App() {
       result = result.filter((v) => (v.rating || 4.5) > 4.2);
     }
 
+    // Fuzzy Search & Relevance Scoring
+    let scoredResult = result.map(v => ({ ...v, relevanceScore: 0 }));
+    
+    if (searchQuery.trim()) {
+      const qTokens = searchQuery.trim().toLowerCase().split(/\s+/);
+      
+      scoredResult = scoredResult.map(v => {
+        let score = 0;
+        const name = v.name.toLowerCase();
+        const catName = v.category.toLowerCase();
+        const catSlug = v.categorySlug.toLowerCase();
+        const tags = (v.description || '').toLowerCase();
+        const address = v.address.toLowerCase();
+        const neighborhood = v.neighborhood.toLowerCase();
+
+        qTokens.forEach(token => {
+          if (name.includes(token)) score += 10;
+          else if (catName.includes(token) || catSlug.includes(token)) score += 5;
+          else if (tags.includes(token)) score += 3;
+          else if (neighborhood.includes(token) || address.includes(token)) score += 2;
+        });
+
+        return { ...v, relevanceScore: score };
+      });
+
+      // Filter out those with 0 score (no matches)
+      scoredResult = scoredResult.filter(v => v.relevanceScore > 0);
+    }
+
     // Split vendors into 'within radius' and 'outside radius' based on searchRadius
     // This ensures vendors within the selected radius are shown first.
-    const withinRadius = result.filter(v => (v.distanceKm || 0) <= searchRadius);
-    const outsideRadius = result.filter(v => (v.distanceKm || 0) > searchRadius);
+    const withinRadius = scoredResult.filter(v => (v.distanceKm || 0) <= searchRadius);
+    const outsideRadius = scoredResult.filter(v => (v.distanceKm || 0) > searchRadius);
 
     // Sorting function
-    const sortFn = (a: Vendor, b: Vendor) => {
+    const sortFn = (a: any, b: any) => {
+      // 1. If searching, sort by relevance first
+      if (searchQuery.trim()) {
+        if (b.relevanceScore !== a.relevanceScore) {
+          return (b.relevanceScore || 0) - (a.relevanceScore || 0);
+        }
+      }
+      
+      // 2. Fallback to normal sort
       if (sortBy === "distance") return (a.distanceKm || 0) - (b.distanceKm || 0);
       if (sortBy === "rating") return (b.rating || 0) - (a.rating || 0);
       if (sortBy === "popular") return (b.reviewsCount || 0) - (a.reviewsCount || 0);
@@ -681,9 +718,8 @@ export default function App() {
     withinRadius.sort(sortFn);
     outsideRadius.sort(sortFn);
 
-    // Return within radius first, then outside radius
     return [...withinRadius, ...outsideRadius];
-  }, [vendors, verifiedOnly, openNowOnly, sortBy, searchRadius]);
+  }, [vendors, verifiedOnly, openNowOnly, sortBy, searchRadius, searchQuery]);
 
   const approvedVendors = processedVendors;
 
@@ -756,12 +792,12 @@ export default function App() {
             {selectedCategory === "all" && !searchQuery && (
               <div className="grid grid-cols-3 gap-2 pb-1 pt-1 px-0.5">
                 {[
-                  { label: 'Electrician', slug: 'electrician' },
-                  { label: 'Plumber', slug: 'plumber' },
-                  { label: 'Car Mechanic', slug: 'mechanic' },
-                  { label: 'Carpenter', slug: 'carpenter' },
-                  { label: 'AC Repair & Services', slug: 'ac-repair' },
-                  { label: 'Show More', slug: 'all-categories' }
+                  { label: 'Electrician', slug: 'electrician', icon: Zap },
+                  { label: 'Plumber', slug: 'plumber', icon: Wrench },
+                  { label: 'Car Mechanic', slug: 'mechanic', icon: Car },
+                  { label: 'Carpenter', slug: 'carpenter', icon: Hammer },
+                  { label: 'AC Repair & Services', slug: 'ac-repair', icon: Snowflake },
+                  { label: 'Show More', slug: 'all-categories', icon: null }
                 ].map(link => (
                   <button
                     key={link.slug}
@@ -775,6 +811,7 @@ export default function App() {
                     }}
                     className="bg-white hover:bg-gray-100 active:scale-95 transition-all text-gray-900 font-extrabold text-[11px] sm:text-xs leading-tight py-2 px-1 rounded-lg shadow-sm flex items-center justify-center min-h-[44px] gap-1"
                   >
+                    {link.icon && <link.icon className="w-4 h-4 text-[#1A9E9E] shrink-0" />}
                     <span className="line-clamp-2">{link.label}</span>
                     {link.slug === 'all-categories' && (
                       <div className="w-4 h-4 rounded-full bg-[#1A9E9E] flex items-center justify-center text-white shrink-0 mt-0.5">
@@ -833,6 +870,10 @@ export default function App() {
             vendors={vendors}
             currentRole={currentRole}
             onUpdateVendorStatus={handleUpdateVendorStatus}
+            onOpenEditVendor={(vendor) => {
+              setSelectedVendorToEdit(vendor);
+              setActiveTab("edit-vendor");
+            }}
             onExportCSV={handleExportCSV}
           />
         ) : activeTab === "offers" ? (
@@ -863,7 +904,7 @@ export default function App() {
         ) : activeTab === "edit-vendor" && selectedVendorToEdit ? (
           <VendorRegistrationView
             onBack={() => {
-              setActiveTab("account");
+              setActiveTab(currentRole === 'admin' || currentRole === 'volunteer' ? 'admin' : 'account');
               setSelectedVendorToEdit(null);
             }}
             categories={categories}
@@ -875,7 +916,7 @@ export default function App() {
             onSubmit={async (vendorData) => {
               // Call the existing update handler
               handleUpdateVendorDetailsSubmit({ ...selectedVendorToEdit, ...vendorData } as Vendor);
-              setActiveTab("account");
+              setActiveTab(currentRole === 'admin' || currentRole === 'volunteer' ? 'admin' : 'account');
               setSelectedVendorToEdit(null);
             }}
             currentLang={currentLang}

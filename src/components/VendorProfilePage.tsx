@@ -88,8 +88,8 @@ export const VendorProfilePage: React.FC<VendorProfilePageProps> = ({
 
         {/* Header Info Below Image */}
         <div className="px-5 pt-4 pb-2 space-y-2.5 bg-white">
-          <h1 className="text-2xl sm:text-3xl font-black text-gray-900 flex items-center gap-2 leading-tight">
-            {isApproved && <CheckCircle2 className="w-6 h-6 text-[#22C55E] shrink-0" />}
+          <h1 className="text-xl sm:text-2xl font-black text-gray-900 flex items-center gap-2 leading-tight">
+            {isApproved && <CheckCircle2 className="w-5 h-5 text-[#22C55E] shrink-0" />}
             {vendor.name}
           </h1>
           
@@ -108,16 +108,16 @@ export const VendorProfilePage: React.FC<VendorProfilePageProps> = ({
             )}
           </div>
 
-          <div className="text-sm text-gray-700 flex items-start gap-1">
-            <MapPin className="w-4 h-4 mt-0.5 text-gray-400 shrink-0" />
+          <div className="text-xs text-gray-700 flex items-start gap-1">
+            <MapPin className="w-3.5 h-3.5 mt-0.5 text-gray-400 shrink-0" />
             <span>{vendor.neighborhood}{vendor.neighborhood && vendor.address ? ', ' : ''}{vendor.address}</span>
           </div>
 
-          <div className="text-sm text-gray-500 font-medium">
+          <div className="text-xs text-gray-500 font-medium">
             {vendor.category} • 10 Years in Business
           </div>
 
-          <div className="text-sm">
+          <div className="text-xs">
             {vendor.operatingHours ? (
               vendor.operatingHours.toLowerCase().includes('24/7') ? (
                 <span className="text-[#22C55E] font-bold">Open Now: {vendor.operatingHours}</span>
@@ -139,10 +139,10 @@ export const VendorProfilePage: React.FC<VendorProfilePageProps> = ({
                 onClick={() => onTrackCall(vendor.id)}
                 className="flex flex-col items-center gap-1.5 flex-1 cursor-pointer active:scale-95 transition-transform"
               >
-                <div className="w-12 h-12 rounded-xl bg-blue-600 text-white flex items-center justify-center shadow-sm">
-                  <Phone className="w-6 h-6 fill-current" />
+                <div className="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center shadow-sm">
+                  <Phone className="w-5 h-5 fill-current" />
                 </div>
-                <span className="text-[11px] font-bold text-gray-800">Call Now</span>
+                <span className="text-[10px] font-bold text-gray-800">Call Now</span>
               </a>
               
               <a
@@ -152,10 +152,10 @@ export const VendorProfilePage: React.FC<VendorProfilePageProps> = ({
                 onClick={() => onTrackWhatsApp(vendor.id)}
                 className="flex flex-col items-center gap-1.5 flex-1 cursor-pointer active:scale-95 transition-transform"
               >
-                <div className="w-12 h-12 rounded-xl bg-white border border-gray-200 flex items-center justify-center shadow-sm">
-                  <WhatsAppLogo className="w-7 h-7" />
+                <div className="w-10 h-10 rounded-xl bg-white border border-gray-200 flex items-center justify-center shadow-sm">
+                  <WhatsAppLogo className="w-6 h-6" />
                 </div>
-                <span className="text-[11px] font-bold text-gray-800">WhatsApp</span>
+                <span className="text-[10px] font-bold text-gray-800">WhatsApp</span>
               </a>
               
               <a 
@@ -164,26 +164,26 @@ export const VendorProfilePage: React.FC<VendorProfilePageProps> = ({
                 rel="noopener noreferrer"
                 className="flex flex-col items-center gap-1.5 flex-1 cursor-pointer active:scale-95 transition-transform"
               >
-                <div className="w-12 h-12 rounded-xl bg-white border border-gray-200 text-gray-700 flex items-center justify-center shadow-sm">
-                  <Navigation className="w-6 h-6" />
+                <div className="w-10 h-10 rounded-xl bg-white border border-gray-200 text-gray-700 flex items-center justify-center shadow-sm">
+                  <Navigation className="w-5 h-5" />
                 </div>
-                <span className="text-[11px] font-bold text-gray-800">Direction</span>
+                <span className="text-[10px] font-bold text-gray-800">Direction</span>
               </a>
               
               <button 
                 onClick={handleShare}
                 className="flex flex-col items-center gap-1.5 flex-1 cursor-pointer active:scale-95 transition-transform"
               >
-                <div className="w-12 h-12 rounded-xl bg-white border border-gray-200 text-gray-700 flex items-center justify-center shadow-sm">
-                  <Share2 className="w-6 h-6" />
+                <div className="w-10 h-10 rounded-xl bg-white border border-gray-200 text-gray-700 flex items-center justify-center shadow-sm">
+                  <Share2 className="w-5 h-5" />
                 </div>
-                <span className="text-[11px] font-bold text-gray-800">Share</span>
+                <span className="text-[10px] font-bold text-gray-800">Share</span>
               </button>
             </div>
             
             <button 
               onClick={() => { window.location.href = callUrl; }} 
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl shadow-sm transition-colors text-sm"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl shadow-sm transition-colors text-xs"
             >
               Enquire Now
             </button>
@@ -192,10 +192,10 @@ export const VendorProfilePage: React.FC<VendorProfilePageProps> = ({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
             <div className="space-y-6">
               <div>
-                <h3 className="font-bold text-gray-900 text-lg mb-3 flex items-center gap-2">
-                  <Building2 className="w-5 h-5 text-[#1A9E9E]" /> About Business
+                <h3 className="font-bold text-gray-900 text-base mb-2 flex items-center gap-2">
+                  <Building2 className="w-4 h-4 text-[#1A9E9E]" /> About Business
                 </h3>
-                <p className="text-gray-600 text-sm leading-relaxed whitespace-pre-wrap">
+                <p className="text-gray-600 text-xs leading-relaxed whitespace-pre-wrap">
                   {vendor.description}
                 </p>
                 {vendor.keywords && (
