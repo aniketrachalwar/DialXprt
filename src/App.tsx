@@ -868,7 +868,7 @@ export default function App() {
 
 
       {/* MAIN BODY DISPLAY */}
-      <main className="w-full mx-auto px-3 py-4">
+      <main className="w-full max-w-6xl mx-auto px-3 sm:px-6 py-5">
         {/* VIEW 1: ROLE-TAILORED ACCOUNT DASHBOARD */}
         {selectedVendorSlug ? (
           <VendorProfilePage
@@ -1128,7 +1128,7 @@ export default function App() {
                     </button>
                   </div>
                 ) : (
-                  <div className="flex flex-col gap-4 sm:gap-5 max-w-4xl mx-auto w-full">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
                     {approvedVendors.filter(v => v.distanceKm === undefined || v.distanceKm <= searchRadius).map((vendor) => (
                       <VendorCard
                         key={vendor.id}
@@ -1276,6 +1276,8 @@ export default function App() {
     </div>
   );
 }
+
+
 
 
 
