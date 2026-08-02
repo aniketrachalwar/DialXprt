@@ -151,19 +151,30 @@ export default function App() {
 
   useEffect(() => {
     const parts = location.pathname.split("/").filter(Boolean);
-    if (parts.length >= 2 && parts[0] === "hyderabad") {
+    if (parts.length >= 1 && parts[0] === "hyderabad") {
       setStaticRoute(null);
       setSelectedVendorSlug(null);
-      const decodedNeighborhood = decodeURIComponent(parts[1]);
+      setActiveTab("home");
+      
+      if (parts.length >= 2) {
+        const decodedNeighborhood = decodeURIComponent(parts[1]);
+        const foundNeighborhood = HYDERABAD_NEIGHBORHOODS.find(
+          (n) => n.name.toLowerCase() === decodedNeighborhood.toLowerCase(),
+        );
 
-      const foundNeighborhood = HYDERABAD_NEIGHBORHOODS.find(
-        (n) => n.name.toLowerCase() === decodedNeighborhood.toLowerCase(),
-      );
-
-      if (foundNeighborhood && currentNeighborhood !== foundNeighborhood.name) {
-        setCurrentNeighborhood(foundNeighborhood.name);
-        setUserLat(foundNeighborhood.lat);
-        setUserLng(foundNeighborhood.lng);
+        if (foundNeighborhood && currentNeighborhood !== foundNeighborhood.name) {
+          setCurrentNeighborhood(foundNeighborhood.name);
+          setUserLat(foundNeighborhood.lat);
+          setUserLng(foundNeighborhood.lng);
+        }
+      } else {
+        // Defaults for /hyderabad/
+        setCurrentNeighborhood("Madhapur");
+        const found = HYDERABAD_NEIGHBORHOODS.find(n => n.name === "Madhapur");
+        if (found) {
+          setUserLat(found.lat);
+          setUserLng(found.lng);
+        }
       }
 
       if (parts.length >= 3) {
@@ -179,14 +190,19 @@ export default function App() {
     } else if (parts.length >= 2 && parts[0] === 'expert') {
       setSelectedVendorSlug(decodeURIComponent(parts[1]));
       setStaticRoute(null);
-    } else if (parts.length === 1 && ['about', 'investor-relations', 'careers', 'contact', 'free-listing', 'privacy', 'terms'].includes(parts[0])) {
+      setActiveTab("home");
+    } else if (parts.length === 1 && ['about', 'investor-relations', 'careers', 'contact', 'privacy', 'terms'].includes(parts[0])) {
       setSelectedVendorSlug(null);
-      if (parts[0] === 'free-listing') {
-        handleOpenRegistration();
-        navigate('/');
-      } else {
-        setStaticRoute(parts[0]);
-      }
+      setStaticRoute(parts[0]);
+    } else if (parts.length === 1 && parts[0] === 'list-business') {
+      setStaticRoute(null);
+      setSelectedVendorSlug(null);
+      setActiveTab("register-vendor");
+    } else if (parts.length === 1 && ['account', 'categories', 'offers', 'admin'].includes(parts[0])) {
+      setStaticRoute(null);
+      setSelectedVendorSlug(null);
+      if (parts[0] === 'categories') setActiveTab('all-categories');
+      else setActiveTab(parts[0] as any);
     } else if (parts.length === 0 || location.pathname === '/') {
       setStaticRoute(null);
       setSelectedVendorSlug(null);
@@ -194,7 +210,8 @@ export default function App() {
       const savedTab = sessionStorage.getItem('activeTab');
       const savedCategory = sessionStorage.getItem('selectedCategory');
       
-      if (savedTab && savedTab !== "home") {
+      // Only restore internal non-routed tabs from session, otherwise use home
+      if (savedTab && !['home', 'register-vendor', 'account', 'all-categories', 'offers', 'admin'].includes(savedTab)) {
         setActiveTab(savedTab as any);
         if (savedCategory) setSelectedCategory(savedCategory);
       } else {
@@ -215,9 +232,19 @@ export default function App() {
         if (location.pathname !== newPath) {
           navigate(newPath);
         }
-      } else if (selectedCategory === "all" && location.pathname !== "/") {
+      } else if (selectedCategory === "all" && location.pathname !== "/" && !location.pathname.startsWith("/hyderabad")) {
         navigate("/");
       }
+    } else if (activeTab === 'register-vendor' && location.pathname !== '/list-business') {
+      navigate('/list-business');
+    } else if (activeTab === 'account' && location.pathname !== '/account') {
+      navigate('/account');
+    } else if (activeTab === 'all-categories' && location.pathname !== '/categories') {
+      navigate('/categories');
+    } else if (activeTab === 'offers' && location.pathname !== '/offers') {
+      navigate('/offers');
+    } else if (activeTab === 'admin' && location.pathname !== '/admin') {
+      navigate('/admin');
     }
   }, [currentNeighborhood, selectedCategory, activeTab, staticRoute, selectedVendorSlug, location.pathname, navigate]);
 

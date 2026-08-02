@@ -8,8 +8,8 @@ interface FloatingSupportWidgetProps {
 }
 
 export const FloatingSupportWidget: React.FC<FloatingSupportWidgetProps> = () => {
-  const adminPhone = '9491111214';
-  const waSupportUrl = `https://wa.me/919491111214?text=${encodeURIComponent(
+  const adminPhone = '7878616178';
+  const waSupportUrl = `https://wa.me/917878616178?text=${encodeURIComponent(
     'Hi DialXprt Support, I need help listing my store or finding a local service expert in Hyderabad.'
   )}`;
 
