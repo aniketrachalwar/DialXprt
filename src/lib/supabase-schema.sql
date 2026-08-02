@@ -64,6 +64,14 @@ CREATE TABLE IF NOT EXISTS public.lead_analytics (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- Enable RLS for lead_analytics
+ALTER TABLE public.lead_analytics ENABLE ROW LEVEL SECURITY;
+
+-- Allow public to insert analytics events
+CREATE POLICY "Public can insert lead analytics"
+    ON public.lead_analytics FOR INSERT
+    WITH CHECK (true);
+
 -- 6. RPC Function for High-Concurrency Geolocation Search (ST_Distance)
 CREATE OR REPLACE FUNCTION public.get_nearby_vendors(
     user_lat DOUBLE PRECISION,
