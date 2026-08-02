@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { SEOHead } from "./components/SEOHead";
 import { Header } from "./components/Header";
@@ -97,6 +97,7 @@ export default function App() {
   const [selectedCategory, setSelectedCategory] = useState<string>(() => sessionStorage.getItem('selectedCategory') || "all");
   const [selectedSubCategory, setSelectedSubCategory] = useState<string | null>(() => sessionStorage.getItem('selectedSubCategory') || null);
   const [activeTab, setActiveTab] = useState<any>(() => sessionStorage.getItem('activeTab') || "home");
+  const isInitialMount = useRef(true);
 
   useEffect(() => {
     sessionStorage.setItem('activeTab', activeTab);
@@ -224,10 +225,16 @@ export default function App() {
 
   // Update URL when state changes
   useEffect(() => {
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      return;
+    }
+
     const isExpertRoute = location.pathname.startsWith('/expert/');
     const isStaticRoute = ['/about', '/contact', '/careers', '/investor-relations', '/privacy', '/terms'].includes(location.pathname);
+    const isKnownTabRoute = ['/list-business', '/account', '/categories', '/offers', '/admin'].includes(location.pathname);
     
-    if (activeTab === 'home' && !staticRoute && !selectedVendorSlug && !isExpertRoute && !isStaticRoute) {
+    if (activeTab === 'home' && !staticRoute && !selectedVendorSlug && !isExpertRoute && !isStaticRoute && !isKnownTabRoute) {
       if (currentNeighborhood && selectedCategory && selectedCategory !== "all") {
         const newPath = `/hyderabad/${encodeURIComponent(currentNeighborhood.toLowerCase())}/${encodeURIComponent(selectedCategory)}`;
         if (location.pathname !== newPath) {
@@ -236,15 +243,15 @@ export default function App() {
       } else if (selectedCategory === "all" && location.pathname !== "/" && !location.pathname.startsWith("/hyderabad")) {
         navigate("/");
       }
-    } else if (activeTab === 'register-vendor' && location.pathname !== '/list-business') {
+    } else if (activeTab === 'register-vendor' && location.pathname !== '/list-business' && !isKnownTabRoute) {
       navigate('/list-business');
-    } else if (activeTab === 'account' && location.pathname !== '/account') {
+    } else if (activeTab === 'account' && location.pathname !== '/account' && !isKnownTabRoute) {
       navigate('/account');
-    } else if (activeTab === 'all-categories' && location.pathname !== '/categories') {
+    } else if (activeTab === 'all-categories' && location.pathname !== '/categories' && !isKnownTabRoute) {
       navigate('/categories');
-    } else if (activeTab === 'offers' && location.pathname !== '/offers') {
+    } else if (activeTab === 'offers' && location.pathname !== '/offers' && !isKnownTabRoute) {
       navigate('/offers');
-    } else if (activeTab === 'admin' && location.pathname !== '/admin') {
+    } else if (activeTab === 'admin' && location.pathname !== '/admin' && !isKnownTabRoute) {
       navigate('/admin');
     }
   }, [currentNeighborhood, selectedCategory, activeTab, staticRoute, selectedVendorSlug, location.pathname, navigate]);
@@ -827,40 +834,7 @@ export default function App() {
               onOpenLocation={() => setIsLocationModalOpen(true)}
             />
 
-            {/* Quick Link Category Pills (Only on pure home screen) */}
-            {selectedCategory === "all" && !searchQuery && (
-              <div className="grid grid-cols-3 gap-2 pb-1 pt-1 px-0.5 group-[.is-scrolled]:hidden transition-all duration-300">
-                {[
-                  { label: 'Electrician', slug: 'electrician', icon: Zap },
-                  { label: 'Plumber', slug: 'plumber', icon: Wrench },
-                  { label: 'Car Mechanic', slug: 'mechanic', icon: Car },
-                  { label: 'Carpenter', slug: 'carpenter', icon: Hammer },
-                  { label: 'AC Repair & Services', slug: 'ac-repair', icon: Snowflake },
-                  { label: 'Show More', slug: 'all-categories', icon: null }
-                ].map(link => (
-                  <button
-                    key={link.slug}
-                    onClick={() => {
-                      if (link.slug === 'all-categories') {
-                        setActiveTab('all-categories');
-                      } else {
-                        setSelectedCategory(link.slug);
-                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                      }
-                    }}
-                    className="bg-white hover:bg-gray-100 active:scale-95 transition-all text-gray-900 font-extrabold text-[11px] sm:text-xs leading-tight py-2 px-1 rounded-lg shadow-sm flex items-center justify-center min-h-[44px] gap-1"
-                  >
-                    {link.icon && <link.icon className="w-4 h-4 text-cyan-500 shrink-0" />}
-                    <span className="line-clamp-2">{link.label}</span>
-                    {link.slug === 'all-categories' && (
-                      <div className="w-4 h-4 rounded-full bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center text-white shrink-0 mt-0.5">
-                        <ChevronDown className="w-3 h-3" strokeWidth={3} />
-                      </div>
-                    )}
-                  </button>
-                ))}
-              </div>
-            )}
+
           </div>
         )}
       </Header>
@@ -978,6 +952,41 @@ export default function App() {
         ) : (
           /* VIEW 2: PUBLIC DIRECTORY HOMEPAGE GRID */
           <div className="space-y-6">
+            {/* Quick Link Category Pills moved OUT of the sticky header */}
+            {selectedCategory === "all" && !searchQuery && (
+              <div className="grid grid-cols-3 gap-2 mb-2 px-3 sm:px-0">
+                {[
+                  { label: 'Electrician', slug: 'electrician', icon: Zap },
+                  { label: 'Plumber', slug: 'plumber', icon: Wrench },
+                  { label: 'Car Mechanic', slug: 'mechanic', icon: Car },
+                  { label: 'Carpenter', slug: 'carpenter', icon: Hammer },
+                  { label: 'AC Repair & Services', slug: 'ac-repair', icon: Snowflake },
+                  { label: 'Show More', slug: 'all-categories', icon: null }
+                ].map(link => (
+                  <button
+                    key={link.slug}
+                    onClick={() => {
+                      if (link.slug === 'all-categories') {
+                        setActiveTab('all-categories');
+                      } else {
+                        setSelectedCategory(link.slug);
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                      }
+                    }}
+                    className="bg-white border border-gray-200 hover:bg-gray-50 active:scale-95 transition-all text-gray-900 font-extrabold text-[11px] sm:text-xs leading-tight py-2 px-1 rounded-xl shadow-sm flex items-center justify-center min-h-[44px] gap-1"
+                  >
+                    {link.icon && <link.icon className="w-4 h-4 text-cyan-500 shrink-0" />}
+                    <span className="line-clamp-2">{link.label}</span>
+                    {link.slug === 'all-categories' && (
+                      <div className="w-4 h-4 rounded-full bg-gradient-to-br from-cyan-400 to-blue-500 flex items-center justify-center text-white shrink-0 mt-0.5">
+                        <ChevronDown className="w-3 h-3" strokeWidth={3} />
+                      </div>
+                    )}
+                  </button>
+                ))}
+              </div>
+            )}
+            
             {selectedCategory === "all" && searchQuery === "" ? (
               /* HOME DASHBOARD WITH PROMO & QUICK FILTERS */
               <HomeDashboard

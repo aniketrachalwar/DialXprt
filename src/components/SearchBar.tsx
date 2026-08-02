@@ -236,10 +236,10 @@ export const SearchBar: React.FC<SearchBarProps> = ({
     <div className="w-full">
       <div className="max-w-4xl mx-auto" ref={containerRef}>
         <div className="relative">
-          <div className="relative flex items-center bg-white/90 backdrop-blur-md rounded-full shadow-md border border-cyan-100 focus-within:border-cyan-400 focus-within:ring-4 focus-within:ring-cyan-100/50 transition-all overflow-hidden h-12 md:h-14">
+          <div className="relative flex items-center bg-white/90 backdrop-blur-md rounded-full shadow-md border border-cyan-100 focus-within:border-cyan-400 focus-within:ring-4 focus-within:ring-cyan-100/50 transition-all overflow-hidden h-10 md:h-12">
             
-            <div className="pl-4 pr-2 text-gray-500 shrink-0">
-              <Search className="w-5 h-5" />
+            <div className="pl-3 pr-2 text-gray-500 shrink-0">
+              <Search className="w-4 h-4" />
             </div>
 
             <input

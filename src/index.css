@@ -78,13 +78,8 @@ body {
 
 #root {
   width: 100%;
-  
   background: #ffffff;
   min-height: 100vh;
-  box-shadow: 0 0 50px rgba(0,0,0,0.5);
-  
-  
-  
 }
 
 button, a, input, select, textarea {

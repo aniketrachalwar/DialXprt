@@ -1,5 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
+import { Store, ArrowRight } from 'lucide-react';
 import { HeroBanners } from './HeroBanners';
 import { CategoryGrid } from './CategoryGrid';
 import { ImageCategorySection } from './ImageCategorySection';
@@ -143,6 +145,28 @@ export const HomeDashboard = ({
 
         <motion.div variants={itemVariants}>
           <TravelBookings onSelectCategory={onSelectCategory} />
+        </motion.div>
+
+        {/* Grow Your Business CTA Banner */}
+        <motion.div variants={itemVariants} className="py-2">
+          <div className="bg-gradient-to-br from-cyan-50 to-blue-50 border border-cyan-100 rounded-2xl p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-sm relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-40 h-40 bg-white rounded-full opacity-40 blur-2xl -mr-10 -mt-10"></div>
+            <div className="relative z-10 flex-1">
+              <h3 className="text-xl sm:text-2xl font-black text-gray-900 tracking-tight mb-2">Grow Your Local Business</h3>
+              <p className="text-gray-600 text-sm max-w-lg">List your services on DialXprt for completely free and get connected with thousands of customers in Hyderabad actively looking for your expertise.</p>
+            </div>
+            <div className="relative z-10">
+              <Link 
+                to="/list-business"
+                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                className="bg-[#1a237e] hover:bg-blue-800 text-white px-6 py-3.5 rounded-xl font-bold text-sm whitespace-nowrap shadow-md transition-all flex items-center justify-center gap-2 group hover:pr-4"
+              >
+                <Store className="w-5 h-5 text-cyan-400" />
+                List Your Business Free
+                <ArrowRight className="w-4 h-4 opacity-0 -ml-4 group-hover:opacity-100 group-hover:ml-0 transition-all duration-300" />
+              </Link>
+            </div>
+          </div>
         </motion.div>
 
         <motion.div variants={itemVariants}>
