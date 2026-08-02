@@ -613,6 +613,16 @@ export const HYDERABAD_NEIGHBORHOODS: Neighborhood[] = [
 ];
 
 export const INITIAL_CATEGORIES: Category[] = [
+  { id: 'c_new1', name: 'Tours & Travels', slug: 'tours-travels', iconName: 'Plane', emoji: '✈️', group: 'Travel', description: 'Tours & Travels services', activeProvidersCount: 42, popularSearch: true },
+  { id: 'c_new2', name: 'Dairy Products', slug: 'dairy-products', iconName: 'Coffee', emoji: '🥛', group: 'Food & Beverage', description: 'Dairy Products services', activeProvidersCount: 15, popularSearch: true },
+  { id: 'c_new3', name: 'Events', slug: 'events', iconName: 'Star', emoji: '🎉', group: 'Events', description: 'Events services', activeProvidersCount: 28, popularSearch: true },
+  { id: 'c_new4', name: 'Contractors', slug: 'contractors', iconName: 'Home', emoji: '🏗️', group: 'Construction', description: 'Contractors services', activeProvidersCount: 35, popularSearch: true },
+  { id: 'c_new5', name: 'Fashion', slug: 'fashion', iconName: 'Shirt', emoji: '👗', group: 'Shopping', description: 'Fashion services', activeProvidersCount: 60, popularSearch: true },
+  { id: 'c_new6', name: 'Fitness', slug: 'fitness', iconName: 'Heart', emoji: '🏋️', group: 'Health & Wellness', description: 'Fitness services', activeProvidersCount: 22, popularSearch: true },
+  { id: 'c_new7', name: 'Restaurants', slug: 'restaurants', iconName: 'Utensils', emoji: '🍽️', group: 'Food & Beverage', description: 'Restaurants services', activeProvidersCount: 45, popularSearch: true },
+  { id: 'c_new8', name: 'Caterers', slug: 'caterers', iconName: 'Coffee', emoji: '👨‍🍳', group: 'Caterers', description: 'Caterers services', activeProvidersCount: 31, popularSearch: true },
+  { id: 'c_new9', name: 'Tailor', slug: 'tailor', iconName: 'Scissors', emoji: '🧵', group: 'Home Maintenance', description: 'Tailor services', activeProvidersCount: 50, popularSearch: true },
+  { id: 'c_new10', name: 'Jhatka Meat & Poultry', slug: 'jhatka-meat-poultry', iconName: 'Activity', emoji: '🍗', group: 'Food & Beverage', description: 'Jhatka Meat & Poultry', activeProvidersCount: 12, popularSearch: true },
   { id: 'c1', name: 'AC Repair & Services', slug: 'ac-repair-services', iconName: 'Activity', emoji: '❄️', group: 'Repairs & Services', description: 'AC Repair & Services services', activeProvidersCount: Math.floor(Math.random() * 50) + 10, popularSearch: true },
   { id: 'c2', name: 'Bike Mechanic', slug: 'bike-mechanic', iconName: 'Activity', emoji: '🏍️', group: 'Automobile', description: 'Bike Mechanic services', activeProvidersCount: Math.floor(Math.random() * 50) + 10, popularSearch: true },
   { id: 'c3', name: 'Car Mechanic', slug: 'car-mechanic', iconName: 'Activity', emoji: '🚗', group: 'Automobile', description: 'Car Mechanic services', activeProvidersCount: Math.floor(Math.random() * 50) + 10, popularSearch: true },
@@ -622,7 +632,6 @@ export const INITIAL_CATEGORIES: Category[] = [
   { id: 'c7', name: 'Refrigerator Repair & Services', slug: 'refrigerator-repair-services', iconName: 'Activity', emoji: '🧊', group: 'Repairs & Services', description: 'Refrigerator Repair & Services services', activeProvidersCount: Math.floor(Math.random() * 50) + 10, popularSearch: true },
   { id: 'c8', name: 'Mobile Repair & Services', slug: 'mobile-repair-services', iconName: 'Activity', emoji: '📱', group: 'Repairs & Services', description: 'Mobile Repair & Services services', activeProvidersCount: Math.floor(Math.random() * 50) + 10, popularSearch: true },
   { id: 'c9', name: 'Computer Laptop Repair & Services', slug: 'computer-laptop-repair-services', iconName: 'Activity', emoji: '💻', group: 'Repairs & Services', description: 'Computer Laptop Repair & Services services', activeProvidersCount: Math.floor(Math.random() * 50) + 10, popularSearch: true },
-  { id: 'c10', name: 'Tailor', slug: 'tailor', iconName: 'Activity', emoji: '🧵', group: 'Home Maintenance', description: 'Tailor services', activeProvidersCount: Math.floor(Math.random() * 50) + 10, popularSearch: true },
   { id: 'c11', name: 'Welder ( Fabrication Works )', slug: 'welder-fabrication-works', iconName: 'Activity', emoji: '🔥', group: 'Home Maintenance', description: 'Welder ( Fabrication Works ) services', activeProvidersCount: Math.floor(Math.random() * 50) + 10, popularSearch: true },
   { id: 'c12', name: 'Bulk SMS Services', slug: 'bulk-sms-services', iconName: 'Activity', emoji: '💬', group: 'Bulk SMS Services', description: 'Bulk SMS Services services', activeProvidersCount: Math.floor(Math.random() * 50) + 10, popularSearch: true },
   { id: 'c13', name: 'IVR Service Providers', slug: 'ivr-service-providers', iconName: 'Activity', emoji: '🎙️', group: 'Bulk SMS Services', description: 'IVR Service Providers services', activeProvidersCount: Math.floor(Math.random() * 50) + 10, popularSearch: true },
@@ -634,7 +643,6 @@ export const INITIAL_CATEGORIES: Category[] = [
   { id: 'c19', name: 'Wedding Cake', slug: 'wedding-cake', iconName: 'Activity', emoji: '💒', group: 'Cake Shops', description: 'Wedding Cake services', activeProvidersCount: Math.floor(Math.random() * 50) + 10, popularSearch: true },
   { id: 'c20', name: 'Customised Cake', slug: 'customised-cake', iconName: 'Activity', emoji: '🧁', group: 'Cake Shops', description: 'Customised Cake services', activeProvidersCount: Math.floor(Math.random() * 50) + 10, popularSearch: true },
   { id: 'c21', name: 'Photo Cake', slug: 'photo-cake', iconName: 'Activity', emoji: '📸', group: 'Cake Shops', description: 'Photo Cake services', activeProvidersCount: Math.floor(Math.random() * 50) + 10, popularSearch: true },
-  { id: 'c22', name: 'All Caterers', slug: 'all-caterers', iconName: 'Activity', emoji: '👨‍🍳', group: 'Caterers', description: 'All Caterers services', activeProvidersCount: Math.floor(Math.random() * 50) + 10, popularSearch: true },
   { id: 'c23', name: 'Birthday Party', slug: 'birthday-party', iconName: 'Activity', emoji: '🎈', group: 'Caterers', description: 'Birthday Party services', activeProvidersCount: Math.floor(Math.random() * 50) + 10, popularSearch: true },
   { id: 'c24', name: 'Party Caterers', slug: 'party-caterers', iconName: 'Activity', emoji: '🥳', group: 'Caterers', description: 'Party Caterers services', activeProvidersCount: Math.floor(Math.random() * 50) + 10, popularSearch: true },
   { id: 'c25', name: 'House Warming', slug: 'house-warming', iconName: 'Activity', emoji: '🏡', group: 'Caterers', description: 'House Warming services', activeProvidersCount: Math.floor(Math.random() * 50) + 10, popularSearch: true },
@@ -720,10 +728,8 @@ export const INITIAL_CATEGORIES: Category[] = [
   { id: 'c105', name: 'Hospitals', slug: 'hospitals', iconName: 'Activity', emoji: '🏥', group: 'Other Services', description: 'Hospitals services', activeProvidersCount: Math.floor(Math.random() * 50) + 10, popularSearch: true },
   { id: 'c106', name: 'Medical Stores', slug: 'medical-stores', iconName: 'Activity', emoji: '💊', group: 'Other Services', description: 'Medical Stores services', activeProvidersCount: Math.floor(Math.random() * 50) + 10, popularSearch: true },
   { id: 'c107', name: 'Real Estate Agents', slug: 'real-estate-agents', iconName: 'Activity', emoji: '🏢', group: 'Other Services', description: 'Real Estate Agents services', activeProvidersCount: Math.floor(Math.random() * 50) + 10, popularSearch: true },
-  { id: 'c108', name: 'Restaurants', slug: 'restaurants', iconName: 'Activity', emoji: '🍽️', group: 'Other Services', description: 'Restaurants services', activeProvidersCount: Math.floor(Math.random() * 50) + 10, popularSearch: true },
   { id: 'c109', name: 'Courier Services', slug: 'courier-services', iconName: 'Activity', emoji: '🚚', group: 'Other Services', description: 'Courier Services services', activeProvidersCount: Math.floor(Math.random() * 50) + 10, popularSearch: true },
   { id: 'c110', name: 'Interior Designers', slug: 'interior-designers', iconName: 'Activity', emoji: '🛋️', group: 'Other Services', description: 'Interior Designers services', activeProvidersCount: Math.floor(Math.random() * 50) + 10, popularSearch: true },
-  { id: 'c111', name: 'Gyms & Fitness', slug: 'gyms-fitness', iconName: 'Activity', emoji: '🏋️‍♂️', group: 'Other Services', description: 'Gyms & Fitness services', activeProvidersCount: Math.floor(Math.random() * 50) + 10, popularSearch: true },
   { id: 'c112', name: 'Event Organizers', slug: 'event-organizers', iconName: 'Activity', emoji: '🎪', group: 'Other Services', description: 'Event Organizers services', activeProvidersCount: Math.floor(Math.random() * 50) + 10, popularSearch: true },
   { id: 'c113', name: 'Security Guards', slug: 'security-guards', iconName: 'Activity', emoji: '👮', group: 'Other Services', description: 'Security Guards services', activeProvidersCount: Math.floor(Math.random() * 50) + 10, popularSearch: true },
   { id: 'c114', name: 'Laptop Repair', slug: 'laptop-repair', iconName: 'Activity', emoji: '💻', group: 'Other Services', description: 'Laptop Repair services', activeProvidersCount: Math.floor(Math.random() * 50) + 10, popularSearch: true },
@@ -739,7 +745,6 @@ export const INITIAL_CATEGORIES: Category[] = [
   { id: 'c124', name: 'Music Classes', slug: 'music-classes', iconName: 'Activity', emoji: '🎵', group: 'Other Services', description: 'Music Classes services', activeProvidersCount: Math.floor(Math.random() * 50) + 10, popularSearch: true },
   { id: 'c125', name: 'Lawyers & Advocates', slug: 'lawyers-advocates', iconName: 'Activity', emoji: '⚖️', group: 'Other Services', description: 'Lawyers & Advocates services', activeProvidersCount: Math.floor(Math.random() * 50) + 10, popularSearch: true },
   { id: 'c126', name: 'CA & Tax Consultants', slug: 'ca-tax-consultants', iconName: 'Activity', emoji: '📊', group: 'Other Services', description: 'CA & Tax Consultants services', activeProvidersCount: Math.floor(Math.random() * 50) + 10, popularSearch: true },
-  { id: 'c127', name: 'Caterers', slug: 'caterers', iconName: 'Activity', emoji: '👨‍🍳', group: 'Other Services', description: 'Caterers services', activeProvidersCount: Math.floor(Math.random() * 50) + 10, popularSearch: true }
 ];
 
 export const INITIAL_VENDORS: Vendor[] = [];

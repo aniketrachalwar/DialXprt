@@ -15,10 +15,8 @@ import { LanguageModal } from "./components/LanguageModal";
 import { AdminPanelView } from "./components/AdminPanelView";
 import { StaticPage } from "./components/StaticPages";
 import { VendorProfilePage } from "./components/VendorProfilePage";
-import { LocationModal } from "./components/LocationModal";
 import { FloatingSupportWidget } from "./components/FloatingSupportWidget";
 import { AuthModal } from "./components/AuthModal";
-import { NotificationsModal } from "./components/NotificationsModal";
 import { NotificationToast } from "./components/NotificationToast";
 import { Footer } from "./components/Footer";
 import { RightStickyBar } from "./components/RightStickyBar";
@@ -673,12 +671,12 @@ export default function App() {
       
       scoredResult = scoredResult.map(v => {
         let score = 0;
-        const name = v.name.toLowerCase();
-        const catName = v.category.toLowerCase();
-        const catSlug = v.categorySlug.toLowerCase();
+        const name = (v.name || '').toLowerCase();
+        const catName = (v.category || '').toLowerCase();
+        const catSlug = (v.categorySlug || '').toLowerCase();
         const tags = (v.description || '').toLowerCase();
-        const address = v.address.toLowerCase();
-        const neighborhood = v.neighborhood.toLowerCase();
+        const address = (v.address || '').toLowerCase();
+        const neighborhood = (v.neighborhood || '').toLowerCase();
 
         qTokens.forEach(token => {
           if (name.includes(token)) score += 10;
@@ -790,7 +788,7 @@ export default function App() {
 
             {/* Quick Link Category Pills (Only on pure home screen) */}
             {selectedCategory === "all" && !searchQuery && (
-              <div className="grid grid-cols-3 gap-2 pb-1 pt-1 px-0.5">
+              <div className="grid grid-cols-3 gap-2 pb-1 pt-1 px-0.5 group-[.is-scrolled]:hidden transition-all duration-300">
                 {[
                   { label: 'Electrician', slug: 'electrician', icon: Zap },
                   { label: 'Plumber', slug: 'plumber', icon: Wrench },

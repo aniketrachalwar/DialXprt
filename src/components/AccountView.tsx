@@ -4,7 +4,34 @@ import {
   Vendor,
   VolunteerUser,
   Category,
-  } from '../types';
+} from '../types';
+
+export interface CustomerWorkerInteraction {
+  id: string;
+  vendorId: string;
+  vendorName: string;
+  vendorCategory: string;
+  vendorPhone: string;
+  vendorAddress?: string;
+  vendorNeighborhood?: string;
+  vendorImage?: string;
+  interactionType?: string;
+  timestamp?: string;
+  visitDate?: string;
+  serviceProvided?: string;
+  status?: string;
+  userRating?: number;
+}
+
+export interface CustomerSavedWorker {
+  vendorId: string;
+  vendorName: string;
+  vendorCategory: string;
+  vendorPhone: string;
+  vendorNeighborhood?: string;
+  vendorImage?: string;
+  rating?: number;
+}
 import {
   ShieldCheck,
   Crown,
