@@ -81,9 +81,9 @@ body {
   background: #ffffff;
   min-height: 100vh;
   box-shadow: 0 0 50px rgba(0,0,0,0.5);
-  transform: translateZ(0); /* Constrains fixed elements */
-  position: relative;
-  overflow-x: hidden;
+  
+  
+  
 }
 
 button, a, input, select, textarea {
@@ -101,6 +101,7 @@ button, a, input, select, textarea {
 img {
   content-visibility: auto;
 }
+
 
 
 
