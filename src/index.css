@@ -68,6 +68,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overscroll-behavior-y: none;
+  overflow-x: hidden;
   background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #312e81 100%); /* Dark premium vibrant backdrop */
   display: flex;
   justify-content: center;
@@ -101,6 +102,7 @@ button, a, input, select, textarea {
 img {
   content-visibility: auto;
 }
+
 
 
 
