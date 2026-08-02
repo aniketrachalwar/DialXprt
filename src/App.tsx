@@ -797,7 +797,7 @@ export default function App() {
         renderCompactSearch={undefined}
       >
         {activeTab === "home" && (
-          <div className="space-y-4">
+          <div className="space-y-4 px-3 sm:px-0">
             <SearchBar
               searchQuery={searchQuery}
               onSearchChange={(q) => {
@@ -868,7 +868,7 @@ export default function App() {
 
 
       {/* MAIN BODY DISPLAY */}
-      <main className="w-full max-w-6xl mx-auto px-3 sm:px-6 py-5">
+      <main className="w-full max-w-6xl mx-auto py-5 sm:px-6">
         {/* VIEW 1: ROLE-TAILORED ACCOUNT DASHBOARD */}
         {selectedVendorSlug ? (
           <VendorProfilePage
@@ -1128,7 +1128,7 @@ export default function App() {
                     </button>
                   </div>
                 ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full px-3 sm:px-0">
                     {approvedVendors.filter(v => v.distanceKm === undefined || v.distanceKm <= searchRadius).map((vendor) => (
                       <VendorCard
                         key={vendor.id}
@@ -1276,6 +1276,8 @@ export default function App() {
     </div>
   );
 }
+
+
 
 
 
