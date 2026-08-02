@@ -186,15 +186,15 @@ export const AdminPanelView: React.FC<AdminPanelViewProps> = ({ currentRole = "a
         {/* VENDORS TAB */}
         {activeTab === 'vendors' && (
           <div className="space-y-8">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 w-full">
               <h2 className="text-xl font-bold text-gray-900">Manage Vendor Leads ({filteredAdminVendors.length})</h2>
-              <div className="flex gap-2">
+              <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
                 <input 
                   type="text"
                   placeholder="Search businesses, owners, phones..."
                   value={vendorSearchQuery}
                   onChange={(e) => setVendorSearchQuery(e.target.value)}
-                  className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 font-medium outline-none focus:border-purple-500 text-sm"
+                  className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 font-medium outline-none focus:border-purple-500 text-sm w-full sm:w-auto"
                 />
                 <button onClick={handleExportVendors} className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-xl text-sm font-bold transition-colors">
                   Export Detailed Vendors CSV
@@ -355,5 +355,8 @@ export const AdminPanelView: React.FC<AdminPanelViewProps> = ({ currentRole = "a
     </div>
   );
 };
+
+
+
 
 
