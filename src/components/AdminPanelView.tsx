@@ -142,7 +142,7 @@ export const AdminPanelView: React.FC<AdminPanelViewProps> = ({ currentRole = "a
   if (loading) return <div className="p-10 text-center font-bold text-gray-500">Loading Admin Data...</div>;
 
   return (
-    <div className="max-w-5xl mx-auto space-y-6 pb-24">
+    <div className="max-w-5xl mx-auto space-y-6 pb-24 px-3 sm:px-6">
       {/* Header */}
       <div className="bg-gradient-to-r from-purple-800 to-indigo-900 rounded-3xl p-6 sm:p-8 text-white shadow-lg mt-4">
         <div className="flex items-center gap-4">
@@ -355,4 +355,5 @@ export const AdminPanelView: React.FC<AdminPanelViewProps> = ({ currentRole = "a
     </div>
   );
 };
+
 

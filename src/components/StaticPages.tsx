@@ -35,7 +35,7 @@ export const StaticPage = ({ route }: { route: string }) => {
   const data = pageData[route] || { title: 'Page Not Found', content: 'The page you are looking for does not exist.' };
   
   return (
-    <div className="bg-white border border-gray-200 rounded-3xl p-8 md:p-12 max-w-4xl mx-auto shadow-sm my-8">
+    <div className="bg-white border border-gray-200 rounded-3xl p-8 md:p-12 max-w-4xl mx-3 sm:mx-auto shadow-sm my-8">
       <h1 className="text-3xl font-extrabold text-gray-900 mb-6">{data.title}</h1>
       <div className="prose prose-blue max-w-none text-gray-600 leading-relaxed">
         <p className="text-lg">{data.content}</p>
@@ -46,4 +46,5 @@ export const StaticPage = ({ route }: { route: string }) => {
     </div>
   );
 };
+
 

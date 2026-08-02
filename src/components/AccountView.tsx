@@ -478,7 +478,7 @@ export const AccountView: React.FC<AccountViewProps> = ({
   const isBusinessOwner = currentRole === 'vendor' || myOwnedShops.length > 0;
 
   return (
-    <div className="max-w-5xl mx-auto space-y-6 pb-8 animate-fade-in">
+    <div className="max-w-5xl mx-auto space-y-6 pb-8 px-3 sm:px-6 animate-fade-in">
       {/* 1. TOP ACCOUNT ROLE SWITCHER & PROFILE HEADER */}
       <div className="bg-white rounded-3xl p-5 sm:p-6 shadow-md border border-gray-200">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b pb-5">
@@ -634,4 +634,5 @@ export const AccountView: React.FC<AccountViewProps> = ({
     </div>
   );
 };
+
 
