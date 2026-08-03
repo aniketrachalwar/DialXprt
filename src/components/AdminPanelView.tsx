@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Crown, Users, Store, Map } from 'lucide-react';
-import { UserRoleAssignment, fetchUserRoles, grantUserRole, removeUserRole } from '../lib/adminApi';
-import { Vendor } from '../types';
+import { Crown, Users, Store, Map, MessageSquare, Star } from 'lucide-react';
+import { UserRoleAssignment, fetchUserRoles, grantUserRole, removeUserRole, fetchFeedback } from '../lib/adminApi';
+import { Vendor, FeedbackEntry } from '../types';
 import { fetchAllVendors } from '../lib/supabase';
 import { SiteMapTowers } from './SiteMapTowers';
 
@@ -15,11 +15,12 @@ interface AdminPanelViewProps {
 }
 
 export const AdminPanelView: React.FC<AdminPanelViewProps> = ({ currentRole = "admin", onUpdateVendorStatus, onOpenEditVendor, onDeleteVendor }) => {
-  const [activeTab, setActiveTab] = useState<'vendors' | 'roles' | 'sitemap'>(currentRole === 'volunteer' ? 'vendors' : 'sitemap');
+  const [activeTab, setActiveTab] = useState<'vendors' | 'roles' | 'sitemap' | 'feedback'>(currentRole === 'volunteer' ? 'vendors' : 'sitemap');
   
   // Data State
   const [roles, setRoles] = useState<UserRoleAssignment[]>([]);
   const [adminVendors, setAdminVendors] = useState<Vendor[]>([]);
+  const [feedback, setFeedback] = useState<FeedbackEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [vendorSearchQuery, setVendorSearchQuery] = useState('');
 
@@ -40,6 +41,11 @@ export const AdminPanelView: React.FC<AdminPanelViewProps> = ({ currentRole = "a
     const allVendorsData = await fetchAllVendors();
     setAdminVendors(allVendorsData);
     
+    if (currentRole === 'admin') {
+      const fbData = await fetchFeedback();
+      setFeedback(fbData);
+    }
+
     setLoading(false);
   };
 
@@ -173,11 +179,55 @@ export const AdminPanelView: React.FC<AdminPanelViewProps> = ({ currentRole = "a
             <Users className="w-5 h-5" /> User Roles & Volunteers
           </button>
         )}
+        {currentRole === 'admin' && (
+          <button onClick={() => setActiveTab('feedback')} className={`flex items-center gap-2 px-5 py-3 rounded-xl font-bold transition-colors whitespace-nowrap ${activeTab === 'feedback' ? 'bg-purple-100 text-purple-700' : 'hover:bg-gray-50 text-gray-600'}`}>
+            <MessageSquare className="w-5 h-5" /> User Feedback
+          </button>
+        )}
       </div>
 
       {/* Main Content Area */}
       <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-200">
         
+        {/* FEEDBACK TAB */}
+        {activeTab === 'feedback' && currentRole === 'admin' && (
+          <div className="space-y-6 animate-fade-in">
+            <div className="flex justify-between items-center">
+              <h2 className="text-xl font-black text-gray-900">User Feedback & Bug Reports</h2>
+            </div>
+            
+            {feedback.length === 0 ? (
+              <div className="text-center py-10 bg-gray-50 rounded-2xl border border-gray-100">
+                <p className="text-gray-500 font-medium">No feedback received yet.</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {feedback.map(fb => (
+                  <div key={fb.id} className="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm space-y-3">
+                    <div className="flex justify-between items-start">
+                      <span className={`px-2.5 py-1 text-xs font-bold rounded-lg ${
+                        fb.type === 'bug' ? 'bg-rose-100 text-rose-700' : 
+                        fb.type === 'feature' ? 'bg-purple-100 text-purple-700' : 'bg-gray-100 text-gray-700'
+                      }`}>
+                        {fb.type === 'bug' ? '🐛 Bug' : fb.type === 'feature' ? '💡 Feature' : '💬 Other'}
+                      </span>
+                      <span className="text-xs text-gray-400 font-medium">{new Date(fb.createdAt).toLocaleDateString()}</span>
+                    </div>
+                    
+                    <div className="flex items-center gap-1">
+                      {[1, 2, 3, 4, 5].map(star => (
+                        <Star key={star} className={`w-4 h-4 ${star <= fb.rating ? 'fill-amber-400 text-amber-400' : 'fill-gray-100 text-gray-200'}`} />
+                      ))}
+                    </div>
+                    
+                    <p className="text-gray-700 text-sm leading-relaxed">{fb.message}</p>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
         {/* SITEMAP TAB */}
         {activeTab === 'sitemap' && (
           <SiteMapTowers />

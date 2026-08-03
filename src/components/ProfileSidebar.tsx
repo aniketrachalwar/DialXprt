@@ -286,13 +286,6 @@ export const ProfileSidebar: React.FC<ProfileSidebarProps> = ({
                   <span>Edit Profile</span>
                 </button>
                 
-                <button 
-                  onClick={() => handleAction(() => onNavigate?.('transactions'))}
-                  className="w-full flex items-center gap-4 px-3 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50 hover:text-[#F36F21] rounded-xl transition-colors text-left"
-                >
-                  <Receipt className="w-4 h-4 text-gray-500 shrink-0" />
-                  <span>My Transaction</span>
-                </button>
 
                 <button 
                   onClick={() => handleAction(onChangeLanguage)}
@@ -332,18 +325,7 @@ export const ProfileSidebar: React.FC<ProfileSidebarProps> = ({
 
               <div className="w-full h-px bg-gray-100 my-2" />
 
-              {/* Section 3 */}
-              <div className="px-4 py-2 space-y-1">
-                <button 
-                  onClick={() => handleAction(() => onNavigate?.('investor_relations'))}
-                  className="w-full flex items-center gap-4 px-3 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50 hover:text-[#F36F21] rounded-xl transition-colors text-left"
-                >
-                  <UserCheck className="w-4 h-4 text-gray-500 shrink-0" />
-                  <span>Investor Relations</span>
-                </button>
-              </div>
 
-              <div className="w-full h-px bg-gray-100 my-2" />
 
               {/* Section 4 */}
               <div className="px-4 py-2 space-y-1 pb-10">

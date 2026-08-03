@@ -1,5 +1,5 @@
 import React from 'react';
-import { Phone, MapPin, CheckCircle2, Star, MessageCircle, Navigation, Share2 } from 'lucide-react';
+import { Phone, MapPin, CheckCircle2, Star, MessageCircle, Navigation, Share2, Heart, Bookmark } from 'lucide-react';
 import { Vendor } from '../types';
 import { WhatsAppLogo } from './WhatsAppLogo';
 import { AppLanguage, getTranslation } from '../lib/translations';
@@ -11,6 +11,9 @@ interface VendorCardProps {
   onTrackCall?: (vendorId: string) => void;
   onTrackWhatsApp?: (vendorId: string) => void;
   currentLang?: AppLanguage;
+  isFavorite?: boolean;
+  onToggleFavorite?: (vendorId: string, e?: React.MouseEvent) => void;
+  onBookmarkClick?: (vendorId: string, e?: React.MouseEvent) => void;
 }
 
 export const VendorCard: React.FC<VendorCardProps> = ({
@@ -20,6 +23,9 @@ export const VendorCard: React.FC<VendorCardProps> = ({
   onTrackCall,
   onTrackWhatsApp,
   currentLang = 'en',
+  isFavorite = false,
+  onToggleFavorite,
+  onBookmarkClick,
 }) => {
   const t = (key: string) => getTranslation(currentLang, key);
   const isApproved = vendor.status === 'approved';
@@ -50,6 +56,25 @@ export const VendorCard: React.FC<VendorCardProps> = ({
       <div className="flex gap-4">
         {/* Left: Image (3:2 ratio style) */}
         <div className="w-28 sm:w-36 h-28 sm:h-32 shrink-0 rounded-xl overflow-hidden relative bg-gray-100 shadow-inner group">
+          {/* Action Buttons Overlay */}
+          <div className="absolute top-1.5 right-1.5 flex flex-col gap-1.5 z-20">
+            {onToggleFavorite && (
+              <button
+                onClick={(e) => onToggleFavorite(vendor.id, e)}
+                className="p-1.5 bg-black/20 hover:bg-black/40 backdrop-blur-sm rounded-full transition-all active:scale-90"
+              >
+                <Heart className={`w-4 h-4 transition-colors ${isFavorite ? 'fill-rose-500 text-rose-500' : 'text-white'}`} />
+              </button>
+            )}
+            {onBookmarkClick && (
+              <button
+                onClick={(e) => onBookmarkClick(vendor.id, e)}
+                className="p-1.5 bg-black/20 hover:bg-black/40 backdrop-blur-sm rounded-full transition-all active:scale-90"
+              >
+                <Bookmark className="w-4 h-4 text-white" />
+              </button>
+            )}
+          </div>
           {vendor.images && vendor.images.length > 1 ? (
             <div className="flex w-full h-full overflow-x-auto snap-x snap-mandatory scrollbar-hide">
               {vendor.images.map((img, i) => (

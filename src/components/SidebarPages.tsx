@@ -32,48 +32,7 @@ const PageData: Record<string, { title: string; icon: React.FC<any>; description
     color: 'text-indigo-500',
     bg: 'bg-indigo-50'
   },
-  transactions: {
-    title: 'My Transactions',
-    icon: Receipt,
-    description: 'Track your payments, bookings, and receipts securely in one place.',
-    color: 'text-emerald-500',
-    bg: 'bg-emerald-50'
-  },
-  customer_service: {
-    title: 'Customer Service',
-    icon: Headphones,
-    description: 'Our 24/7 support team will be available here to resolve any issues you might have.',
-    color: 'text-blue-500',
-    bg: 'bg-blue-50'
-  },
-  investor_relations: {
-    title: 'Investor Relations',
-    icon: UserCheck,
-    description: 'Financial reports, press releases, and corporate governance for DialXprt investors.',
-    color: 'text-slate-700',
-    bg: 'bg-slate-100'
-  },
-  policy: {
-    title: 'Policies & Privacy',
-    icon: Shield,
-    description: 'Detailed terms of service, privacy policies, and user agreements.',
-    color: 'text-amber-500',
-    bg: 'bg-amber-50'
-  },
-  feedback: {
-    title: 'Share Feedback',
-    icon: MessageSquare,
-    description: 'Help us improve! Soon you will be able to leave detailed feature requests and feedback here.',
-    color: 'text-violet-500',
-    bg: 'bg-violet-50'
-  },
-  help: {
-    title: 'Help Center',
-    icon: HelpCircle,
-    description: 'Comprehensive guides, FAQs, and troubleshooting articles.',
-    color: 'text-teal-500',
-    bg: 'bg-teal-50'
-  }
+
 };
 
 export const SidebarPages: React.FC<SidebarPagesProps> = ({ activeTab, onBack }) => {

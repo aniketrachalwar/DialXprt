@@ -27,6 +27,7 @@ import {
   Neighborhood,
   UserRole,
   NotificationItem,
+  Collection,
 } from "./types";
 import {
   INITIAL_CATEGORIES,
@@ -46,6 +47,13 @@ import { calculateDistanceKm } from "./lib/geo";
 import { fetchCategories } from "./lib/adminApi";
 import { HomeDashboard } from "./components/HomeDashboard";
 import { AllCategoriesView } from "./components/AllCategoriesView";
+import { FavoritesView } from "./components/FavoritesView";
+import { SavedCollectionsView } from "./components/SavedCollectionsView";
+import { CollectionsModal } from "./components/CollectionsModal";
+import { CustomerServiceView } from "./components/CustomerServiceView";
+import { PolicyView } from "./components/PolicyView";
+import { FeedbackView } from "./components/FeedbackView";
+import { HelpCenterView } from "./components/HelpCenterView";
 import { SubCategoryView } from "./components/SubCategoryView";
 import { OffersView } from "./components/OffersView";
 import { MapPin, Search, ArrowLeft, ChevronDown, Zap, Wrench, Car, Hammer, Snowflake } from "lucide-react";
@@ -75,7 +83,51 @@ const CATEGORY_BANNERS: Record<string, { imageUrl: string; title: string; subtit
 
 export default function App() {
   // Global Language State
+  const switchGoogleTranslate = (lang: string) => {
+    try {
+      const domain = window.location.hostname;
+      if (lang === 'en') {
+        document.cookie = `googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; domain=${domain}; path=/;`;
+        document.cookie = `googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+      } else {
+        document.cookie = `googtrans=/en/${lang}; domain=${domain}; path=/`;
+        document.cookie = `googtrans=/en/${lang}; path=/`;
+      }
+      
+      const select = document.querySelector('.goog-te-combo') as HTMLSelectElement;
+      if (select) {
+        select.value = lang === 'en' ? 'en' : lang;
+        select.dispatchEvent(new Event('change'));
+      }
+      if (lang === 'en') {
+        // Force reload to completely remove Google Translate spans if switching back to English
+        setTimeout(() => window.location.reload(), 300);
+      }
+    } catch (e) {
+      console.error("Failed to switch Google Translate language", e);
+    }
+  };
+
   const [currentLang, setCurrentLang] = useState<AppLanguage>("en");
+
+  useEffect(() => {
+    const savedLang = localStorage.getItem('dialxprt_lang') as AppLanguage;
+    if (savedLang) {
+      setCurrentLang(savedLang);
+      if (savedLang !== 'en') {
+        switchGoogleTranslate(savedLang);
+      }
+    } else {
+      setCurrentLang('en');
+    }
+  }, []);
+
+  const handleLanguageChange = (lang: AppLanguage) => {
+    setCurrentLang(lang);
+    localStorage.setItem('dialxprt_lang', lang);
+    switchGoogleTranslate(lang);
+  };
+
   // Helper for app translations
   const t = (key: string) => getTranslation(currentLang, key);
 
@@ -136,6 +188,30 @@ export default function App() {
   const [userEmail, setUserEmail] = useState<string>("");
   const [userAvatar, setUserAvatar] = useState<string>("");
   const [selectedVendorToEdit, setSelectedVendorToEdit] = useState<Vendor | null>(null);
+  
+  // Favorites State
+  const [favoriteVendorIds, setFavoriteVendorIds] = useState<string[]>(() => {
+    try {
+      const stored = localStorage.getItem('dialxprt_favorites_v1');
+      return stored ? JSON.parse(stored) : [];
+    } catch (e) {
+      return [];
+    }
+  });
+
+  // Collections State
+  const [collections, setCollections] = useState<Collection[]>(() => {
+    try {
+      const stored = localStorage.getItem('dialxprt_collections_v1');
+      return stored ? JSON.parse(stored) : [];
+    } catch (e) {
+      return [];
+    }
+  });
+  
+  // Collections Modal State
+  const [isCollectionsModalOpen, setIsCollectionsModalOpen] = useState(false);
+  const [vendorForCollection, setVendorForCollection] = useState<string | null>(null);
 
   const handleOpenRegistration = () => {
     if (!userEmail) {
@@ -322,6 +398,19 @@ export default function App() {
           setUserPhone(session.user.phone || userEmail);
           setUserName(session.user.user_metadata?.full_name || userEmail.split("@")[0] || "User");
         }
+
+        // Sync Favorites from Supabase
+        if (session.user.user_metadata?.favorites && Array.isArray(session.user.user_metadata.favorites)) {
+          setFavoriteVendorIds(session.user.user_metadata.favorites);
+          localStorage.setItem('dialxprt_favorites_v1', JSON.stringify(session.user.user_metadata.favorites));
+        }
+
+        // Sync Collections from Supabase
+        if (session.user.user_metadata?.collections && Array.isArray(session.user.user_metadata.collections)) {
+          setCollections(session.user.user_metadata.collections);
+          localStorage.setItem('dialxprt_collections_v1', JSON.stringify(session.user.user_metadata.collections));
+        }
+
         if (userEmail === "aniketrachalwar073@gmail.com" || userEmail === "aniketrachalwar1@gmail.com") {
           setCurrentRole("admin");
         } else {
@@ -366,6 +455,19 @@ export default function App() {
           setUserPhone(session.user.phone || userEmail);
           setUserName(session.user.user_metadata?.full_name || userEmail.split("@")[0] || "User");
         }
+        
+        // Sync Favorites from Supabase
+        if (session.user.user_metadata?.favorites && Array.isArray(session.user.user_metadata.favorites)) {
+          setFavoriteVendorIds(session.user.user_metadata.favorites);
+          localStorage.setItem('dialxprt_favorites_v1', JSON.stringify(session.user.user_metadata.favorites));
+        }
+
+        // Sync Collections from Supabase
+        if (session.user.user_metadata?.collections && Array.isArray(session.user.user_metadata.collections)) {
+          setCollections(session.user.user_metadata.collections);
+          localStorage.setItem('dialxprt_collections_v1', JSON.stringify(session.user.user_metadata.collections));
+        }
+
         if (userEmail === "aniketrachalwar073@gmail.com" || userEmail === "aniketrachalwar1@gmail.com") {
           setCurrentRole("admin");
         } else {
@@ -451,6 +553,88 @@ export default function App() {
         await supabase.auth.signOut();
       } catch (err) {
         console.error("Supabase logout error:", err);
+      }
+    }
+  };
+
+  const handleToggleFavorite = async (vendorId: string, e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    
+    let newFavorites: string[];
+    if (favoriteVendorIds.includes(vendorId)) {
+      newFavorites = favoriteVendorIds.filter(id => id !== vendorId);
+    } else {
+      newFavorites = [...favoriteVendorIds, vendorId];
+    }
+    
+    setFavoriteVendorIds(newFavorites);
+    localStorage.setItem('dialxprt_favorites_v1', JSON.stringify(newFavorites));
+    
+    // Sync with Supabase if logged in
+    if (supabase && userEmail) {
+      try {
+        await supabase.auth.updateUser({
+          data: { favorites: newFavorites }
+        });
+      } catch (err) {
+        console.error("Error syncing favorites to Supabase:", err);
+      }
+    }
+  };
+
+  const handleCreateCollection = async (name: string) => {
+    const newCollection: Collection = {
+      id: `col_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      name,
+      vendorIds: [],
+      createdAt: new Date().toISOString()
+    };
+    const newCollections = [...collections, newCollection];
+    setCollections(newCollections);
+    localStorage.setItem('dialxprt_collections_v1', JSON.stringify(newCollections));
+    
+    if (supabase && userEmail) {
+      try {
+        await supabase.auth.updateUser({ data: { collections: newCollections } });
+      } catch (err) {
+        console.error("Error syncing collections:", err);
+      }
+    }
+  };
+
+  const handleToggleVendorInCollection = async (collectionId: string, vendorId: string) => {
+    const newCollections = collections.map(col => {
+      if (col.id === collectionId) {
+        const hasVendor = col.vendorIds.includes(vendorId);
+        return {
+          ...col,
+          vendorIds: hasVendor ? col.vendorIds.filter(id => id !== vendorId) : [...col.vendorIds, vendorId]
+        };
+      }
+      return col;
+    });
+    setCollections(newCollections);
+    localStorage.setItem('dialxprt_collections_v1', JSON.stringify(newCollections));
+    
+    if (supabase && userEmail) {
+      try {
+        await supabase.auth.updateUser({ data: { collections: newCollections } });
+      } catch (err) {
+        console.error("Error syncing collections:", err);
+      }
+    }
+  };
+
+  const handleDeleteCollection = async (collectionId: string) => {
+    const newCollections = collections.filter(col => col.id !== collectionId);
+    setCollections(newCollections);
+    localStorage.setItem('dialxprt_collections_v1', JSON.stringify(newCollections));
+    
+    if (supabase && userEmail) {
+      try {
+        await supabase.auth.updateUser({ data: { collections: newCollections } });
+      } catch (err) {
+        console.error("Error syncing collections:", err);
       }
     }
   };
@@ -800,7 +984,7 @@ export default function App() {
         unreadNotificationsCount={unreadCount}
         userPhone={userPhone}
         currentLang={currentLang}
-        onLanguageChange={setCurrentLang}
+        onLanguageChange={handleLanguageChange}
         renderCompactSearch={undefined}
       >
         {activeTab === "home" && (
@@ -829,7 +1013,7 @@ export default function App() {
               onTrackWhatsApp={handleTrackWhatsApp}
               totalVendorsCount={approvedVendors.length}
               currentLang={currentLang}
-              onLanguageChange={(lang) => setCurrentLang(lang)}
+              onLanguageChange={handleLanguageChange}
               currentNeighborhood={currentNeighborhood}
               onOpenLocation={() => setIsLocationModalOpen(true)}
             />
@@ -844,14 +1028,23 @@ export default function App() {
       {/* MAIN BODY DISPLAY */}
       <main className="w-full max-w-6xl mx-auto py-5 sm:px-6">
         {/* VIEW 1: ROLE-TAILORED ACCOUNT DASHBOARD */}
-        {selectedVendorSlug ? (
-          <VendorProfilePage
-            vendor={vendors.find((v) => v.slug === selectedVendorSlug) || null}
-            onTrackCall={handleTrackCall}
-            onTrackWhatsApp={handleTrackWhatsApp}
-            currentLang={currentLang}
-          />
-        ) : staticRoute ? (
+        {selectedVendorSlug ? (() => {
+          const profileVendor = vendors.find((v) => v.slug === selectedVendorSlug) || null;
+          return (
+            <VendorProfilePage
+              vendor={profileVendor}
+              onTrackCall={handleTrackCall}
+              onTrackWhatsApp={handleTrackWhatsApp}
+              currentLang={currentLang}
+              isFavorite={profileVendor ? favoriteVendorIds.includes(profileVendor.id) : false}
+              onToggleFavorite={handleToggleFavorite}
+              onBookmarkClick={(vId) => {
+                setVendorForCollection(vId);
+                setIsCollectionsModalOpen(true);
+              }}
+            />
+          );
+        })() : staticRoute ? (
           <StaticPage route={staticRoute} />
         ) : activeTab === "account" ? (
           <AccountView
@@ -947,8 +1140,39 @@ export default function App() {
             onUpdateUserProfile={handleUpdateUserProfile}
             currentLang={currentLang}
           />
-        ) : ["favorites", "saved", "transactions", "customer_service", "investor_relations", "policy", "feedback", "help"].includes(activeTab) ? (
-          <SidebarPages activeTab={activeTab} onBack={() => setActiveTab("home")} />
+        ) : activeTab === "favorites" ? (
+          <FavoritesView 
+            vendors={vendors}
+            favoriteVendorIds={favoriteVendorIds}
+            onToggleFavorite={handleToggleFavorite}
+            onSelectVendor={(v) => navigate(`/expert/${v.slug}`)}
+            onBack={() => setActiveTab("home")}
+          />
+        ) : activeTab === "saved" ? (
+          <SavedCollectionsView
+            vendors={vendors}
+            collections={collections}
+            favoriteVendorIds={favoriteVendorIds}
+            onToggleFavorite={handleToggleFavorite}
+            onSelectVendor={(v) => navigate(`/expert/${v.slug}`)}
+            onBack={() => setActiveTab("home")}
+            onOpenCollectionsModal={(vId) => {
+              setVendorForCollection(vId);
+              setIsCollectionsModalOpen(true);
+            }}
+            onDeleteCollection={handleDeleteCollection}
+          />
+        ) : activeTab === "customer_service" ? (
+          <CustomerServiceView onBack={() => setActiveTab("home")} />
+        ) : activeTab === "policy" ? (
+          <PolicyView onBack={() => setActiveTab("home")} />
+        ) : activeTab === "feedback" ? (
+          <FeedbackView onBack={() => setActiveTab("home")} />
+        ) : activeTab === "help" ? (
+          <HelpCenterView 
+            onBack={() => setActiveTab("home")} 
+            onNavigateToCustomerService={() => setActiveTab("customer_service")}
+          />
         ) : (
           /* VIEW 2: PUBLIC DIRECTORY HOMEPAGE GRID */
           <div className="space-y-6">
@@ -1155,6 +1379,13 @@ export default function App() {
                         onTrackCall={handleTrackCall}
                         onTrackWhatsApp={handleTrackWhatsApp}
                         currentLang={currentLang}
+                        isFavorite={favoriteVendorIds.includes(vendor.id)}
+                        onToggleFavorite={handleToggleFavorite}
+                        onBookmarkClick={(vId, e) => {
+                          if (e) e.stopPropagation();
+                          setVendorForCollection(vId);
+                          setIsCollectionsModalOpen(true);
+                        }}
                       />
                     ))}
 
@@ -1183,6 +1414,13 @@ export default function App() {
                             onTrackCall={handleTrackCall}
                             onTrackWhatsApp={handleTrackWhatsApp}
                             currentLang={currentLang}
+                            isFavorite={favoriteVendorIds.includes(vendor.id)}
+                            onToggleFavorite={handleToggleFavorite}
+                            onBookmarkClick={(vId, e) => {
+                              if (e) e.stopPropagation();
+                              setVendorForCollection(vId);
+                              setIsCollectionsModalOpen(true);
+                            }}
                           />
                         ))}
                       </>
@@ -1223,6 +1461,16 @@ export default function App() {
 
       {/* 4.5 RIGHT STICKY ACTION BAR */}
       <RightStickyBar onOpenRegistration={handleOpenRegistration} />
+
+      {/* Collections Modal */}
+      <CollectionsModal
+        isOpen={isCollectionsModalOpen}
+        onClose={() => setIsCollectionsModalOpen(false)}
+        vendorId={vendorForCollection}
+        collections={collections}
+        onToggleVendor={handleToggleVendorInCollection}
+        onCreateCollection={handleCreateCollection}
+      />
 
       {/* 5. MODALS */}
 
@@ -1280,7 +1528,7 @@ export default function App() {
         isOpen={isLangModalOpen}
         onClose={() => setIsLangModalOpen(false)}
         currentLang={currentLang}
-        onLanguageChange={setCurrentLang}
+        onLanguageChange={handleLanguageChange}
       />
     </div>
   );

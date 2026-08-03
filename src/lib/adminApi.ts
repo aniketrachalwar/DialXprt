@@ -1,6 +1,6 @@
 import { supabase, isSupabaseConfigured } from './supabase';
 import { INITIAL_CATEGORIES } from '../data/mockVendors';
-import { Category } from '../types';
+import { Category, FeedbackEntry } from '../types';
 
 export interface UserRoleAssignment {
   id?: string;
@@ -21,6 +21,7 @@ let memoryUserRoles: UserRoleAssignment[] = [
 ];
 let memoryCategories: Category[] = [...INITIAL_CATEGORIES];
 let memoryB2BProducts: B2BProduct[] = [];
+let memoryFeedback: FeedbackEntry[] = [];
 
 export async function fetchUserRoles(): Promise<UserRoleAssignment[]> {
   if (isSupabaseConfigured && supabase) {
@@ -130,6 +131,48 @@ export async function fetchB2BProducts(): Promise<B2BProduct[]> {
     }
   }
   return memoryB2BProducts;
+}
+
+export async function saveFeedback(entry: Omit<FeedbackEntry, 'id' | 'createdAt'>): Promise<void> {
+  const newEntry: FeedbackEntry = {
+    ...entry,
+    id: `fb_${Date.now()}`,
+    createdAt: new Date().toISOString()
+  };
+
+  if (isSupabaseConfigured && supabase) {
+    try {
+      await supabase.from('feedback').insert([newEntry]);
+    } catch (e) {
+      console.error('Error saving feedback', e);
+    }
+  } else {
+    // Save to local storage memory
+    const existing = localStorage.getItem('dialxprt_feedback');
+    const existingData = existing ? JSON.parse(existing) : [];
+    const updated = [newEntry, ...existingData];
+    localStorage.setItem('dialxprt_feedback', JSON.stringify(updated));
+    memoryFeedback = updated;
+  }
+}
+
+export async function fetchFeedback(): Promise<FeedbackEntry[]> {
+  if (isSupabaseConfigured && supabase) {
+    try {
+      const { data, error } = await supabase.from('feedback').select('*').order('createdAt', { ascending: false });
+      if (!error && data) return data as FeedbackEntry[];
+    } catch (e) {
+      console.error('Error fetching feedback', e);
+    }
+  }
+  
+  // Fallback to local storage
+  const existing = localStorage.getItem('dialxprt_feedback');
+  if (existing) {
+    return JSON.parse(existing) as FeedbackEntry[];
+  }
+  
+  return memoryFeedback;
 }
 
 export async function addB2BProduct(product: B2BProduct) {

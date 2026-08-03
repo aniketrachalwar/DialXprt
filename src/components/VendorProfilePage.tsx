@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Phone, MapPin, CheckCircle2, Star, Share2, ShieldCheck, Clock, Building2, User, Navigation } from 'lucide-react';
+import { ArrowLeft, Phone, MapPin, CheckCircle2, Star, Share2, ShieldCheck, Clock, Building2, User, Navigation, Heart, Bookmark } from 'lucide-react';
 import { Vendor } from '../types';
 import { WhatsAppLogo } from './WhatsAppLogo';
 import { AppLanguage, getTranslation } from '../lib/translations';
@@ -11,6 +11,9 @@ interface VendorProfilePageProps {
   onTrackCall: (vendorId: string) => void;
   onTrackWhatsApp: (vendorId: string) => void;
   currentLang?: AppLanguage;
+  isFavorite?: boolean;
+  onToggleFavorite?: (vendorId: string) => void;
+  onBookmarkClick?: (vendorId: string) => void;
 }
 
 export const VendorProfilePage: React.FC<VendorProfilePageProps> = ({
@@ -18,6 +21,9 @@ export const VendorProfilePage: React.FC<VendorProfilePageProps> = ({
   onTrackCall,
   onTrackWhatsApp,
   currentLang = 'en',
+  isFavorite = false,
+  onToggleFavorite,
+  onBookmarkClick,
 }) => {
   const t = (key: string) => getTranslation(currentLang, key);
   const navigate = useNavigate();
@@ -80,9 +86,27 @@ export const VendorProfilePage: React.FC<VendorProfilePageProps> = ({
             <button onClick={() => navigate(-1)} className="bg-white/80 hover:bg-white text-gray-900 p-2.5 rounded-full backdrop-blur-md transition-colors shadow-sm">
               <ArrowLeft className="w-5 h-5" />
             </button>
-            <button onClick={handleShare} className="bg-white/80 hover:bg-white text-gray-900 p-2.5 rounded-full backdrop-blur-md transition-colors shadow-sm">
-              <Share2 className="w-5 h-5" />
-            </button>
+            <div className="flex gap-2">
+              {onToggleFavorite && (
+                <button 
+                  onClick={() => onToggleFavorite(vendor.id)} 
+                  className="bg-white/80 hover:bg-white p-2.5 rounded-full backdrop-blur-md transition-colors shadow-sm"
+                >
+                  <Heart className={`w-5 h-5 transition-colors ${isFavorite ? 'fill-rose-500 text-rose-500' : 'text-gray-900'}`} />
+                </button>
+              )}
+              {onBookmarkClick && (
+                <button 
+                  onClick={() => onBookmarkClick(vendor.id)} 
+                  className="bg-white/80 hover:bg-white p-2.5 rounded-full backdrop-blur-md transition-colors shadow-sm"
+                >
+                  <Bookmark className="w-5 h-5 text-gray-900" />
+                </button>
+              )}
+              <button onClick={handleShare} className="bg-white/80 hover:bg-white text-gray-900 p-2.5 rounded-full backdrop-blur-md transition-colors shadow-sm">
+                <Share2 className="w-5 h-5" />
+              </button>
+            </div>
           </div>
         </div>
 

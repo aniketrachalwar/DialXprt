@@ -2,6 +2,21 @@ export type VendorStatus = 'approved' | 'pending' | 'rejected';
 
 export type UserRole = 'customer' | 'vendor' | 'volunteer' | 'admin';
 
+export interface FeedbackEntry {
+  id: string;
+  rating: number;
+  type: 'feature' | 'bug' | 'other';
+  message: string;
+  createdAt: string;
+}
+
+export interface Collection {
+  id: string;
+  name: string;
+  vendorIds: string[];
+  createdAt: string;
+}
+
 export interface VolunteerUser {
   id: string;
   name: string;
