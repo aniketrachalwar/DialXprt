@@ -86,9 +86,7 @@ export const VendorRegistrationView: React.FC<VendorRegistrationViewProps> = ({
       setEmail(initialData.email || '');
       setWhatsapp(initialData.whatsapp || '');
       setAddress(initialData.address || '');
-      
-      const foundNeighborhood = HYDERABAD_NEIGHBORHOODS.find(n => n.name === initialData.neighborhood);
-      if (foundNeighborhood) setSelectedNeighborhoods([foundNeighborhood]);
+      if (initialData.neighborhood) setNeighborhoodSearch(initialData.neighborhood);
       
       setPincode(initialData.pincode || '');
       setDescription(initialData.description || '');
@@ -108,13 +106,6 @@ export const VendorRegistrationView: React.FC<VendorRegistrationViewProps> = ({
   }, [initialData, isEditMode, categories]);
 
 
-
-  useEffect(() => {
-    if (selectedNeighborhoods.length > 0) {
-      const uniquePincodes = Array.from(new Set(selectedNeighborhoods.map(n => n.pincode))).join(', ');
-      setPincode(uniquePincodes);
-    }
-  }, [selectedNeighborhoods]);
 
   const handleVoiceDescription = () => {
     const SpeechRecognition =
@@ -161,7 +152,7 @@ export const VendorRegistrationView: React.FC<VendorRegistrationViewProps> = ({
 
   const handleSubmitForm = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name || !ownerName || selectedCategories.length === 0 || !experience || selectedNeighborhoods.length === 0 || !pincode || !phone) {
+    if (!name || !ownerName || selectedCategories.length === 0 || !experience || !neighborhoodSearch || !pincode || !phone) {
       alert('Please fill in all required fields marked with *');
       return;
     }
@@ -170,7 +161,7 @@ export const VendorRegistrationView: React.FC<VendorRegistrationViewProps> = ({
 
     const categoryName = selectedCategories.map(c => c.name).join(', ');
     const categorySlug = selectedCategories.map(c => c.slug).join(', ');
-    const finalNeighborhood = selectedNeighborhoods.map(n => n.name).join(', ');
+    const finalNeighborhood = neighborhoodSearch;
 
     const finalImage =
       images[0] ||
@@ -468,88 +459,18 @@ export const VendorRegistrationView: React.FC<VendorRegistrationViewProps> = ({
                 </div>
               </div>
 
-              <div ref={neighborhoodSearchRef} className="relative">
+              <div>
                 <label className="block text-xs font-bold text-gray-700 mb-1">
                   Area/ప్రాంతం/क्षेत्र *
                 </label>
-                
-                <div 
-                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-xl bg-white min-h-[48px] flex flex-wrap gap-1.5 items-center cursor-text"
-                  onClick={() => setIsNeighborhoodDropdownOpen(true)}
-                >
-                  {selectedNeighborhoods.map(n => (
-                    <span key={n.id} className="bg-teal-50 text-[#0F5C5C] px-2 py-1 rounded-md flex items-center gap-1 font-bold text-[11px]">
-                      {n.name}
-                      <X 
-                        className="w-3.5 h-3.5 cursor-pointer hover:text-teal-700" 
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setSelectedNeighborhoods(prev => prev.filter(item => item.id !== n.id));
-                        }} 
-                      />
-                    </span>
-                  ))}
-                  
-                  <input
-                    type="text"
-                    value={neighborhoodSearch}
-                    onChange={(e) => {
-                      setNeighborhoodSearch(e.target.value);
-                      setIsNeighborhoodDropdownOpen(true);
-                    }}
-                    placeholder={selectedNeighborhoods.length === 0 ? "Search Area or Pincode..." : "Add more areas..."}
-                    className="flex-1 min-w-[120px] focus:outline-none text-sm bg-transparent my-1"
-                    onFocus={() => setIsNeighborhoodDropdownOpen(true)}
-                  />
-                </div>
-
-                {isNeighborhoodDropdownOpen && (
-                  <div className="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-xl shadow-lg max-h-60 overflow-y-auto">
-                    {HYDERABAD_NEIGHBORHOODS.filter(n => {
-                      if (selectedNeighborhoods.some(item => item.id === n.id)) return false;
-                      const search = neighborhoodSearch.toLowerCase();
-                      const pinSearch = pincode.toLowerCase();
-                      
-                      if (search) {
-                        return n.name.toLowerCase().includes(search) || n.pincode.includes(search);
-                      }
-                      
-                      if (pinSearch && pinSearch.length >= 3) {
-                        return n.pincode.includes(pinSearch);
-                      }
-                      
-                      return true;
-                    }).length === 0 ? (
-                      <div className="px-4 py-3 text-sm text-gray-500">No matching areas found.</div>
-                    ) : (
-                      HYDERABAD_NEIGHBORHOODS.filter(n => {
-                        if (selectedNeighborhoods.some(item => item.id === n.id)) return false;
-                        const search = neighborhoodSearch.toLowerCase();
-                        const pinSearch = pincode.toLowerCase();
-                        if (search) {
-                          return n.name.toLowerCase().includes(search) || n.pincode.includes(search);
-                        }
-                        if (pinSearch && pinSearch.length >= 3) {
-                          return n.pincode.includes(pinSearch);
-                        }
-                        return true;
-                      }).map(n => (
-                        <div 
-                          key={n.id}
-                          className="px-4 py-2.5 hover:bg-teal-50 cursor-pointer flex items-center justify-between text-sm text-gray-700 font-medium"
-                          onClick={() => {
-                            setSelectedNeighborhoods(prev => [...prev, n]);
-                            setNeighborhoodSearch('');
-                            setIsNeighborhoodDropdownOpen(false);
-                          }}
-                        >
-                          <span>{n.name}</span>
-                          <span className="text-xs text-gray-400">{n.pincode}</span>
-                        </div>
-                      ))
-                    )}
-                  </div>
-                )}
+                <input
+                  type="text"
+                  required
+                  value={neighborhoodSearch}
+                  onChange={(e) => setNeighborhoodSearch(e.target.value)}
+                  placeholder="e.g. Madhapur, Gachibowli"
+                  className="w-full px-3 py-2.5 text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0F5C5C] focus:outline-none min-h-[48px]"
+                />
               </div>
 
               <div>
@@ -560,12 +481,7 @@ export const VendorRegistrationView: React.FC<VendorRegistrationViewProps> = ({
                   type="text"
                   required
                   value={pincode}
-                  onChange={(e) => {
-                    setPincode(e.target.value);
-                    if (e.target.value.length >= 3) {
-                      setIsNeighborhoodDropdownOpen(true);
-                    }
-                  }}
+                  onChange={(e) => setPincode(e.target.value)}
                   placeholder="e.g. 500081"
                   className="w-full px-3 py-2.5 text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0F5C5C] focus:outline-none min-h-[48px]"
                 />
@@ -744,7 +660,7 @@ export const VendorRegistrationView: React.FC<VendorRegistrationViewProps> = ({
               <div className="flex pt-4 mt-2">
                 <button
                   type="submit"
-                  disabled={loading || !phone || !ownerName || selectedCategories.length === 0 || !experience || selectedNeighborhoods.length === 0 || !pincode}
+                  disabled={loading || !phone || !ownerName || selectedCategories.length === 0 || !experience || !neighborhoodSearch || !pincode}
                   className="w-full bg-[#F36F21] hover:bg-orange-600 text-white font-bold py-3 px-4 rounded-xl flex items-center justify-center gap-2 shadow-lg min-h-[48px] disabled:opacity-50"
                 >
                   {loading ? (
