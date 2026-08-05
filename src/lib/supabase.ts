@@ -318,12 +318,12 @@ export async function updateVendorDetails(updatedVendor: Vendor): Promise<Vendor
 /**
  * Volunteer / Admin Status Approval Function
  */
-export function updateVendorStatus(
+export async function updateVendorStatus(
   vendorId: string,
   newStatus: VendorStatus,
   volunteerName: string,
   notes: string
-): Vendor | null {
+): Promise<Vendor | null> {
   const existing = getStoredVendors();
   let updatedVendor: Vendor | null = null;
 
@@ -344,6 +344,23 @@ export function updateVendorStatus(
 
   if (updatedVendor) {
     saveStoredVendors(updatedList);
+  }
+
+  if (supabase) {
+    try {
+      const updatePromise = supabase
+        .from('vendors')
+        .update({
+          status: newStatus,
+          is_verified: newStatus === 'approved',
+        })
+        .eq('id', vendorId);
+        
+      const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('Supabase request timed out')), 2500));
+      await Promise.race([updatePromise, timeoutPromise]);
+    } catch (e) {
+      console.warn('Failed to update status in Supabase:', e);
+    }
   }
 
   return updatedVendor;

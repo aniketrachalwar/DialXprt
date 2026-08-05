@@ -768,13 +768,13 @@ export default function App() {
   };
 
   // Volunteer / Admin Status Action
-  const handleUpdateVendorStatus = (
+  const handleUpdateVendorStatus = async (
     vendorId: string,
     status: "approved" | "pending" | "rejected",
     volunteerName: string,
     notes: string,
   ) => {
-    const updated = updateVendorStatus(vendorId, status, volunteerName, notes);
+    const updated = await updateVendorStatus(vendorId, status, volunteerName, notes);
     if (updated) {
       loadData();
       if (status === "approved") {

@@ -8,7 +8,7 @@ import { SiteMapTowers } from './SiteMapTowers';
 interface AdminPanelViewProps {
   vendors?: Vendor[];
   currentRole?: string;
-  onUpdateVendorStatus?: (vendorId: string, status: "approved" | "pending" | "rejected", volunteerName: string, notes: string) => void;
+  onUpdateVendorStatus?: (vendorId: string, status: "approved" | "pending" | "rejected", volunteerName: string, notes: string) => void | Promise<void>;
   onOpenEditVendor?: (vendor: Vendor) => void;
   onDeleteVendor?: (vendorId: string) => void;
   onExportCSV?: () => void;
@@ -71,7 +71,7 @@ export const AdminPanelView: React.FC<AdminPanelViewProps> = ({ currentRole = "a
 
   const handleStatusChange = async (vendorId: string, status: "approved" | "pending" | "rejected") => {
     if (onUpdateVendorStatus) {
-      onUpdateVendorStatus(vendorId, status, 'Super Admin', `Status changed to ${status} via Admin Panel`);
+      await onUpdateVendorStatus(vendorId, status, 'Super Admin', `Status changed to ${status} via Admin Panel`);
       // Update local state immediately for fast feedback
       setAdminVendors(prev => prev.map(v => v.id === vendorId ? { ...v, status, isVerified: status === 'approved' } : v));
       // Then re-fetch to ensure sync
