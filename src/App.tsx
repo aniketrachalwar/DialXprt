@@ -214,12 +214,7 @@ export default function App() {
   const [vendorForCollection, setVendorForCollection] = useState<string | null>(null);
 
   const handleOpenRegistration = () => {
-    if (!userEmail) {
-      alert("Please login or verify your phone number to register a business.");
-      setIsAuthModalOpen(true);
-    } else {
-      setActiveTab("register-vendor");
-    }
+    setActiveTab("register-vendor");
   };
 
   // URL State Synchronization

@@ -285,93 +285,121 @@ export const VendorRegistrationView: React.FC<VendorRegistrationViewProps> = ({
                 </div>
               </div>
 
-              <div ref={categorySearchRef} className="relative">
-                <label className="block text-xs font-bold text-gray-700 mb-1">
-                  Profession/వృత్తి/वृत्ति *
-                </label>
-                
-                <div 
-                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-xl bg-white min-h-[48px] flex flex-wrap gap-1.5 items-center cursor-text"
-                  onClick={() => setIsCategoryDropdownOpen(true)}
-                >
-                  {selectedCategories.map(cat => (
-                    <span key={cat?.slug || Math.random().toString()} className="bg-orange-100 text-[#F36F21] px-2 py-1 rounded-md flex items-center gap-1 font-bold text-[11px]">
-                      {cat?.name || 'Custom'}
-                      <X 
-                        className="w-3.5 h-3.5 cursor-pointer hover:text-orange-700" 
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setSelectedCategories(prev => prev.filter(c => c?.slug !== cat?.slug));
-                        }} 
-                      />
-                    </span>
-                  ))}
+              {isEditMode ? (
+                <div ref={categorySearchRef} className="relative">
+                  <label className="block text-xs font-bold text-gray-700 mb-1">
+                    Profession/వృత్తి/वृत्ति *
+                  </label>
                   
-                  <input
-                    type="text"
-                    value={categorySearch}
-                    onChange={(e) => {
-                      setCategorySearch(e.target.value);
-                      setIsCategoryDropdownOpen(true);
-                    }}
-                    placeholder={selectedCategories.length === 0 ? "Search for Electrician, Plumber, etc..." : "Add more..."}
-                    className="flex-1 min-w-[120px] focus:outline-none text-sm bg-transparent my-1"
-                    onFocus={() => setIsCategoryDropdownOpen(true)}
-                  />
-                </div>
+                  <div 
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-xl bg-white min-h-[48px] flex flex-wrap gap-1.5 items-center cursor-text"
+                    onClick={() => setIsCategoryDropdownOpen(true)}
+                  >
+                    {selectedCategories.map(cat => (
+                      <span key={cat?.slug || Math.random().toString()} className="bg-orange-100 text-[#F36F21] px-2 py-1 rounded-md flex items-center gap-1 font-bold text-[11px]">
+                        {cat?.name || 'Custom'}
+                        <X 
+                          className="w-3.5 h-3.5 cursor-pointer hover:text-orange-700" 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedCategories(prev => prev.filter(c => c?.slug !== cat?.slug));
+                          }} 
+                        />
+                      </span>
+                    ))}
+                    
+                    <input
+                      type="text"
+                      value={categorySearch}
+                      onChange={(e) => {
+                        setCategorySearch(e.target.value);
+                        setIsCategoryDropdownOpen(true);
+                      }}
+                      placeholder={selectedCategories.length === 0 ? "Search for Electrician, Plumber, etc..." : "Add more..."}
+                      className="flex-1 min-w-[120px] focus:outline-none text-sm bg-transparent my-1"
+                      onFocus={() => setIsCategoryDropdownOpen(true)}
+                    />
+                  </div>
 
-                {isCategoryDropdownOpen && (
-                  <div className="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-xl shadow-lg max-h-60 overflow-y-auto">
-                    {(categories || []).filter(cat => {
-                      if (!cat) return false;
-                      if (selectedCategories.some(c => c?.slug === cat.slug)) return false;
-                      if (!categorySearch) return true;
-                      return (cat?.name || "").toLowerCase().includes((categorySearch || "").toLowerCase()) || 
-                             (cat?.slug || "").toLowerCase().includes((categorySearch || "").toLowerCase());
-                    }).length === 0 ? (
-                      <div className="px-4 py-3 text-sm text-gray-500">No matching professions found.</div>
-                    ) : (
-                      (categories || []).filter(cat => {
+                  {isCategoryDropdownOpen && (
+                    <div className="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-xl shadow-lg max-h-60 overflow-y-auto">
+                      {(categories || []).filter(cat => {
                         if (!cat) return false;
                         if (selectedCategories.some(c => c?.slug === cat.slug)) return false;
                         if (!categorySearch) return true;
                         return (cat?.name || "").toLowerCase().includes((categorySearch || "").toLowerCase()) || 
                                (cat?.slug || "").toLowerCase().includes((categorySearch || "").toLowerCase());
-                      }).map(cat => (
+                      }).length === 0 ? (
+                        <div className="px-4 py-3 text-sm text-gray-500">No matching professions found.</div>
+                      ) : (
+                        (categories || []).filter(cat => {
+                          if (!cat) return false;
+                          if (selectedCategories.some(c => c?.slug === cat.slug)) return false;
+                          if (!categorySearch) return true;
+                          return (cat?.name || "").toLowerCase().includes((categorySearch || "").toLowerCase()) || 
+                                 (cat?.slug || "").toLowerCase().includes((categorySearch || "").toLowerCase());
+                        }).map(cat => (
+                          <div 
+                            key={cat?.slug || Math.random().toString()}
+                            className="px-4 py-2.5 hover:bg-orange-50 cursor-pointer flex items-center gap-2 text-sm text-gray-700 font-semibold"
+                            onClick={() => {
+                              if (cat) {
+                                setSelectedCategories(prev => [...prev, cat]);
+                                setCategorySearch('');
+                              }
+                            }}
+                          >
+                            <span className="text-xl">{cat?.emoji || '🏷️'}</span>
+                            <span>{getCategoryName(cat?.slug || '', cat?.name || '', currentLang)}</span>
+                          </div>
+                        ))
+                      )}
+                      {categorySearch && !(categories || []).some(c => c && (c.name || "").toLowerCase() === categorySearch.toLowerCase()) && (
                         <div 
-                          key={cat?.slug || Math.random().toString()}
-                          className="px-4 py-2.5 hover:bg-orange-50 cursor-pointer flex items-center gap-2 text-sm text-gray-700 font-semibold"
+                          className="px-4 py-3 border-t border-gray-100 hover:bg-orange-50 cursor-pointer flex items-center gap-2 text-sm text-[#F36F21] font-bold"
                           onClick={() => {
-                            if (cat) {
-                              setSelectedCategories(prev => [...prev, cat]);
-                              setCategorySearch('');
-                            }
+                            setSelectedCategories(prev => [...prev, {
+                              id: `custom-${Date.now()}`,
+                              name: categorySearch.trim(),
+                              slug: categorySearch.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+                              emoji: '🏷️'
+                            }]);
+                            setCategorySearch('');
                           }}
                         >
-                          <span className="text-xl">{cat?.emoji || '🏷️'}</span>
-                          <span>{getCategoryName(cat?.slug || '', cat?.name || '', currentLang)}</span>
+                          <PlusCircle className="w-4 h-4" /> Add "{categorySearch}"
                         </div>
-                      ))
-                    )}
-                    {categorySearch && !(categories || []).some(c => c && (c.name || "").toLowerCase() === categorySearch.toLowerCase()) && (
-                      <div 
-                        className="px-4 py-3 border-t border-gray-100 hover:bg-orange-50 cursor-pointer flex items-center gap-2 text-sm text-[#F36F21] font-bold"
-                        onClick={() => {
-                          setSelectedCategories(prev => [...prev, {
-                            id: `custom-${Date.now()}`,
-                            name: categorySearch.trim(),
-                            slug: categorySearch.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-'),
-                            emoji: '🏷️'
-                          }]);
-                          setCategorySearch('');
-                        }}
-                      >
-                        <PlusCircle className="w-4 h-4" /> Add "{categorySearch}"
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div>
+                  <label className="block text-xs font-bold text-gray-700 mb-1">
+                    Profession/వృత్తి/वृत्ति *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={selectedCategories[0]?.name || ''}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      if (!val) {
+                        setSelectedCategories([]);
+                      } else {
+                        setSelectedCategories([{
+                          id: `custom-${Date.now()}`,
+                          name: val,
+                          slug: val.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+                          emoji: '🏷️'
+                        }]);
+                      }
+                    }}
+                    placeholder="For Example :- Electrician, Plumber, etc..."
+                    className="w-full px-3 py-2.5 text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0F5C5C] focus:outline-none min-h-[48px]"
+                  />
+                </div>
+              )}
 
               <div>
                 <label className="block text-xs font-bold text-gray-700 mb-1">
@@ -587,38 +615,40 @@ export const VendorRegistrationView: React.FC<VendorRegistrationViewProps> = ({
                 </div>
               </div>
 
-              <div>
-                <label className="block text-xs font-bold text-gray-700 mb-1">
-                  Exact Shop Location (GPS) *
-                </label>
-                <div className="bg-teal-50 border border-teal-100 rounded-xl p-3">
-                  <p className="text-xs text-teal-800 mb-3 font-medium">Please stand inside or right outside your shop/business and click the auto-detect button to capture your exact location.</p>
-                  <button 
-                    type="button" 
-                    onClick={() => {
-                      if (navigator.geolocation) {
-                        navigator.geolocation.getCurrentPosition((pos) => {
-                          setLocations([[pos.coords.latitude, pos.coords.longitude]]);
-                          alert('Location detected successfully!');
-                        }, (err) => {
-                          alert('Unable to detect location: ' + err.message);
-                        }, { enableHighAccuracy: true });
-                      } else {
-                        alert('Geolocation is not supported by your browser');
-                      }
-                    }}
-                    className="w-full bg-[#0F5C5C] hover:bg-teal-700 text-white py-2.5 rounded-lg font-bold active:scale-95 flex items-center justify-center gap-2 transition-transform shadow-sm min-h-[48px]"
-                  >
-                    <MapPin className="w-5 h-5" />
-                    Auto Detect Exact Location
-                  </button>
-                  {locations.length > 0 && (
-                    <p className="text-[11px] text-center text-teal-700 mt-3 font-bold bg-teal-100/50 py-1.5 rounded-md flex items-center justify-center gap-1">
-                      <CheckCircle2 className="w-3.5 h-3.5" /> Location captured successfully
-                    </p>
-                  )}
+              {isEditMode && (
+                <div>
+                  <label className="block text-xs font-bold text-gray-700 mb-1">
+                    Exact Shop Location (GPS) *
+                  </label>
+                  <div className="bg-teal-50 border border-teal-100 rounded-xl p-3">
+                    <p className="text-xs text-teal-800 mb-3 font-medium">Please stand inside or right outside your shop/business and click the auto-detect button to capture your exact location.</p>
+                    <button 
+                      type="button" 
+                      onClick={() => {
+                        if (navigator.geolocation) {
+                          navigator.geolocation.getCurrentPosition((pos) => {
+                            setLocations([[pos.coords.latitude, pos.coords.longitude]]);
+                            alert('Location detected successfully!');
+                          }, (err) => {
+                            alert('Unable to detect location: ' + err.message);
+                          }, { enableHighAccuracy: true });
+                        } else {
+                          alert('Geolocation is not supported by your browser');
+                        }
+                      }}
+                      className="w-full bg-[#0F5C5C] hover:bg-teal-700 text-white py-2.5 rounded-lg font-bold active:scale-95 flex items-center justify-center gap-2 transition-transform shadow-sm min-h-[48px]"
+                    >
+                      <MapPin className="w-5 h-5" />
+                      Auto Detect Exact Location
+                    </button>
+                    {locations.length > 0 && (
+                      <p className="text-[11px] text-center text-teal-700 mt-3 font-bold bg-teal-100/50 py-1.5 rounded-md flex items-center justify-center gap-1">
+                        <CheckCircle2 className="w-3.5 h-3.5" /> Location captured successfully
+                      </p>
+                    )}
+                  </div>
                 </div>
-              </div>
+              )}
 
               <div>
                 <label className="block text-xs font-bold text-gray-700 mb-1">
