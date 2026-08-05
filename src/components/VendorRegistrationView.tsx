@@ -394,70 +394,74 @@ export const VendorRegistrationView: React.FC<VendorRegistrationViewProps> = ({
                 />
               </div>
 
-              <hr className="border-gray-100 my-6" />
-              <div>
-                <label className="block text-xs font-bold text-gray-700 mb-1">
-                  Shop Photos / Board Photos
-                </label>
-                <div className="border-2 border-dashed border-gray-300 rounded-xl p-3 text-center bg-gray-50 hover:bg-gray-100 transition-colors">
-                  {images.length > 0 && (
-                    <div className="grid grid-cols-2 gap-2 mb-3">
-                      {images.map((img, i) => (
-                        <div key={i} className="relative h-24 w-full rounded-lg overflow-hidden border border-gray-200">
-                          <img src={img} alt={`Preview ${i}`} className="w-full h-full object-cover" />
-                          <button
-                            type="button"
-                            onClick={() => setImages(prev => prev.filter((_, idx) => idx !== i))}
-                            className="absolute top-1 right-1 bg-red-600 text-white p-1 rounded-full text-xs shadow-md active:scale-95"
-                          >
-                            <X className="w-3.5 h-3.5" />
-                          </button>
+              {isEditMode && (
+                <>
+                  <hr className="border-gray-100 my-6" />
+                  <div>
+                    <label className="block text-xs font-bold text-gray-700 mb-1">
+                      Shop Photos / Board Photos
+                    </label>
+                    <div className="border-2 border-dashed border-gray-300 rounded-xl p-3 text-center bg-gray-50 hover:bg-gray-100 transition-colors">
+                      {images.length > 0 && (
+                        <div className="grid grid-cols-2 gap-2 mb-3">
+                          {images.map((img, i) => (
+                            <div key={i} className="relative h-24 w-full rounded-lg overflow-hidden border border-gray-200">
+                              <img src={img} alt={`Preview ${i}`} className="w-full h-full object-cover" />
+                              <button
+                                type="button"
+                                onClick={() => setImages(prev => prev.filter((_, idx) => idx !== i))}
+                                className="absolute top-1 right-1 bg-red-600 text-white p-1 rounded-full text-xs shadow-md active:scale-95"
+                              >
+                                <X className="w-3.5 h-3.5" />
+                              </button>
+                            </div>
+                          ))}
                         </div>
-                      ))}
+                      )}
+                      
+                      <label className="cursor-pointer flex flex-col items-center justify-center py-2 border-t border-gray-200 mt-2">
+                        <Camera className="w-6 h-6 text-[#F36F21] mb-1" />
+                        <span className="text-xs font-bold text-gray-700">Take Photos or Upload Images</span>
+                        <span className="text-[10px] text-gray-500">You can upload multiple files</span>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          multiple
+                          onChange={handlePhotoUpload}
+                          className="hidden"
+                        />
+                      </label>
                     </div>
-                  )}
-                  
-                  <label className="cursor-pointer flex flex-col items-center justify-center py-2 border-t border-gray-200 mt-2">
-                    <Camera className="w-6 h-6 text-[#F36F21] mb-1" />
-                    <span className="text-xs font-bold text-gray-700">Take Photos or Upload Images</span>
-                    <span className="text-[10px] text-gray-500">You can upload multiple files</span>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      multiple
-                      onChange={handlePhotoUpload}
-                      className="hidden"
-                    />
-                  </label>
-                </div>
 
-                <div className="mt-2">
-                  <p className="text-[11px] text-gray-500 mb-1 font-medium">Or pick sample shop images:</p>
-                  <div className="grid grid-cols-3 gap-1.5">
-                    <button
-                      type="button"
-                      onClick={() => handleUsePresetPhoto('https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&q=80&w=600')}
-                      className="text-[10px] bg-gray-100 hover:bg-gray-200 p-1.5 rounded border font-medium truncate active:scale-95"
-                    >
-                      Electrical Store
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => handleUsePresetPhoto('https://images.unsplash.com/photo-1578916171728-46686eac8d58?auto=format&fit=crop&q=80&w=600')}
-                      className="text-[10px] bg-gray-100 hover:bg-gray-200 p-1.5 rounded border font-medium truncate active:scale-95"
-                    >
-                      Kirana Store
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => handleUsePresetPhoto('https://images.unsplash.com/photo-1585704032915-c3400ca199e7?auto=format&fit=crop&q=80&w=600')}
-                      className="text-[10px] bg-gray-100 hover:bg-gray-200 p-1.5 rounded border font-medium truncate active:scale-95"
-                    >
-                      Plumbing Shop
-                    </button>
+                    <div className="mt-2">
+                      <p className="text-[11px] text-gray-500 mb-1 font-medium">Or pick sample shop images:</p>
+                      <div className="grid grid-cols-3 gap-1.5">
+                        <button
+                          type="button"
+                          onClick={() => handleUsePresetPhoto('https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&q=80&w=600')}
+                          className="text-[10px] bg-gray-100 hover:bg-gray-200 p-1.5 rounded border font-medium truncate active:scale-95"
+                        >
+                          Electrical Store
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleUsePresetPhoto('https://images.unsplash.com/photo-1578916171728-46686eac8d58?auto=format&fit=crop&q=80&w=600')}
+                          className="text-[10px] bg-gray-100 hover:bg-gray-200 p-1.5 rounded border font-medium truncate active:scale-95"
+                        >
+                          Kirana Store
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleUsePresetPhoto('https://images.unsplash.com/photo-1585704032915-c3400ca199e7?auto=format&fit=crop&q=80&w=600')}
+                          className="text-[10px] bg-gray-100 hover:bg-gray-200 p-1.5 rounded border font-medium truncate active:scale-95"
+                        >
+                          Plumbing Shop
+                        </button>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
+                </>
+              )}
 
               <div>
                 <label className="block text-xs font-bold text-gray-700 mb-1">
