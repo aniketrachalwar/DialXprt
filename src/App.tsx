@@ -1287,7 +1287,6 @@ export default function App() {
                       className="px-3 py-1.5 bg-white border border-gray-200 rounded-full text-xs font-bold text-gray-700 outline-none focus:ring-2 focus:ring-[#1A9E9E] shrink-0"
                     >
                       <option value="distance">Sort by: Distance</option>
-                      <option value="rating">Sort by: Rating</option>
                       <option value="popular">Sort by: Popularity</option>
                     </select>
 

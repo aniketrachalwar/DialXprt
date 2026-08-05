@@ -34,11 +34,6 @@ export const SEOHead: React.FC<SEOHeadProps> = ({ title, description, locality, 
           "@type": "GeoCoordinates",
           "latitude": vendor.lat,
           "longitude": vendor.lng
-        },
-        "aggregateRating": {
-          "@type": "AggregateRating",
-          "ratingValue": vendor.rating || 4.8,
-          "reviewCount": vendor.reviewsCount || 10
         }
       }
     }));

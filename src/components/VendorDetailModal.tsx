@@ -101,12 +101,6 @@ export const VendorDetailModal: React.FC<VendorDetailModalProps> = ({
               </h1>
               
               <div className="flex items-center gap-3 text-sm font-semibold">
-                <div className="flex items-center gap-1 text-[#FFA500]">
-                  <Star className="w-4 h-4 fill-[#FFA500]" />
-                  <span>{vendor.rating || '4.5'}</span>
-                  <span className="text-gray-300 font-medium ml-1">({vendor.reviewsCount || 0} reviews)</span>
-                </div>
-                <span className="text-gray-400">•</span>
                 <span className="text-gray-200">{vendor.neighborhood}</span>
               </div>
             </div>
@@ -180,46 +174,6 @@ export const VendorDetailModal: React.FC<VendorDetailModalProps> = ({
             )}
           </div>
 
-          {/* Review & Rating Section */}
-          <div className="p-5 border-t-8 border-gray-50 bg-white">
-            <h3 className="font-bold text-gray-900 text-lg mb-4">Reviews & Ratings</h3>
-            
-            <div className="flex flex-col sm:flex-row gap-6 mb-6">
-              {/* Overall Summary */}
-              <div className="flex flex-col items-center justify-center p-4 bg-gray-50 rounded-2xl sm:w-1/3">
-                <span className="text-4xl font-black text-gray-900 mb-1">{vendor.rating || '4.5'}</span>
-                <div className="flex items-center gap-0.5 mb-1">
-                  {[1, 2, 3, 4, 5].map((s) => (
-                    <Star key={s} className="w-4 h-4 fill-[#FFA500] text-[#FFA500]" />
-                  ))}
-                </div>
-                <span className="text-xs text-gray-500 font-medium">Based on {vendor.reviewsCount || 0} reviews</span>
-              </div>
-
-              {/* Star Breakdown (Mock) */}
-              <div className="flex-1 flex flex-col justify-center gap-1.5 text-xs text-gray-500 font-medium">
-                {[
-                  { stars: 5, pct: '75%' },
-                  { stars: 4, pct: '15%' },
-                  { stars: 3, pct: '5%' },
-                  { stars: 2, pct: '3%' },
-                  { stars: 1, pct: '2%' }
-                ].map((row) => (
-                  <div key={row.stars} className="flex items-center gap-2">
-                    <span className="w-4">{row.stars}★</span>
-                    <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
-                      <div className="h-full bg-[#FFA500] rounded-full" style={{ width: row.pct }}></div>
-                    </div>
-                    <span className="w-8 text-right">{row.pct}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <button className="w-full border-2 border-gray-200 text-gray-700 font-bold py-3 rounded-xl hover:bg-gray-50 transition-colors">
-              Write a Review
-            </button>
-          </div>
         </div>
 
         {/* Lead Capture Floating Bar (Mobile & Desktop) */}

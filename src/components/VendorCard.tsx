@@ -112,20 +112,10 @@ export const VendorCard: React.FC<VendorCardProps> = ({
             )}
           </h3>
 
-          {/* Ratings & Reviews */}
+          {/* Ratings & Reviews - Hidden per user request */}
           <div className="flex items-center gap-1.5 mb-1.5">
-            {vendor.reviewsCount === 0 || vendor.rating === 0 ? (
-              <span className="text-[10px] font-bold bg-[#22C55E]/10 text-[#22C55E] px-2 py-0.5 rounded-full uppercase tracking-wider">NEW</span>
-            ) : (
-              <>
-                <div className="flex items-center gap-0.5">
-                  {[1, 2, 3, 4, 5].map((s) => (
-                    <Star key={s} className={`w-3.5 h-3.5 ${s <= (vendor.rating || 4.5) ? 'fill-[#FFA500] text-[#FFA500]' : 'fill-gray-200 text-gray-200'}`} />
-                  ))}
-                </div>
-                <span className="font-bold text-gray-800 text-sm ml-1">{vendor.rating || '4.5'}</span>
-                <span className="text-gray-500 text-xs">({vendor.reviewsCount || 0})</span>
-              </>
+            {vendor.isVerified && (
+              <span className="text-[10px] font-bold bg-[#22C55E]/10 text-[#22C55E] px-2 py-0.5 rounded-full uppercase tracking-wider">VERIFIED</span>
             )}
           </div>
 

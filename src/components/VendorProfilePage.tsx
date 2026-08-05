@@ -118,17 +118,10 @@ export const VendorProfilePage: React.FC<VendorProfilePageProps> = ({
           </h1>
           
           <div className="flex flex-wrap items-center gap-2 text-sm text-gray-600">
-            {vendor.reviewsCount === 0 || vendor.rating === 0 ? (
+            {vendor.isVerified && (
               <div className="flex items-center gap-1 bg-[#22C55E]/10 text-[#22C55E] px-2 py-0.5 rounded text-xs font-bold shadow-sm uppercase tracking-wider border border-[#22C55E]/20">
-                NEW
+                VERIFIED
               </div>
-            ) : (
-              <>
-                <div className="flex items-center gap-1 bg-[#22C55E] text-white px-2 py-0.5 rounded text-xs font-bold shadow-sm">
-                  {vendor.rating} <Star className="w-3 h-3 fill-white text-white" />
-                </div>
-                <span>{vendor.reviewsCount} Ratings</span>
-              </>
             )}
           </div>
 
