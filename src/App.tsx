@@ -711,7 +711,7 @@ export default function App() {
       },
       (error) => {
         setIsDetectingGPS(false);
-        alert(
+        console.warn(
           "Location access denied or unavailable. Defaulting to Madhapur, Hyderabad.",
         );
       },
