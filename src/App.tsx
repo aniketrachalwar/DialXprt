@@ -20,6 +20,7 @@ import { AuthModal } from "./components/AuthModal";
 import { NotificationToast } from "./components/NotificationToast";
 import { Footer } from "./components/Footer";
 import { RightStickyBar } from "./components/RightStickyBar";
+import { fetchUserRoles } from "./lib/adminApi";
 
 import {
   Vendor,
@@ -466,19 +467,17 @@ export default function App() {
         if (userEmail === "aniketrachalwar073@gmail.com" || userEmail === "aniketrachalwar1@gmail.com") {
           setCurrentRole("admin");
         } else {
-          // Check if they were granted a role by the admin
-          const rolesStr = localStorage.getItem('dialxprt_roles_v1');
-          if (rolesStr) {
-            const savedRoles = JSON.parse(rolesStr);
+          // Check if they were granted a role by the admin (fetch from API)
+          fetchUserRoles().then((savedRoles) => {
             const userRole = savedRoles.find((r: any) => r.email === userEmail || (session.user.phone && r.email === session.user.phone));
             if (userRole) {
               setCurrentRole(userRole.role);
             } else {
               setCurrentRole("customer");
             }
-          } else {
-            setCurrentRole("customer"); // reset if different user logs in
-          }
+          }).catch(() => {
+            setCurrentRole("customer");
+          });
         }
       } else {
         setUserEmail("");
