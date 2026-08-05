@@ -107,14 +107,7 @@ export const VendorRegistrationView: React.FC<VendorRegistrationViewProps> = ({
     }
   }, [initialData, isEditMode, categories]);
 
-  useEffect(() => {
-    if (currentNeighborhood) {
-      const found = HYDERABAD_NEIGHBORHOODS.find(n => n.name.toLowerCase() === currentNeighborhood.toLowerCase());
-      if (found) {
-        setSelectedNeighborhoods([found]);
-      }
-    }
-  }, [currentNeighborhood]);
+
 
   useEffect(() => {
     if (selectedNeighborhoods.length > 0) {
@@ -232,10 +225,7 @@ export const VendorRegistrationView: React.FC<VendorRegistrationViewProps> = ({
           <h1 className="text-lg font-bold leading-tight">
             {isEditMode ? 'Edit Business Details' : t('registerStoreTitle')}
           </h1>
-          <p className="text-xs text-indigo-200">Step {step} of 3: Onboarding Form</p>
-        </div>
-        <div className="w-8 h-8 rounded-full bg-[#F36F21] flex items-center justify-center font-extrabold text-white text-sm shadow-sm">
-          {step}
+          <p className="text-xs text-indigo-200">Complete all details to list your business</p>
         </div>
       </div>
 
@@ -247,11 +237,9 @@ export const VendorRegistrationView: React.FC<VendorRegistrationViewProps> = ({
 
       {/* Main Content Area */}
       <div className="flex-1 max-w-lg mx-auto w-full p-4 sm:p-6 bg-white shadow-sm sm:my-4 sm:rounded-2xl sm:border sm:border-gray-100">
-        <form onSubmit={handleSubmitForm} className="space-y-4">
-        {/* STEP 1: Basic Information */}
-          {step === 1 && (
-            <div className="space-y-3 animate-fade-in">
-              <div>
+        <form onSubmit={handleSubmitForm} className="space-y-6">
+          <div className="space-y-4 animate-fade-in">
+            <div>
                 <label className="block text-xs font-bold text-gray-700 mb-1">
                   Business Name *
                 </label>
@@ -663,30 +651,8 @@ export const VendorRegistrationView: React.FC<VendorRegistrationViewProps> = ({
                 />
               </div>
 
-              <div className="flex gap-2 pt-2">
-                <button
-                  type="button"
-                  onClick={() => setStep(1)}
-                  className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-3 px-4 rounded-xl flex items-center justify-center gap-1 min-h-[48px]"
-                >
-                  <ChevronLeft className="w-4 h-4" />
-                  <span>Back</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setStep(3)}
-                  className="flex-2 bg-[#0F5C5C] hover:bg-teal-700 text-white font-bold py-3 px-4 rounded-xl flex items-center justify-center gap-2 min-h-[48px]"
-                >
-                  <span>Next: Phone & Details</span>
-                  <ChevronRight className="w-4 h-4" />
-                </button>
-              </div>
-            </div>
-          )}
+              <hr className="border-gray-100 my-6" />
 
-          {/* STEP 3: Phone Numbers & Voice Description */}
-          {step === 3 && (
-            <div className="space-y-3 animate-fade-in">
               <div>
                 <label className="block text-xs font-bold text-gray-700 mb-1">
                   {t('phoneLabel')} *
@@ -791,20 +757,11 @@ export const VendorRegistrationView: React.FC<VendorRegistrationViewProps> = ({
 
 
 
-              <div className="flex gap-2 pt-2">
-                <button
-                  type="button"
-                  onClick={() => setStep(2)}
-                  className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-3 px-4 rounded-xl flex items-center justify-center gap-1 min-h-[48px]"
-                >
-                  <ChevronLeft className="w-4 h-4" />
-                  <span>Back</span>
-                </button>
-
+              <div className="flex pt-4 mt-2">
                 <button
                   type="submit"
                   disabled={loading || !phone || !ownerName || selectedCategories.length === 0 || !experience || selectedNeighborhoods.length === 0 || !pincode}
-                  className="flex-2 bg-[#F36F21] hover:bg-orange-600 text-white font-bold py-3 px-4 rounded-xl flex items-center justify-center gap-2 shadow-lg min-h-[48px] disabled:opacity-50"
+                  className="w-full bg-[#F36F21] hover:bg-orange-600 text-white font-bold py-3 px-4 rounded-xl flex items-center justify-center gap-2 shadow-lg min-h-[48px] disabled:opacity-50"
                 >
                   {loading ? (
                     <span>Submitting Store...</span>
@@ -817,7 +774,6 @@ export const VendorRegistrationView: React.FC<VendorRegistrationViewProps> = ({
                 </button>
               </div>
             </div>
-          )}
         </form>
       </div>
     </div>
