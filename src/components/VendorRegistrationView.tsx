@@ -403,23 +403,7 @@ export const VendorRegistrationView: React.FC<VendorRegistrationViewProps> = ({
                 />
               </div>
 
-              <div className="pt-3">
-                <button
-                  type="button"
-                  disabled={!name || !ownerName || selectedCategories.length === 0 || !experience}
-                  onClick={() => setStep(2)}
-                  className="w-full bg-[#0F5C5C] hover:bg-teal-700 text-white font-bold py-3 px-4 rounded-xl flex items-center justify-center gap-2 transition-all min-h-[48px] disabled:opacity-50"
-                >
-                  <span>Next: Location Details</span>
-                  <ChevronRight className="w-4 h-4" />
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* STEP 2: Shop Photo & Address */}
-          {step === 2 && (
-            <div className="space-y-3 animate-fade-in">
+              <hr className="border-gray-100 my-6" />
               <div>
                 <label className="block text-xs font-bold text-gray-700 mb-1">
                   Shop Photos / Board Photos
