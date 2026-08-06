@@ -37,7 +37,11 @@ export const AllCategoriesView: React.FC<AllCategoriesViewProps> = ({
     return groups;
   }, [categories, searchQuery, currentLang]);
 
-  const groupNames = Object.keys(groupedCategories);
+  const groupNames = Object.keys(groupedCategories).sort((a, b) => {
+    if (a === 'Home Services') return -1;
+    if (b === 'Home Services') return 1;
+    return a.localeCompare(b);
+  });
   
   const [activeGroup, setActiveGroup] = useState<string>(groupNames[0] || '');
   const [expandedGroups, setExpandedGroups] = useState<Record<string, boolean>>({});
