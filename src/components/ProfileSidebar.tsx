@@ -19,7 +19,8 @@ import {
   Mail,
   TrendingUp,
   Megaphone,
-  Handshake
+  Handshake,
+  Download
 } from 'lucide-react';
 
 interface ProfileSidebarProps {
@@ -34,6 +35,7 @@ interface ProfileSidebarProps {
   isAdmin?: boolean;
   currentRole?: string;
   onLogin?: () => void;
+  onInstallApp?: () => void;
 }
 
 export const ProfileSidebar: React.FC<ProfileSidebarProps> = ({
@@ -47,7 +49,8 @@ export const ProfileSidebar: React.FC<ProfileSidebarProps> = ({
   onNavigate,
   isAdmin,
   currentRole,
-  onLogin
+  onLogin,
+  onInstallApp
 }) => {
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
@@ -205,6 +208,18 @@ export const ProfileSidebar: React.FC<ProfileSidebarProps> = ({
                   </div>
                   <span className="text-[15px] font-semibold text-gray-800">Help</span>
                 </button>
+
+                {onInstallApp && (
+                  <button 
+                    onClick={() => handleAction(onInstallApp)}
+                    className="w-full flex items-center gap-4 px-6 py-3.5 text-sm font-semibold text-gray-800 hover:bg-teal-50 transition-colors"
+                  >
+                    <div className="w-9 h-9 rounded-full border border-teal-200 flex items-center justify-center shrink-0 bg-teal-50">
+                      <Download className="w-4 h-4 text-teal-600" />
+                    </div>
+                    <span className="text-[15px] font-bold text-teal-700">Install App</span>
+                  </button>
+                )}
               </div>
             </div>
           </>
@@ -352,6 +367,16 @@ export const ProfileSidebar: React.FC<ProfileSidebarProps> = ({
                   <HelpCircle className="w-4 h-4 text-gray-500 shrink-0" />
                   <span>Help</span>
                 </button>
+                
+                {onInstallApp && (
+                  <button 
+                    onClick={() => handleAction(onInstallApp)}
+                    className="w-full flex items-center gap-4 px-3 py-3 text-sm font-bold text-teal-700 hover:bg-teal-50 rounded-xl transition-colors text-left mt-2 bg-teal-50/50 border border-teal-100"
+                  >
+                    <Download className="w-4 h-4 text-teal-600 shrink-0" />
+                    <span>Install App</span>
+                  </button>
+                )}
                 
                 <button 
                   onClick={() => handleAction(onLogout)}

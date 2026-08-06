@@ -214,6 +214,28 @@ export default function App() {
   const [isCollectionsModalOpen, setIsCollectionsModalOpen] = useState(false);
   const [vendorForCollection, setVendorForCollection] = useState<string | null>(null);
 
+  // PWA Install Prompt State
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+
+  useEffect(() => {
+    const handler = (e: Event) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+    };
+    window.addEventListener('beforeinstallprompt', handler as EventListener);
+    return () => window.removeEventListener('beforeinstallprompt', handler as EventListener);
+  }, []);
+
+  const handleInstallApp = async () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === 'accepted') {
+        setDeferredPrompt(null);
+      }
+    }
+  };
+
   const handleOpenRegistration = () => {
     setActiveTab("register-vendor");
   };
@@ -1526,6 +1548,7 @@ export default function App() {
           setIsProfileSidebarOpen(false);
           setIsAuthModalOpen(true);
         }}
+        onInstallApp={deferredPrompt ? handleInstallApp : undefined}
       />
 
       <LanguageModal
