@@ -686,8 +686,6 @@ export default function App() {
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
-        setUserLat(latitude);
-        setUserLng(longitude);
         setIsAutoDetected(true);
         setIsDetectingGPS(false);
 
@@ -701,13 +699,26 @@ export default function App() {
           }
         });
 
-        setCurrentNeighborhood(closest.name);
-
-        addNotification({
-          title: "Location Auto-Detected",
-          message: `Position centered at ${closest.name}, Hyderabad (${minDist.toFixed(1)} km away).`,
-          type: "system",
-        });
+        if (minDist > 50) {
+          const defaultHood = HYDERABAD_NEIGHBORHOODS.find(n => n.name === 'Madhapur') || HYDERABAD_NEIGHBORHOODS[0];
+          setUserLat(defaultHood.lat);
+          setUserLng(defaultHood.lng);
+          setCurrentNeighborhood(defaultHood.name);
+          addNotification({
+            title: "Out of Service Area",
+            message: "We currently only serve Hyderabad. Defaulting to Madhapur.",
+            type: "warning",
+          });
+        } else {
+          setUserLat(latitude);
+          setUserLng(longitude);
+          setCurrentNeighborhood(closest.name);
+          addNotification({
+            title: "Location Auto-Detected",
+            message: `Position centered at ${closest.name}, Hyderabad (${minDist.toFixed(1)} km away).`,
+            type: "system",
+          });
+        }
       },
       (error) => {
         setIsDetectingGPS(false);
