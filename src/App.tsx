@@ -1174,11 +1174,11 @@ export default function App() {
             {selectedCategory === "all" && !searchQuery && (
               <div className="grid grid-cols-3 gap-2 mb-2 px-3 sm:px-0">
                 {[
-                  { label: 'Electrician', slug: 'electrician', icon: Zap },
-                  { label: 'Plumber', slug: 'plumber', icon: Wrench },
+                  { label: 'AC Repair & Services', slug: 'ac-repair', icon: Snowflake },
                   { label: 'Car Mechanic', slug: 'mechanic', icon: Car },
                   { label: 'Carpenter', slug: 'carpenter', icon: Hammer },
-                  { label: 'AC Repair & Services', slug: 'ac-repair', icon: Snowflake },
+                  { label: 'Electrician', slug: 'electrician', icon: Zap },
+                  { label: 'Plumber', slug: 'plumber', icon: Wrench },
                   { label: 'Show More', slug: 'all-categories', icon: null }
                 ].map(link => (
                   <button
