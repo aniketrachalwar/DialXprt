@@ -491,22 +491,6 @@ export const VendorRegistrationView: React.FC<VendorRegistrationViewProps> = ({
                 />
               </div>
 
-              <div>
-                <label className="block text-xs font-bold text-gray-700 mb-1">
-                  Business or Shop Name ( OPTIONAL )
-                </label>
-                <div className="relative">
-                  <Building2 className="w-4 h-4 text-gray-400 absolute left-3 top-3.5" />
-                  <input
-                    type="text"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder="Better if you provide Name."
-                    className="w-full pl-9 pr-3 py-2.5 text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0F5C5C] focus:outline-none min-h-[48px]"
-                  />
-                </div>
-              </div>
-
               {isEditMode && (
                 <div>
                   <label className="block text-xs font-bold text-gray-700 mb-1">
