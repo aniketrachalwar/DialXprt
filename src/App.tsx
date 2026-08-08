@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useRef } from "react";
+import React, { useState, useEffect, useMemo, useRef, Suspense } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { SEOHead } from "./components/SEOHead";
 import { Header } from "./components/Header";
@@ -47,17 +47,26 @@ import {
 import { calculateDistanceKm } from "./lib/geo";
 import { fetchCategories } from "./lib/adminApi";
 import { HomeDashboard } from "./components/HomeDashboard";
-import { AllCategoriesView } from "./components/AllCategoriesView";
-import { FavoritesView } from "./components/FavoritesView";
-import { SavedCollectionsView } from "./components/SavedCollectionsView";
 import { CollectionsModal } from "./components/CollectionsModal";
-import { CustomerServiceView } from "./components/CustomerServiceView";
-import { PolicyView } from "./components/PolicyView";
-import { FeedbackView } from "./components/FeedbackView";
-import { HelpCenterView } from "./components/HelpCenterView";
-import { SubCategoryView } from "./components/SubCategoryView";
-import { OffersView } from "./components/OffersView";
 import { MapPin, Search, ArrowLeft, ChevronDown, Zap, Wrench, Car, Hammer, Snowflake } from "lucide-react";
+
+import { LoadingSpinner } from "./components/LoadingSpinner";
+
+// Lazy-loaded views
+const VendorRegistrationView = React.lazy(() => import('./components/VendorRegistrationView').then(m => ({ default: m.VendorRegistrationView })));
+const AccountView = React.lazy(() => import('./components/AccountView').then(m => ({ default: m.AccountView })));
+const UserProfileEditView = React.lazy(() => import('./components/UserProfileEditView').then(m => ({ default: m.UserProfileEditView })));
+const AdminPanelView = React.lazy(() => import('./components/AdminPanelView').then(m => ({ default: m.AdminPanelView })));
+const VendorProfilePage = React.lazy(() => import('./components/VendorProfilePage').then(m => ({ default: m.VendorProfilePage })));
+const AllCategoriesView = React.lazy(() => import('./components/AllCategoriesView').then(m => ({ default: m.AllCategoriesView })));
+const FavoritesView = React.lazy(() => import('./components/FavoritesView').then(m => ({ default: m.FavoritesView })));
+const SavedCollectionsView = React.lazy(() => import('./components/SavedCollectionsView').then(m => ({ default: m.SavedCollectionsView })));
+const CustomerServiceView = React.lazy(() => import('./components/CustomerServiceView').then(m => ({ default: m.CustomerServiceView })));
+const PolicyView = React.lazy(() => import('./components/PolicyView').then(m => ({ default: m.PolicyView })));
+const FeedbackView = React.lazy(() => import('./components/FeedbackView').then(m => ({ default: m.FeedbackView })));
+const HelpCenterView = React.lazy(() => import('./components/HelpCenterView').then(m => ({ default: m.HelpCenterView })));
+const SubCategoryView = React.lazy(() => import('./components/SubCategoryView').then(m => ({ default: m.SubCategoryView })));
+const OffersView = React.lazy(() => import('./components/OffersView').then(m => ({ default: m.OffersView })));
 
 const CATEGORY_BANNERS: Record<string, { imageUrl: string; title: string; subtitle: string }> = {
   'gym': {
@@ -1054,6 +1063,7 @@ export default function App() {
 
       {/* MAIN BODY DISPLAY */}
       <main className="w-full max-w-6xl mx-auto py-5 sm:px-6">
+        <Suspense fallback={<LoadingSpinner />}>
         {/* VIEW 1: ROLE-TAILORED ACCOUNT DASHBOARD */}
         {selectedVendorSlug ? (() => {
           const profileVendor = vendors.find((v) => v.slug === selectedVendorSlug) || null;
@@ -1459,6 +1469,7 @@ export default function App() {
         )}
 
         <Footer />
+        </Suspense>
       </main>
 
       {/* 3. CLEAN 3-TAB BOTTOM NAVIGATION BAR */}
