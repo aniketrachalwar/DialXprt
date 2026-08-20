@@ -4,6 +4,8 @@ import { UserRoleAssignment, fetchUserRoles, grantUserRole, removeUserRole, fetc
 import { Vendor, FeedbackEntry } from '../types';
 import { fetchAllVendors } from '../lib/supabase';
 import { SiteMapTowers } from './SiteMapTowers';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 interface AdminPanelViewProps {
   vendors?: Vendor[];
@@ -99,6 +101,120 @@ export const AdminPanelView: React.FC<AdminPanelViewProps> = ({ currentRole = "a
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+  };
+
+  const handleExportExcel = () => {
+    const tableHtml = `
+      <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
+      <head>
+        <!--[if gte mso 9]>
+        <xml>
+          <x:ExcelWorkbook>
+            <x:ExcelWorksheets>
+              <x:ExcelWorksheet>
+                <x:Name>Businesses</x:Name>
+                <x:WorksheetOptions>
+                  <x:DisplayGridlines/>
+                </x:WorksheetOptions>
+              </x:ExcelWorksheet>
+            </x:ExcelWorksheets>
+          </x:ExcelWorkbook>
+        </xml>
+        <![endif]-->
+        <meta charset="utf-8">
+        <style>
+          th { background-color: #0F5C5C; color: white; font-weight: bold; padding: 8px; border: 1px solid #ccc; }
+          td { padding: 6px; border: 1px solid #eee; }
+        </style>
+      </head>
+      <body>
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Business Name</th>
+              <th>Category</th>
+              <th>Owner Name</th>
+              <th>Phone</th>
+              <th>WhatsApp</th>
+              <th>Address</th>
+              <th>Neighborhood</th>
+              <th>City</th>
+              <th>Pincode</th>
+              <th>Experience</th>
+              <th>Status</th>
+              <th>Verified</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${filteredAdminVendors.map(v => `
+              <tr>
+                <td>${v.id}</td>
+                <td>${v.name || ''}</td>
+                <td>${v.category || ''}</td>
+                <td>${v.ownerName || ''}</td>
+                <td>'${v.phone || ''}</td>
+                <td>'${v.whatsapp || ''}</td>
+                <td>${v.address || ''}</td>
+                <td>${v.neighborhood || ''}</td>
+                <td>${v.city || ''}</td>
+                <td>${v.pincode || ''}</td>
+                <td>${v.experience || ''}</td>
+                <td>${v.status || ''}</td>
+                <td>${v.isVerified ? 'Yes' : 'No'}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </body>
+      </html>
+    `;
+
+    const blob = new Blob([tableHtml], { type: 'application/vnd.ms-excel;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", `DialXprt_Businesses_Export_${Date.now()}.xls`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const handleExportPDF = () => {
+    const doc = new jsPDF({ orientation: 'landscape' });
+    
+    // Add title
+    doc.setFontSize(16);
+    doc.text("DialXprt Business Directory Export", 14, 15);
+    doc.setFontSize(10);
+    doc.text(`Generated on: ${new Date().toLocaleString()} | Total Businesses: ${filteredAdminVendors.length}`, 14, 22);
+    
+    const headers = [
+      ["ID", "Name", "Category", "Owner", "Phone", "WhatsApp", "Neighborhood", "Status", "Verified"]
+    ];
+    
+    const data = filteredAdminVendors.map((v) => [
+      v.id,
+      v.name || '',
+      v.category || '',
+      v.ownerName || '',
+      v.phone || '',
+      v.whatsapp || '',
+      v.neighborhood || '',
+      v.status || '',
+      v.isVerified ? 'Yes' : 'No'
+    ]);
+    
+    autoTable(doc, {
+      startY: 28,
+      head: headers,
+      body: data,
+      theme: 'striped',
+      headStyles: { fillColor: [15, 92, 92] },
+      styles: { fontSize: 8 },
+    });
+    
+    doc.save(`DialXprt_Vendors_${Date.now()}.pdf`);
   };
 
   const handleExportVendors = () => {
@@ -246,11 +362,19 @@ export const AdminPanelView: React.FC<AdminPanelViewProps> = ({ currentRole = "a
                   onChange={(e) => setVendorSearchQuery(e.target.value)}
                   className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 font-medium outline-none focus:border-purple-500 text-sm w-full sm:w-auto"
                 />
-                <button onClick={handleExportVendors} className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-xl text-sm font-bold transition-colors">
-                  Export Detailed Vendors CSV
+                <button onClick={handleExportExcel} className="bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 py-2 rounded-xl text-xs font-bold transition-colors flex items-center gap-1.5 shadow-sm">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                  Export Excel
                 </button>
-                <button onClick={handleExportUsers} className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl text-sm font-bold transition-colors">
-                  Export Users CSV
+                <button onClick={handleExportPDF} className="bg-rose-600 hover:bg-rose-700 text-white px-3.5 py-2 rounded-xl text-xs font-bold transition-colors flex items-center gap-1.5 shadow-sm">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                  Export PDF
+                </button>
+                <button onClick={handleExportVendors} className="bg-gray-600 hover:bg-gray-700 text-white px-3 py-2 rounded-xl text-xs font-bold transition-colors">
+                  Export CSV
+                </button>
+                <button onClick={handleExportUsers} className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-xl text-xs font-bold transition-colors">
+                  Export Users
                 </button>
               </div>
             </div>

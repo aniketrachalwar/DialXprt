@@ -5,16 +5,11 @@ import { Header } from "./components/Header";
 import { BottomNav } from "./components/BottomNav";
 import { SearchBar } from "./components/SearchBar";
 import { VendorCard } from "./components/VendorCard";
-import { VendorRegistrationView } from "./components/VendorRegistrationView";
-import { AccountView } from "./components/AccountView";
-import { UserProfileEditView } from "./components/UserProfileEditView";
 import { LocationPickerModal } from "./components/LocationPickerModal";
 import { ProfileSidebar } from "./components/ProfileSidebar";
 import { SidebarPages } from "./components/SidebarPages";
 import { LanguageModal } from "./components/LanguageModal";
-import { AdminPanelView } from "./components/AdminPanelView";
 import { StaticPage } from "./components/StaticPages";
-import { VendorProfilePage } from "./components/VendorProfilePage";
 import { FloatingSupportWidget } from "./components/FloatingSupportWidget";
 import { AuthModal } from "./components/AuthModal";
 import { NotificationToast } from "./components/NotificationToast";
@@ -192,11 +187,41 @@ export default function App() {
   const [selectedVendorSlug, setSelectedVendorSlug] = useState<string | null>(null);
 
   // Role & User Context
-  const [currentRole, setCurrentRole] = useState<UserRole>("customer");
-  const [userPhone, setUserPhone] = useState<string>("");
-  const [userName, setUserName] = useState<string>("Guest User");
-  const [userEmail, setUserEmail] = useState<string>("");
-  const [userAvatar, setUserAvatar] = useState<string>("");
+  const [currentRole, setCurrentRole] = useState<UserRole>(() => {
+    try {
+      const saved = localStorage.getItem('dialxprt_mock_session_v1');
+      if (saved) return JSON.parse(saved).currentRole || "customer";
+    } catch (_) {}
+    return "customer";
+  });
+  const [userPhone, setUserPhone] = useState<string>(() => {
+    try {
+      const saved = localStorage.getItem('dialxprt_mock_session_v1');
+      if (saved) return JSON.parse(saved).userPhone || "";
+    } catch (_) {}
+    return "";
+  });
+  const [userName, setUserName] = useState<string>(() => {
+    try {
+      const saved = localStorage.getItem('dialxprt_mock_session_v1');
+      if (saved) return JSON.parse(saved).userName || "Guest User";
+    } catch (_) {}
+    return "Guest User";
+  });
+  const [userEmail, setUserEmail] = useState<string>(() => {
+    try {
+      const saved = localStorage.getItem('dialxprt_mock_session_v1');
+      if (saved) return JSON.parse(saved).userEmail || "";
+    } catch (_) {}
+    return "";
+  });
+  const [userAvatar, setUserAvatar] = useState<string>(() => {
+    try {
+      const saved = localStorage.getItem('dialxprt_mock_session_v1');
+      if (saved) return JSON.parse(saved).userAvatar || "";
+    } catch (_) {}
+    return "";
+  });
   const [selectedVendorToEdit, setSelectedVendorToEdit] = useState<Vendor | null>(null);
   
   // Favorites State
@@ -573,6 +598,7 @@ export default function App() {
     setUserEmail("");
     setCurrentRole("customer");
     setActiveTab("home");
+    localStorage.removeItem('dialxprt_mock_session_v1');
     if (supabase) {
       try {
         await supabase.auth.signOut();
@@ -738,7 +764,7 @@ export default function App() {
           addNotification({
             title: "Out of Service Area",
             message: "We currently only serve Hyderabad. Defaulting to Madhapur.",
-            type: "warning",
+            type: "system",
           });
         } else {
           setUserLat(latitude);
@@ -1524,10 +1550,19 @@ export default function App() {
       <AuthModal
         isOpen={isAuthModalOpen}
         onClose={() => setIsAuthModalOpen(false)}
-        onLoginSuccess={(phone, role) => {
-          setUserPhone(phone);
+        onLoginSuccess={(email, role, name) => {
+          const resolvedName = name || email.split("@")[0] || "User";
+          setUserPhone(email);
+          setUserEmail(email);
+          setUserName(resolvedName);
           setCurrentRole(role);
           setActiveTab("account");
+          localStorage.setItem('dialxprt_mock_session_v1', JSON.stringify({
+            userEmail: email,
+            userPhone: email,
+            userName: resolvedName,
+            currentRole: role
+          }));
         }}
       />
 

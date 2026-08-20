@@ -7,7 +7,7 @@ import { supabase, isSupabaseConfigured } from '../lib/supabase';
 interface AuthModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onLoginSuccess: (email: string, role: UserRole) => void;
+  onLoginSuccess: (email: string, role: UserRole, name?: string) => void;
 }
 
 export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLoginSuccess }) => {
@@ -29,7 +29,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onLoginSu
     setLoading(true);
     setTimeout(() => {
       setLoading(false);
-      onLoginSuccess(email, role);
+      onLoginSuccess(email, role, name);
       onClose();
     }, 800);
   };
