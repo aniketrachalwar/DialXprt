@@ -142,10 +142,27 @@ export default function App() {
   const [loading, setLoading] = useState<boolean>(true);
 
   // User Geolocation State (Defaulting to Madhapur, Hyderabad)
-  const [userLat, setUserLat] = useState<number>(17.4483);
-  const [userLng, setUserLng] = useState<number>(78.3915);
-  const [currentNeighborhood, setCurrentNeighborhood] =
-    useState<string>("Madhapur");
+  const [userLat, setUserLat] = useState<number>(() => {
+    try {
+      const saved = localStorage.getItem('dialxprt_selected_location_v1');
+      if (saved) return JSON.parse(saved).lat || 17.4483;
+    } catch (_) {}
+    return 17.4483;
+  });
+  const [userLng, setUserLng] = useState<number>(() => {
+    try {
+      const saved = localStorage.getItem('dialxprt_selected_location_v1');
+      if (saved) return JSON.parse(saved).lng || 78.3915;
+    } catch (_) {}
+    return 78.3915;
+  });
+  const [currentNeighborhood, setCurrentNeighborhood] = useState<string>(() => {
+    try {
+      const saved = localStorage.getItem('dialxprt_selected_location_v1');
+      if (saved) return JSON.parse(saved).name || "Madhapur";
+    } catch (_) {}
+    return "Madhapur";
+  });
   const [isAutoDetected, setIsAutoDetected] = useState<boolean>(false);
   const [isDetectingGPS, setIsDetectingGPS] = useState<boolean>(false);
 
@@ -761,6 +778,11 @@ export default function App() {
           setUserLat(defaultHood.lat);
           setUserLng(defaultHood.lng);
           setCurrentNeighborhood(defaultHood.name);
+          localStorage.setItem('dialxprt_selected_location_v1', JSON.stringify({
+            name: defaultHood.name,
+            lat: defaultHood.lat,
+            lng: defaultHood.lng
+          }));
           addNotification({
             title: "Out of Service Area",
             message: "We currently only serve Hyderabad. Defaulting to Madhapur.",
@@ -770,6 +792,11 @@ export default function App() {
           setUserLat(latitude);
           setUserLng(longitude);
           setCurrentNeighborhood(closest.name);
+          localStorage.setItem('dialxprt_selected_location_v1', JSON.stringify({
+            name: closest.name,
+            lat: latitude,
+            lng: longitude
+          }));
           addNotification({
             title: "Location Auto-Detected",
             message: `Position centered at ${closest.name}, Hyderabad (${minDist.toFixed(1)} km away).`,
@@ -799,6 +826,11 @@ export default function App() {
     setUserLng(n.lng);
     setCurrentNeighborhood(n.name);
     setIsAutoDetected(false);
+    localStorage.setItem('dialxprt_selected_location_v1', JSON.stringify({
+      name: n.name,
+      lat: n.lat,
+      lng: n.lng
+    }));
   };
 
   // Business Onboarding Submission
