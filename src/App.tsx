@@ -49,6 +49,7 @@ import { LoadingSpinner } from "./components/LoadingSpinner";
 
 // Lazy-loaded views
 const VendorRegistrationView = React.lazy(() => import('./components/VendorRegistrationView').then(m => ({ default: m.VendorRegistrationView })));
+const GoogleFormRegistrationView = React.lazy(() => import('./components/GoogleFormRegistrationView').then(m => ({ default: m.GoogleFormRegistrationView })));
 const AccountView = React.lazy(() => import('./components/AccountView').then(m => ({ default: m.AccountView })));
 const UserProfileEditView = React.lazy(() => import('./components/UserProfileEditView').then(m => ({ default: m.UserProfileEditView })));
 const AdminPanelView = React.lazy(() => import('./components/AdminPanelView').then(m => ({ default: m.AdminPanelView })));
@@ -418,20 +419,7 @@ export default function App() {
   const [isNotificationsModalOpen, setIsNotificationsModalOpen] = useState(false);
   const [isLangModalOpen, setIsLangModalOpen] = useState<boolean>(false);
   const [isProfileSidebarOpen, setIsProfileSidebarOpen] = useState<boolean>(false);
-  const [isScrolled, setIsScrolled] = useState<boolean>(false);
 
-  // Scroll listener for sticky search bar
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 100) {
-        setIsScrolled(true);
-      } else {
-        setIsScrolled(false);
-      }
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
 
   // Sync with Supabase Auth Session
   useEffect(() => {
@@ -1192,15 +1180,12 @@ export default function App() {
             currentLang={currentLang}
           />
         ) : activeTab === "register-vendor" ? (
-          <VendorRegistrationView
-            onBack={() => setActiveTab("home")}
-            categories={categories}
-            userLat={userLat}
-            userLng={userLng}
-            currentNeighborhood={currentNeighborhood}
-            onSubmit={async (vendorData) => {
-              await handleRegisterVendorSubmit(vendorData);
-              setActiveTab('home');
+          <GoogleFormRegistrationView
+            onBack={() => {
+              setActiveTab("home");
+              if (location.pathname !== "/") {
+                navigate("/");
+              }
             }}
             currentLang={currentLang}
           />
