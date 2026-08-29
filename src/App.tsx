@@ -1254,7 +1254,7 @@ export default function App() {
             isEditMode={true}
             onSubmit={async (vendorData) => {
               // Call the existing update handler
-              handleUpdateVendorDetailsSubmit({ ...selectedVendorToEdit, ...vendorData } as Vendor);
+              await handleUpdateVendorDetailsSubmit({ ...selectedVendorToEdit, ...vendorData } as Vendor);
               setActiveTab(currentRole === 'admin' || currentRole === 'volunteer' ? 'admin' : 'account');
               setSelectedVendorToEdit(null);
             }}

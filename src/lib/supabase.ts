@@ -318,6 +318,7 @@ export async function updateVendorDetails(updatedVendor: Vendor): Promise<Vendor
         .from('vendors')
         .update({
           name: safeVendor.name,
+          category_slug: safeVendor.categorySlug,
           owner_name: safeVendor.ownerName,
           phone: safeVendor.phone,
           whatsapp: safeVendor.whatsapp,
