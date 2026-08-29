@@ -79,17 +79,34 @@ export const VendorRegistrationView: React.FC<VendorRegistrationViewProps> = ({
       setName(initialData.name || '');
       setOwnerName(initialData.ownerName || '');
       
-      const foundCategory = categories.find(c => c.slug === initialData.categorySlug);
-      if (foundCategory) setSelectedCategories([foundCategory]);
+      // Load Categories (Supports single or comma-separated lists)
+      if (initialData.categorySlug) {
+        const slugs = initialData.categorySlug.split(',').map(s => s.trim().toLowerCase());
+        const found = categories.filter(c => slugs.includes(c.slug.toLowerCase()));
+        setSelectedCategories(found);
+      } else if (initialData.category) {
+        const cats = initialData.category.split(',').map(s => s.trim().toLowerCase());
+        const found = categories.filter(c => cats.includes(c.name.toLowerCase()) || cats.includes(c.slug.toLowerCase()));
+        setSelectedCategories(found);
+      }
       
       setPhone(initialData.phone || '');
       setEmail(initialData.email || '');
       setWhatsapp(initialData.whatsapp || '');
       setAddress(initialData.address || '');
-      if (initialData.neighborhood) setNeighborhoodSearch(initialData.neighborhood);
+      
+      if (initialData.neighborhood) {
+        setNeighborhoodSearch(initialData.neighborhood);
+        const foundNeigh = HYDERABAD_NEIGHBORHOODS.find(n => n.name.toLowerCase() === initialData.neighborhood.toLowerCase());
+        if (foundNeigh) setSelectedNeighborhoods([foundNeigh]);
+      }
       
       setPincode(initialData.pincode || '');
       setDescription(initialData.description || '');
+      setExperience(initialData.experience || '');
+      setSuggestions(initialData.suggestions || '');
+      setReferenceName(initialData.referenceName || '');
+      setReferenceNumber(initialData.referenceNumber || '');
       setKeywords(initialData.keywords || '');
       setOperatingHours(initialData.operatingHours || '9:00 AM - 8:00 PM');
       
