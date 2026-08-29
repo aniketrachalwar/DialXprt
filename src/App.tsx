@@ -708,10 +708,10 @@ export default function App() {
     },
   ]);
 
-  // Load Vendors on Mount & Filter Change
+  // Load Vendors on Mount & Location/Role Change
   useEffect(() => {
     loadData();
-  }, [userLat, userLng, selectedCategory, selectedSubCategory, searchRadius, currentRole]);
+  }, [userLat, userLng, currentRole]);
 
   const loadData = async () => {
     setLoading(true);
@@ -719,10 +719,10 @@ export default function App() {
       const data = await fetchNearbyVendors(
         userLat,
         userLng,
-        selectedCategory,
+        "all", // Fetch ALL categories at once for instant client-side transitions
         "", // Client-side search filtering is used instead
         currentRole === "admin" || currentRole === "volunteer", // ONLY include pending if admin or volunteer
-        selectedSubCategory,
+        null, // Fetch ALL subcategories at once
         1000 // Always fetch a large radius (1000km) so we don't limit results, we just sort/group them
       );
       setVendors(data);
@@ -968,6 +968,21 @@ export default function App() {
       result = result.filter((v) => (v.rating || 4.5) > 4.2);
     }
 
+    // Category & Subcategory UI Filters (Ensure robust reactiveness)
+    if (selectedCategory && selectedCategory !== "all") {
+      result = result.filter(v => {
+        const slugStr = v.categorySlug || v.category || "";
+        const slugs = slugStr.split(',').map(s => s.trim().toLowerCase());
+        return slugs.includes(selectedCategory.toLowerCase());
+      });
+    }
+    if (selectedSubCategory) {
+      result = result.filter(v => {
+        const subSlugStr = v.subCategorySlug || "";
+        return subSlugStr.toLowerCase() === selectedSubCategory.toLowerCase();
+      });
+    }
+
     // Fuzzy Search & Relevance Scoring
     let scoredResult = result.map(v => ({ ...v, relevanceScore: 0 }));
     
@@ -1012,7 +1027,24 @@ export default function App() {
       }
       
       // 2. Fallback to normal sort
-      if (sortBy === "distance") return (a.distanceKm || 0) - (b.distanceKm || 0);
+      if (sortBy === "distance") {
+        const distA = a.distanceKm || 0;
+        const distB = b.distanceKm || 0;
+        const bucketA = Math.floor(distA / 1.5);
+        const bucketB = Math.floor(distB / 1.5);
+        
+        if (bucketA !== bucketB) {
+          return bucketA - bucketB;
+        }
+        
+        const ratingA = a.rating || 0;
+        const ratingB = b.rating || 0;
+        if (ratingB !== ratingA) {
+          return ratingB - ratingA;
+        }
+        
+        return distA - distB;
+      }
       if (sortBy === "rating") return (b.rating || 0) - (a.rating || 0);
       if (sortBy === "popular") return (b.reviewsCount || 0) - (a.reviewsCount || 0);
       return 0;
@@ -1022,7 +1054,7 @@ export default function App() {
     outsideRadius.sort(sortFn);
 
     return [...withinRadius, ...outsideRadius];
-  }, [vendors, verifiedOnly, openNowOnly, sortBy, searchRadius, searchQuery]);
+  }, [vendors, verifiedOnly, openNowOnly, sortBy, searchRadius, searchQuery, selectedCategory, selectedSubCategory]);
 
   const approvedVendors = processedVendors;
 
@@ -1165,6 +1197,9 @@ export default function App() {
               setSelectedVendorToEdit(v);
               setActiveTab("edit-vendor");
             }}
+            onOpenAddVendor={() => {
+              setActiveTab("add-vendor");
+            }}
             onExportCSV={handleExportCSV}
           />
         ) : activeTab === "offers" ? (
@@ -1186,6 +1221,22 @@ export default function App() {
               if (location.pathname !== "/") {
                 navigate("/");
               }
+            }}
+            currentLang={currentLang}
+          />
+        ) : activeTab === "add-vendor" ? (
+          <VendorRegistrationView
+            onBack={() => {
+              setActiveTab(currentRole === 'admin' || currentRole === 'volunteer' ? 'admin' : 'account');
+            }}
+            categories={categories}
+            userLat={userLat}
+            userLng={userLng}
+            currentNeighborhood={currentNeighborhood}
+            isEditMode={false}
+            onSubmit={async (vendorData) => {
+              await handleRegisterVendorSubmit(vendorData);
+              setActiveTab(currentRole === 'admin' || currentRole === 'volunteer' ? 'admin' : 'account');
             }}
             currentLang={currentLang}
           />
@@ -1329,8 +1380,8 @@ export default function App() {
                   </div>
                 )}
 
-                {/* Location & Category Results Header Bar */}
-                <div className="flex flex-col gap-3 bg-white p-4 rounded-2xl border border-gray-200 shadow-sm">
+                {/* Navigation & Results Info Bar */}
+                <div className="flex items-center justify-between gap-3 bg-white p-4 rounded-2xl border border-gray-200 shadow-sm">
                   <div className="flex items-center gap-3">
                     <button
                       onClick={() => {
@@ -1338,69 +1389,90 @@ export default function App() {
                         setSelectedSubCategory(null);
                         setSearchQuery("");
                       }}
-                      className="p-2.5 bg-gray-100 hover:bg-[#1A9E9E] hover:text-white text-gray-700 rounded-xl transition-all shrink-0 min-h-[44px] min-w-[44px] flex items-center justify-center font-bold"
+                      className="p-2 bg-gray-55 hover:bg-[#1A9E9E] hover:text-white text-gray-700 rounded-xl transition-all shrink-0 min-h-[40px] min-w-[40px] flex items-center justify-center font-bold border border-gray-200 active:scale-95 shadow-sm"
                       title={searchQuery ? "Back to All Services Grid" : "Back to Subcategories"}
                     >
                       <ArrowLeft className="w-5 h-5" />
                     </button>
-
                     <div>
-                      <div className="flex items-center gap-2 mt-2">
-                        {selectedCategory !== "all" && (
-                          <>
-                            <span className="text-xs font-bold text-[#F36F21] bg-orange-50 px-2.5 py-0.5 rounded-md border border-orange-200">
-                              {categories.find((c) => c.slug === selectedCategory)?.name || selectedCategory}
-                            </span>
-                            <span className="text-xs text-gray-400">•</span>
-                          </>
-                        )}
-                        <button 
-                          onClick={() => setIsLocationModalOpen(true)}
-                          className="text-xs text-gray-500 font-semibold flex items-center gap-1 hover:text-gray-900 transition-colors bg-white px-2 py-1 rounded-md border border-gray-200 shadow-sm"
-                        >
-                          <MapPin className="w-3.5 h-3.5 text-[#F36F21]" />{" "}
-                          {currentNeighborhood}, Hyderabad
-                        </button>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[10px] font-bold text-[#F36F21] bg-orange-50 px-2 py-0.5 rounded-md border border-orange-100 uppercase tracking-wider">
+                          {selectedCategory === "all" ? "Search" : (categories.find((c) => c.slug === selectedCategory)?.name || selectedCategory)}
+                        </span>
                       </div>
+                      <h2 className="text-sm font-black text-gray-900 mt-0.5 line-clamp-1">
+                        {searchQuery ? `"${searchQuery}"` : selectedSubCategory || "All Services"}
+                      </h2>
                     </div>
                   </div>
 
-                  {/* Filter & Sort Toolbar */}
-                  <div className="flex items-center gap-2 overflow-x-auto hide-scrollbar pt-2 border-t border-gray-100">
+                  <div className="flex items-center gap-2">
                     <select
                       value={sortBy}
                       onChange={(e) => setSortBy(e.target.value as any)}
-                      className="px-3 py-1.5 bg-white border border-gray-200 rounded-full text-xs font-bold text-gray-700 outline-none focus:ring-2 focus:ring-[#1A9E9E] shrink-0"
+                      className="px-3 py-1.5 bg-gray-50 border border-gray-200 rounded-full text-xs font-bold text-gray-700 outline-none focus:ring-2 focus:ring-[#1A9E9E] cursor-pointer"
                     >
-                      <option value="distance">Sort by: Distance</option>
+                      <option value="distance">Sort by: Nearby & Rating</option>
                       <option value="popular">Sort by: Popularity</option>
+                      <option value="rating">Sort by: Rating</option>
                     </select>
-
-                    <select
-                      value={searchRadius}
-                      onChange={(e) => setSearchRadius(Number(e.target.value))}
-                      className="px-3 py-1.5 bg-white border border-gray-200 rounded-full text-xs font-bold text-gray-700 outline-none focus:ring-2 focus:ring-[#1A9E9E] shrink-0"
-                    >
-                      <option value={2}>2 km</option>
-                      <option value={5}>5 km</option>
-                      <option value={10}>10 km</option>
-                    </select>
-
-                    <button
-                      onClick={() => setOpenNowOnly(!openNowOnly)}
-                      className={`px-3 py-1.5 rounded-full text-xs font-bold shrink-0 flex items-center gap-1 transition-colors border ${
-                        openNowOnly
-                          ? "bg-green-50 border-green-200 text-green-700"
-                          : "bg-white border-gray-200 text-gray-700 hover:bg-gray-50"
-                      }`}
-                    >
-                      <span
-                        className={`w-1.5 h-1.5 rounded-full ${openNowOnly ? "bg-green-500 animate-pulse" : "bg-gray-400"}`}
-                      ></span>
-                      Open Now
-                    </button>
-
                   </div>
+                </div>
+
+                {/* One-Line Location Detect Bar (Highlighted in User's Screenshot) */}
+                <div className="flex items-center gap-2 bg-white px-4 py-3 rounded-2xl border border-gray-200 shadow-sm text-sm font-semibold text-gray-700">
+                  <MapPin className="w-4 h-4 text-[#F36F21] shrink-0" />
+                  <span className="truncate">
+                    Results in <span className="font-bold text-gray-900">"{currentNeighborhood}, Hyderabad"</span>
+                  </span>
+                  <button 
+                    onClick={() => setIsLocationModalOpen(true)}
+                    className="ml-auto text-[#1A9E9E] hover:text-[#147B7B] font-black flex items-center gap-1 text-xs whitespace-nowrap active:scale-95 transition-all border border-cyan-100 hover:bg-cyan-50/50 px-2.5 py-1.5 rounded-lg"
+                  >
+                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
+                    </svg>
+                    Change
+                  </button>
+                </div>
+
+                {/* Filters Toolbar */}
+                <div className="flex items-center gap-2 overflow-x-auto hide-scrollbar bg-white px-4 py-2.5 rounded-2xl border border-gray-200 shadow-sm">
+                  <span className="text-xs font-bold text-gray-400 uppercase tracking-wider shrink-0 mr-1">Filters:</span>
+                  <select
+                    value={searchRadius}
+                    onChange={(e) => setSearchRadius(Number(e.target.value))}
+                    className="px-3 py-1.5 bg-gray-50 border border-gray-200 rounded-full text-xs font-bold text-gray-700 outline-none focus:ring-2 focus:ring-[#1A9E9E] shrink-0 cursor-pointer"
+                  >
+                    <option value={2}>Within 2 km</option>
+                    <option value={5}>Within 5 km</option>
+                    <option value={10}>Within 10 km</option>
+                  </select>
+
+                  <button
+                    onClick={() => setOpenNowOnly(!openNowOnly)}
+                    className={`px-3 py-1.5 rounded-full text-xs font-bold shrink-0 flex items-center gap-1 transition-colors border ${
+                      openNowOnly
+                        ? "bg-green-50 border-green-200 text-green-700"
+                        : "bg-gray-55 border-gray-200 text-gray-700 hover:bg-gray-100"
+                    }`}
+                  >
+                    <span
+                      className={`w-1.5 h-1.5 rounded-full ${openNowOnly ? "bg-green-500 animate-pulse" : "bg-gray-400"}`}
+                    ></span>
+                    Open Now
+                  </button>
+
+                  <button
+                    onClick={() => setVerifiedOnly(!verifiedOnly)}
+                    className={`px-3 py-1.5 rounded-full text-xs font-bold shrink-0 flex items-center gap-1 transition-colors border ${
+                      verifiedOnly
+                        ? "bg-blue-50 border-blue-200 text-blue-700"
+                        : "bg-gray-55 border-gray-200 text-gray-700 hover:bg-gray-100"
+                    }`}
+                  >
+                    Verified Only
+                  </button>
                 </div>
 
                 {/* Vendor Cards Grid */}

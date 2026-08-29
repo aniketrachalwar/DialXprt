@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Crown, Users, Store, Map, MessageSquare, Star } from 'lucide-react';
+import { Crown, Users, Store, Map, MessageSquare, Star, PlusCircle } from 'lucide-react';
 import { UserRoleAssignment, fetchUserRoles, grantUserRole, removeUserRole, fetchFeedback } from '../lib/adminApi';
 import { Vendor, FeedbackEntry } from '../types';
 import { fetchAllVendors } from '../lib/supabase';
@@ -12,11 +12,12 @@ interface AdminPanelViewProps {
   currentRole?: string;
   onUpdateVendorStatus?: (vendorId: string, status: "approved" | "pending" | "rejected", volunteerName: string, notes: string) => void | Promise<void>;
   onOpenEditVendor?: (vendor: Vendor) => void;
+  onOpenAddVendor?: () => void;
   onDeleteVendor?: (vendorId: string) => void;
   onExportCSV?: () => void;
 }
 
-export const AdminPanelView: React.FC<AdminPanelViewProps> = ({ currentRole = "admin", onUpdateVendorStatus, onOpenEditVendor, onDeleteVendor }) => {
+export const AdminPanelView: React.FC<AdminPanelViewProps> = ({ currentRole = "admin", onUpdateVendorStatus, onOpenEditVendor, onOpenAddVendor, onDeleteVendor }) => {
   const [activeTab, setActiveTab] = useState<'vendors' | 'roles' | 'sitemap' | 'feedback'>(currentRole === 'volunteer' ? 'vendors' : 'sitemap');
   
   // Data State
@@ -362,6 +363,12 @@ export const AdminPanelView: React.FC<AdminPanelViewProps> = ({ currentRole = "a
                   onChange={(e) => setVendorSearchQuery(e.target.value)}
                   className="bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 font-medium outline-none focus:border-purple-500 text-sm w-full sm:w-auto"
                 />
+                {onOpenAddVendor && (
+                  <button onClick={onOpenAddVendor} className="bg-purple-600 hover:bg-purple-700 text-white px-3.5 py-2 rounded-xl text-xs font-bold transition-colors flex items-center gap-1.5 shadow-sm">
+                    <PlusCircle className="w-4 h-4" />
+                    Add Business
+                  </button>
+                )}
                 <button onClick={handleExportExcel} className="bg-emerald-600 hover:bg-emerald-700 text-white px-3.5 py-2 rounded-xl text-xs font-bold transition-colors flex items-center gap-1.5 shadow-sm">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                   Export Excel
