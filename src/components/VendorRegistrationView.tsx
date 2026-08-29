@@ -169,16 +169,12 @@ export const VendorRegistrationView: React.FC<VendorRegistrationViewProps> = ({
 
   const handleSubmitForm = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name || !ownerName || selectedCategories.length === 0 || !experience || !neighborhoodSearch || !pincode || !phone) {
-      alert('Please fill in all required fields marked with *');
-      return;
-    }
 
     setLoading(true);
 
-    const categoryName = selectedCategories.map(c => c.name).join(', ');
-    const categorySlug = selectedCategories.map(c => c.slug).join(', ');
-    const finalNeighborhood = neighborhoodSearch;
+    const categoryName = selectedCategories.map(c => c?.name || '').filter(Boolean).join(', ') || 'Other';
+    const categorySlug = selectedCategories.map(c => c?.slug || '').filter(Boolean).join(', ') || 'other';
+    const finalNeighborhood = neighborhoodSearch || 'Madhapur';
 
     const finalImage =
       images[0] ||
@@ -186,17 +182,17 @@ export const VendorRegistrationView: React.FC<VendorRegistrationViewProps> = ({
 
     try {
       await onSubmit({
-        name: name || ownerName,
-        ownerName,
+        name: name || ownerName || 'Unnamed Business',
+        ownerName: ownerName || 'Anonymous Owner',
         category: categoryName,
         categorySlug,
-        phone,
+        phone: phone || '',
         email,
-        whatsapp: whatsapp || phone,
+        whatsapp: whatsapp || phone || '',
         address: address || finalNeighborhood,
         neighborhood: finalNeighborhood,
         city: 'Hyderabad',
-        pincode,
+        pincode: pincode || '500081',
         lat: locations[0]?.[0] || userLat,
         lng: locations[0]?.[1] || userLng,
         additionalLocations: locations.length > 1 ? locations.slice(1).map(pos => ({ lat: pos[0], lng: pos[1] })) : [],
@@ -206,7 +202,7 @@ export const VendorRegistrationView: React.FC<VendorRegistrationViewProps> = ({
         operatingHours,
         fullAddress: address,
         description,
-        experience,
+        experience: experience || 'N/A',
         suggestions,
         referenceName,
         referenceNumber,
@@ -249,13 +245,12 @@ export const VendorRegistrationView: React.FC<VendorRegistrationViewProps> = ({
           <div className="space-y-4 animate-fade-in">
             <div>
                 <label className="block text-xs font-bold text-gray-700 mb-1">
-                  Business Name *
+                  Business Name
                 </label>
                 <div className="relative mb-3">
                   <User className="w-4 h-4 text-gray-400 absolute left-3 top-3.5" />
                   <input
                     type="text"
-                    required
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     placeholder="Your Business Name"
@@ -266,13 +261,12 @@ export const VendorRegistrationView: React.FC<VendorRegistrationViewProps> = ({
 
               <div>
                 <label className="block text-xs font-bold text-gray-700 mb-1">
-                  Full Name/పేరు/नाम *
+                  Full Name/పేరు/नाम
                 </label>
                 <div className="relative">
                   <User className="w-4 h-4 text-gray-400 absolute left-3 top-3.5" />
                   <input
                     type="text"
-                    required
                     value={ownerName}
                     onChange={(e) => setOwnerName(e.target.value)}
                     placeholder="Your full name"
@@ -284,7 +278,7 @@ export const VendorRegistrationView: React.FC<VendorRegistrationViewProps> = ({
               {isEditMode ? (
                 <div ref={categorySearchRef} className="relative">
                   <label className="block text-xs font-bold text-gray-700 mb-1">
-                    Profession/వృత్తి/वृत्ति *
+                    Profession/వృత్తి/वृत्ति
                   </label>
                   
                   <div 
@@ -372,11 +366,10 @@ export const VendorRegistrationView: React.FC<VendorRegistrationViewProps> = ({
               ) : (
                 <div>
                   <label className="block text-xs font-bold text-gray-700 mb-1">
-                    Profession/వృత్తి/वृत्ति *
+                    Profession/వృత్తి/वृत्ति
                   </label>
                   <input
                     type="text"
-                    required
                     value={selectedCategories[0]?.name || ''}
                     onChange={(e) => {
                       const val = e.target.value;
@@ -399,11 +392,10 @@ export const VendorRegistrationView: React.FC<VendorRegistrationViewProps> = ({
 
               <div>
                 <label className="block text-xs font-bold text-gray-700 mb-1">
-                  Experience *
+                  Experience
                 </label>
                 <input
                   type="text"
-                  required
                   value={experience}
                   onChange={(e) => setExperience(e.target.value)}
                   placeholder="For Example :- 1yr, 10yr, 6 Months etc..."
@@ -482,11 +474,10 @@ export const VendorRegistrationView: React.FC<VendorRegistrationViewProps> = ({
 
               <div>
                 <label className="block text-xs font-bold text-gray-700 mb-1">
-                  Area/ప్రాంతం/क्षेत्र *
+                  Area/ప్రాంతం/क्षेत्र
                 </label>
                 <input
                   type="text"
-                  required
                   value={neighborhoodSearch}
                   onChange={(e) => setNeighborhoodSearch(e.target.value)}
                   placeholder="e.g. Madhapur, Gachibowli"
@@ -496,11 +487,10 @@ export const VendorRegistrationView: React.FC<VendorRegistrationViewProps> = ({
 
               <div>
                 <label className="block text-xs font-bold text-gray-700 mb-1">
-                  Pincode *
+                  Pincode
                 </label>
                 <input
                   type="text"
-                  required
                   value={pincode}
                   onChange={(e) => setPincode(e.target.value)}
                   placeholder="e.g. 500081"
@@ -511,7 +501,7 @@ export const VendorRegistrationView: React.FC<VendorRegistrationViewProps> = ({
               {isEditMode && (
                 <div>
                   <label className="block text-xs font-bold text-gray-700 mb-1">
-                    Exact Shop Location (GPS) *
+                    Exact Shop Location (GPS)
                   </label>
                   <div className="bg-teal-50 border border-teal-100 rounded-xl p-3">
                     <p className="text-xs text-teal-800 mb-3 font-medium">Please stand inside or right outside your shop/business and click the auto-detect button to capture your exact location.</p>
@@ -560,13 +550,12 @@ export const VendorRegistrationView: React.FC<VendorRegistrationViewProps> = ({
 
               <div>
                 <label className="block text-xs font-bold text-gray-700 mb-1">
-                  {t('phoneLabel')} *
+                  {t('phoneLabel')}
                 </label>
                 <div className="relative">
                   <Phone className="w-4 h-4 text-gray-400 absolute left-3 top-3.5" />
                   <input
                     type="tel"
-                    required
                     maxLength={10}
                     value={phone}
                     onChange={(e) => setPhone(e.target.value.replace(/\D/g, ''))}
@@ -665,7 +654,7 @@ export const VendorRegistrationView: React.FC<VendorRegistrationViewProps> = ({
               <div className="flex pt-4 mt-2">
                 <button
                   type="submit"
-                  disabled={loading || !phone || !ownerName || selectedCategories.length === 0 || !experience || !neighborhoodSearch || !pincode}
+                  disabled={loading}
                   className="w-full bg-[#F36F21] hover:bg-orange-600 text-white font-bold py-3 px-4 rounded-xl flex items-center justify-center gap-2 shadow-lg min-h-[48px] disabled:opacity-50"
                 >
                   {loading ? (

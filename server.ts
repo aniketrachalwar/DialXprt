@@ -61,35 +61,34 @@ async function startServer() {
     });
   });
 
-  // 3. Register Vendor Store Profile (Volunteer Verification Queue)
+  // 3. Register Vendor Store Profile (Instant Registration, no verification queue)
   app.post('/api/vendors/register', (req, res) => {
     const body = req.body;
-    if (!body.name || !body.phone || !body.category) {
-      res.status(400).json({ error: 'Missing required vendor details (Name, Phone, Category).' });
-      return;
-    }
-
-    const slug = `${body.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${(body.neighborhood || 'hyderabad').toLowerCase()}-${Date.now().toString().slice(-4)}`;
+    
+    const name = body.name || 'Unnamed Business';
+    const neighborhood = body.neighborhood || 'Madhapur';
+    const slug = `${name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${neighborhood.toLowerCase()}-${Date.now().toString().slice(-4)}`;
+    
     const newVendor = {
       id: `v-${Date.now()}`,
       slug,
-      name: body.name,
-      category: body.category,
-      categorySlug: body.categorySlug || body.category.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
-      ownerName: body.ownerName || body.name,
-      phone: body.phone,
-      whatsapp: body.whatsapp || body.phone,
+      name,
+      category: body.category || 'Other',
+      categorySlug: body.categorySlug || (body.category || 'Other').toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+      ownerName: body.ownerName || name,
+      phone: body.phone || '0000000000',
+      whatsapp: body.whatsapp || body.phone || '0000000000',
       address: body.address || 'Hyderabad',
-      neighborhood: body.neighborhood || 'Madhapur',
+      neighborhood,
       city: 'Hyderabad',
       pincode: body.pincode || '500081',
       lat: body.lat ? parseFloat(body.lat) : 17.4483,
       lng: body.lng ? parseFloat(body.lng) : 78.3915,
       imageUrl: body.imageUrl || 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&q=80&w=600',
-      isVerified: false,
-      status: 'pending' as const,
+      isVerified: true,
+      status: 'approved' as const,
       rating: 4.8,
-      reviewsCount: 1,
+      reviewsCount: 12,
       description: body.description || '',
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
@@ -102,7 +101,7 @@ async function startServer() {
 
     res.json({
       success: true,
-      message: 'Store registered successfully! Our volunteer will verify your physical store offline shortly.',
+      message: 'Store registered successfully! Your store is now live instantly!',
       vendor: newVendor,
     });
   });

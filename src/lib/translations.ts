@@ -56,7 +56,7 @@ export const TRANSLATIONS: Record<AppLanguage, Record<string, string>> = {
 
     // Registration Modal
     registerStoreTitle: "Register Your Shop or Service",
-    registerSubTitle: "Get verified by local volunteers and connect directly with Hyderabad customers with zero commission.",
+    registerSubTitle: "Manually fill business details to list instantly. Submissions are live immediately.",
     shopNameLabel: "Shop / Business Name",
     shopNamePlaceholder: "e.g. Sri Venkateswara Kirana & General Store",
     categoryLabel: "Service Category",
@@ -185,8 +185,8 @@ export const TRANSLATIONS: Record<AppLanguage, Record<string, string>> = {
     realtimeSync: "Just now • DialXprt Real-Time Sync",
     welcomeTitle: "Welcome to DialXprt Hyderabad!",
     welcomeMessage: "Find local plumbers, electricians & verified Kirana stores near you instantly.",
-    storeSubmittedTitle: "Store Submitted for Verification!",
-    storeSubmittedMessage: "Your business is registered. A DialXprt volunteer will verify offline shortly.",
+    storeSubmittedTitle: "Store Registered & Live!",
+    storeSubmittedMessage: "Your business is registered and live instantly on DialXprt.",
     storeVerifiedTitle: "Store Verified & Live!",
 
     // Results Header Bar
@@ -266,7 +266,7 @@ export const TRANSLATIONS: Record<AppLanguage, Record<string, string>> = {
 
     // Registration Modal
     registerStoreTitle: "మీ షాప్ లేదా సేవను నమోదు చేయండి",
-    registerSubTitle: "స్థానిక వాలంటీర్లచే ధృవీకరించబడండి మరియు కమీషన్ లేకుండా నేరుగా కస్టమర్‌లకు కనెక్ట్ అవ్వండి.",
+    registerSubTitle: "తక్షణమే జాబితా చేయడానికి వ్యాపార వివరాలను మాన్యువల్‌గా పూరించండి. సమర్పణలు వెంటనే ప్రత్యక్షమవుతాయి.",
     shopNameLabel: "షాప్ / వ్యాపారం పేరు",
     shopNamePlaceholder: "ఉదా. శ్రీ వెంకటేశ్వర కిరాణా స్టోర్",
     categoryLabel: "సేవా విభాగం",
@@ -378,8 +378,8 @@ export const TRANSLATIONS: Record<AppLanguage, Record<string, string>> = {
     realtimeSync: "ఇప్పుడే • డైల్ ఎక్స్‌పర్ట్ లైవ్ సింక్",
     welcomeTitle: "డైల్ ఎక్స్‌పర్ట్ హైదరాబాద్‌కి స్వాగతం!",
     welcomeMessage: "మీ సమీపంలో ఉన్న ప్లంబర్లు, ఎలక్ట్రీషియన్లు మరియు కిరాణా షాపులను కనుగొనండి.",
-    storeSubmittedTitle: "షాప్ ధృవీకరణ కోసం సమర్పించబడింది!",
-    storeSubmittedMessage: "మీ వ్యాపారం నమోదు చేయబడింది. వాలంటీర్ ఆఫ్‌లైన్ ధృవీకరణ చేస్తారు.",
+    storeSubmittedTitle: "షాప్ విజయవంతంగా నమోదైంది & లైవ్ చేయబడింది!",
+    storeSubmittedMessage: "మీ వ్యాపారం విజయవంతంగా నమోదైంది మరియు డయల్ ఎక్స్‌పర్ట్‌లో తక్షణమే ప్రత్యక్షంగా ఉంది.",
     storeVerifiedTitle: "షాప్ ధృవీకరించబడింది & ప్రత్యక్షమైంది!",
 
     // Results Header Bar
@@ -459,7 +459,7 @@ export const TRANSLATIONS: Record<AppLanguage, Record<string, string>> = {
 
     // Registration Modal
     registerStoreTitle: "अपनी दुकान या सेवा पंजीकृत करें",
-    registerSubTitle: "स्थानीय स्वयंसेवकों द्वारा सत्यापित हों और बिना किसी कमीशन के ग्राहकों से सीधे जुड़ें।",
+    registerSubTitle: "तुरंत सूचीबद्ध करने के लिए व्यावसायिक विवरण मैन्युअल रूप से भरें। सबमिशन तुरंत लाइव हो जाते हैं।",
     shopNameLabel: "दुकान / व्यवसाय का नाम",
     shopNamePlaceholder: "जैसे श्री वेंकटेश्वर किराना स्टोर",
     categoryLabel: "सेवा श्रेणी",
@@ -571,8 +571,8 @@ export const TRANSLATIONS: Record<AppLanguage, Record<string, string>> = {
     realtimeSync: "अभी • डायल एक्सपर्ट लाइव सिंक",
     welcomeTitle: "डायल एक्सपर्ट हैदराबाद में आपका स्वागत है!",
     welcomeMessage: "अपने पास के प्लंबर, इलेक्ट्रीशियन और किराना दुकानें तुरंत खोजें।",
-    storeSubmittedTitle: "दुकान सत्यापन के लिए जमा की गई!",
-    storeSubmittedMessage: "आपका व्यवसाय पंजीकृत है। वोलंटियर जल्द ही ऑफ़लाइन सत्यापन करेगा।",
+    storeSubmittedTitle: "दुकान सफलतापूर्वक पंजीकृत और लाइव!",
+    storeSubmittedMessage: "आपका व्यवसाय पंजीकृत है और डायलएक्सपर्ट पर तुरंत लाइव है।",
     storeVerifiedTitle: "दुकान सत्यापित और लाइव!",
 
     // Results Header Bar
