@@ -821,7 +821,6 @@ export default function App() {
     }));
   };
 
-  // Business Onboarding Submission
   const handleRegisterVendorSubmit = async (
     vendorData: Omit<
       Vendor,
@@ -837,12 +836,13 @@ export default function App() {
       | "callsCount"
       | "whatsappClicksCount"
     >,
+    autoApprove: boolean = false,
   ) => {
     const finalVendorData = { ...vendorData };
     if (userEmail) {
       finalVendorData.email = userEmail;
     }
-    const newVendor = await registerVendor(finalVendorData);
+    const newVendor = await registerVendor(finalVendorData, autoApprove);
     
     // Do NOT await loadData, let it run in background so UI unblocks instantly
     loadData();
@@ -1235,7 +1235,7 @@ export default function App() {
             currentNeighborhood={currentNeighborhood}
             isEditMode={false}
             onSubmit={async (vendorData) => {
-              await handleRegisterVendorSubmit(vendorData);
+              await handleRegisterVendorSubmit(vendorData, true);
               setActiveTab(currentRole === 'admin' || currentRole === 'volunteer' ? 'admin' : 'account');
             }}
             currentLang={currentLang}

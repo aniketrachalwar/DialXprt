@@ -158,7 +158,10 @@ export async function fetchNearbyVendors(
 /**
  * Register a new Store for Volunteer Verification
  */
-export async function registerVendor(vendorData: Omit<Vendor, 'id' | 'slug' | 'createdAt' | 'updatedAt' | 'status' | 'isVerified' | 'rating' | 'reviewsCount' | 'viewsCount' | 'callsCount' | 'whatsappClicksCount'>): Promise<Vendor> {
+export async function registerVendor(
+  vendorData: Omit<Vendor, 'id' | 'slug' | 'createdAt' | 'updatedAt' | 'status' | 'isVerified' | 'rating' | 'reviewsCount' | 'viewsCount' | 'callsCount' | 'whatsappClicksCount'>,
+  autoApprove: boolean = false
+): Promise<Vendor> {
   const slug = `${vendorData.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${vendorData.neighborhood.toLowerCase()}-${Date.now().toString().slice(-4)}`;
   const now = new Date().toISOString();
 
@@ -166,8 +169,8 @@ export async function registerVendor(vendorData: Omit<Vendor, 'id' | 'slug' | 'c
     ...vendorData,
     id: `v-${Date.now()}`,
     slug,
-    isVerified: false,
-    status: 'pending',
+    isVerified: autoApprove,
+    status: autoApprove ? 'approved' : 'pending',
     rating: 0,
     reviewsCount: 0,
     viewsCount: 0,
@@ -199,8 +202,8 @@ export async function registerVendor(vendorData: Omit<Vendor, 'id' | 'slug' | 'c
           suggestions: newVendor.suggestions,
           reference_name: newVendor.referenceName,
           reference_number: newVendor.referenceNumber,
-          status: 'pending',
-          is_verified: false,
+          status: autoApprove ? 'approved' : 'pending',
+          is_verified: autoApprove,
         },
       ]);
       // Timeout after 2.5 seconds to prevent hanging if Supabase is down or slow

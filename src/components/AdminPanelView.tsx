@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Crown, Users, Store, Map, MessageSquare, Star, PlusCircle } from 'lucide-react';
+import { Crown, Users, Store, MessageSquare, Star, PlusCircle } from 'lucide-react';
 import { UserRoleAssignment, fetchUserRoles, grantUserRole, removeUserRole, fetchFeedback } from '../lib/adminApi';
 import { Vendor, FeedbackEntry } from '../types';
 import { fetchAllVendors } from '../lib/supabase';
-import { SiteMapTowers } from './SiteMapTowers';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
@@ -18,7 +17,7 @@ interface AdminPanelViewProps {
 }
 
 export const AdminPanelView: React.FC<AdminPanelViewProps> = ({ currentRole = "admin", onUpdateVendorStatus, onOpenEditVendor, onOpenAddVendor, onDeleteVendor }) => {
-  const [activeTab, setActiveTab] = useState<'vendors' | 'roles' | 'sitemap' | 'feedback'>(currentRole === 'volunteer' ? 'vendors' : 'sitemap');
+  const [activeTab, setActiveTab] = useState<'vendors' | 'roles' | 'feedback'>('vendors');
   
   // Data State
   const [roles, setRoles] = useState<UserRoleAssignment[]>([]);
@@ -283,11 +282,6 @@ export const AdminPanelView: React.FC<AdminPanelViewProps> = ({ currentRole = "a
 
       {/* Navigation Tabs */}
       <div className="flex gap-2 overflow-x-auto bg-white p-2 rounded-2xl shadow-sm border border-gray-100 no-scrollbar">
-        {currentRole === 'admin' && (
-          <button onClick={() => setActiveTab('sitemap')} className={`flex items-center gap-2 px-5 py-3 rounded-xl font-bold transition-colors whitespace-nowrap ${activeTab === 'sitemap' ? 'bg-purple-100 text-purple-700' : 'hover:bg-gray-50 text-gray-600'}`}>
-            <Map className="w-5 h-5" /> Site Map (Errors)
-          </button>
-        )}
         <button onClick={() => setActiveTab('vendors')} className={`flex items-center gap-2 px-5 py-3 rounded-xl font-bold transition-colors whitespace-nowrap ${activeTab === 'vendors' ? 'bg-purple-100 text-purple-700' : 'hover:bg-gray-50 text-gray-600'}`}>
           <Store className="w-5 h-5" /> Vendor Leads & Data
         </button>
@@ -343,11 +337,6 @@ export const AdminPanelView: React.FC<AdminPanelViewProps> = ({ currentRole = "a
               </div>
             )}
           </div>
-        )}
-
-        {/* SITEMAP TAB */}
-        {activeTab === 'sitemap' && (
-          <SiteMapTowers />
         )}
 
         {/* VENDORS TAB */}
