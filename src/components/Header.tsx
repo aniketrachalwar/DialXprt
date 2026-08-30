@@ -68,16 +68,29 @@ export const Header: React.FC<HeaderProps> = ({
       <div className="max-w-7xl mx-auto px-2.5 sm:px-4 py-3">
         <div className={`flex items-center justify-between gap-1.5 sm:gap-2 ${children ? 'mb-3' : ''}`}>
           {/* Logo Section - Navigates Home */}
-          <div
-            id="header-logo-home-btn"
-            className="flex items-center gap-1.5 cursor-pointer hover:opacity-90 transition-opacity shrink-0"
-            onClick={onGoHome}
-            title={t('homeTab')}
-          >
-            <Logo variant="white" size="md" />
-            <span className="text-[9px] sm:text-[10px] bg-[#F36F21] text-white font-black px-1.5 py-0.5 rounded uppercase tracking-wider self-start mt-0.5 shadow-sm">
-              HYD
-            </span>
+          <div className="flex items-center gap-2">
+            <div
+              id="header-logo-home-btn"
+              className="flex items-center gap-1.5 cursor-pointer hover:opacity-90 transition-opacity shrink-0"
+              onClick={onGoHome}
+              title={t('homeTab')}
+            >
+              <Logo variant="white" size="md" />
+              <span className="text-[9px] sm:text-[10px] bg-[#F36F21] text-white font-black px-1.5 py-0.5 rounded uppercase tracking-wider self-start mt-0.5 shadow-sm">
+                HYD
+              </span>
+            </div>
+
+            {/* Location Selector Button */}
+            <button
+              onClick={onOpenLocationModal}
+              className="flex items-center gap-1 text-[11px] sm:text-xs font-semibold bg-white/10 hover:bg-white/20 active:scale-95 transition-all py-1 px-2.5 rounded-full border border-white/20 max-w-[150px] sm:max-w-[200px] cursor-pointer shrink-0"
+              title={t('selectLocationTitle') || 'Change Location'}
+            >
+              <MapPin className="w-3.5 h-3.5 text-[#F36F21] shrink-0" />
+              <span className="truncate">{currentNeighborhood}</span>
+              <ChevronDown className="w-3 h-3 opacity-70 shrink-0" />
+            </button>
           </div>
 
           {/* Optional Compact Search Bar (Sticky Mode) */}

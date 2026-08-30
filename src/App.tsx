@@ -381,13 +381,14 @@ export default function App() {
     const isKnownTabRoute = ['/list-business', '/account', '/categories', '/offers', '/admin'].includes(location.pathname);
     
     if (activeTab === 'home' && !staticRoute && !selectedVendorSlug && !isExpertRoute && !isStaticRoute && !isKnownTabRoute) {
-      if (currentNeighborhood && selectedCategory && selectedCategory !== "all") {
-        const newPath = `/hyderabad/${encodeURIComponent(currentNeighborhood.toLowerCase())}/${encodeURIComponent(selectedCategory)}`;
-        if (location.pathname !== newPath) {
-          navigate(newPath);
+      if (currentNeighborhood) {
+        const categoryPart = selectedCategory && selectedCategory !== "all" ? `/${encodeURIComponent(selectedCategory)}` : "";
+        const newPath = `/hyderabad/${encodeURIComponent(currentNeighborhood.toLowerCase())}${categoryPart}`;
+        if (location.pathname.startsWith('/hyderabad') || (selectedCategory && selectedCategory !== "all")) {
+          if (location.pathname !== newPath) {
+            navigate(newPath);
+          }
         }
-      } else if (selectedCategory === "all" && location.pathname !== "/" && !location.pathname.startsWith("/hyderabad")) {
-        navigate("/");
       }
     } else if (activeTab === 'register-vendor' && location.pathname !== '/list-business' && !isKnownTabRoute) {
       navigate('/list-business');
@@ -769,7 +770,8 @@ export default function App() {
           localStorage.setItem('dialxprt_selected_location_v1', JSON.stringify({
             name: defaultHood.name,
             lat: defaultHood.lat,
-            lng: defaultHood.lng
+            lng: defaultHood.lng,
+            isManual: false
           }));
           addNotification({
             title: "Out of Service Area",
@@ -783,7 +785,8 @@ export default function App() {
           localStorage.setItem('dialxprt_selected_location_v1', JSON.stringify({
             name: closest.name,
             lat: latitude,
-            lng: longitude
+            lng: longitude,
+            isManual: false
           }));
           addNotification({
             title: "Location Auto-Detected",
@@ -802,6 +805,25 @@ export default function App() {
     );
   };
 
+  // Auto-detect location on initial load if no manual location selection exists
+  useEffect(() => {
+    try {
+      const savedStr = localStorage.getItem('dialxprt_selected_location_v1');
+      if (savedStr) {
+        const saved = JSON.parse(savedStr);
+        if (saved && saved.isManual) {
+          // User manually chose a location, do not override
+          return;
+        }
+      }
+    } catch (_) {}
+
+    // No manual location is saved. If geolocation is supported, auto-detect on startup
+    if (navigator.geolocation) {
+      handleAutoDetectGPS();
+    }
+  }, []);
+
   // Auto-detect on category selection if not already detected
   useEffect(() => {
     if (!isAutoDetected && navigator.geolocation && selectedCategory !== "all") {
@@ -817,7 +839,8 @@ export default function App() {
     localStorage.setItem('dialxprt_selected_location_v1', JSON.stringify({
       name: n.name,
       lat: n.lat,
-      lng: n.lng
+      lng: n.lng,
+      isManual: true
     }));
   };
 
