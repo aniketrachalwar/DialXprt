@@ -22,6 +22,7 @@ interface HeaderProps {
   renderCompactSearch?: React.ReactNode;
   onOpenLanguage: () => void;
   children?: React.ReactNode;
+  showLocationPicker?: boolean;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -41,7 +42,8 @@ export const Header: React.FC<HeaderProps> = ({
   onLanguageChange,
   renderCompactSearch,
   onOpenLanguage,
-  children
+  children,
+  showLocationPicker = true
 }) => {
   const t = (key: string) => getTranslation(currentLang, key);
 
@@ -82,15 +84,17 @@ export const Header: React.FC<HeaderProps> = ({
             </div>
 
             {/* Location Selector Button */}
-            <button
-              onClick={onOpenLocationModal}
-              className="flex items-center gap-1 text-[11px] sm:text-xs font-semibold bg-white/10 hover:bg-white/20 active:scale-95 transition-all py-1 px-2.5 rounded-full border border-white/20 max-w-[150px] sm:max-w-[200px] cursor-pointer shrink-0"
-              title={t('selectLocationTitle') || 'Change Location'}
-            >
-              <MapPin className="w-3.5 h-3.5 text-[#F36F21] shrink-0" />
-              <span className="truncate">{currentNeighborhood}</span>
-              <ChevronDown className="w-3 h-3 opacity-70 shrink-0" />
-            </button>
+            {showLocationPicker && (
+              <button
+                onClick={onOpenLocationModal}
+                className="flex items-center gap-1 text-[11px] sm:text-xs font-semibold bg-white/10 hover:bg-white/20 active:scale-95 transition-all py-1 px-2.5 rounded-full border border-white/20 max-w-[150px] sm:max-w-[200px] cursor-pointer shrink-0"
+                title={t('selectLocationTitle') || 'Change Location'}
+              >
+                <MapPin className="w-3.5 h-3.5 text-[#F36F21] shrink-0" />
+                <span className="truncate">{currentNeighborhood}</span>
+                <ChevronDown className="w-3 h-3 opacity-70 shrink-0" />
+              </button>
+            )}
           </div>
 
           {/* Optional Compact Search Bar (Sticky Mode) */}

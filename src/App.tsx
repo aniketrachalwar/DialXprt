@@ -805,31 +805,14 @@ export default function App() {
     );
   };
 
-  // Auto-detect location on initial load if no manual location selection exists
+  // Auto-detect on category selection or search if not already detected
   useEffect(() => {
-    try {
-      const savedStr = localStorage.getItem('dialxprt_selected_location_v1');
-      if (savedStr) {
-        const saved = JSON.parse(savedStr);
-        if (saved && saved.isManual) {
-          // User manually chose a location, do not override
-          return;
-        }
-      }
-    } catch (_) {}
-
-    // No manual location is saved. If geolocation is supported, auto-detect on startup
-    if (navigator.geolocation) {
+    const hasSearch = searchQuery && searchQuery.trim() !== "";
+    const hasCategory = selectedCategory && selectedCategory !== "all";
+    if (!isAutoDetected && navigator.geolocation && (hasCategory || hasSearch)) {
       handleAutoDetectGPS();
     }
-  }, []);
-
-  // Auto-detect on category selection if not already detected
-  useEffect(() => {
-    if (!isAutoDetected && navigator.geolocation && selectedCategory !== "all") {
-      handleAutoDetectGPS();
-    }
-  }, [selectedCategory, isAutoDetected]);
+  }, [selectedCategory, searchQuery, isAutoDetected]);
 
   const handleSelectNeighborhood = (n: Neighborhood) => {
     setUserLat(n.lat);
@@ -1123,6 +1106,7 @@ export default function App() {
         currentLang={currentLang}
         onLanguageChange={handleLanguageChange}
         renderCompactSearch={undefined}
+        showLocationPicker={!(activeTab === "home" && selectedCategory === "all" && !searchQuery)}
       >
         {activeTab === "home" && (
           <div className="space-y-4 px-3 sm:px-0">
