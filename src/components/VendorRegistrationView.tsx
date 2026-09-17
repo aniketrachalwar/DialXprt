@@ -219,29 +219,22 @@ export const VendorRegistrationView: React.FC<VendorRegistrationViewProps> = ({
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-slate-50 to-blue-50/50 pb-24 font-sans animate-fade-in flex flex-col">
-      {/* Premium Header: Orange & Blue Branding */}
       <div className="bg-gradient-to-r from-[#0F5C5C] via-[#1E3A8A] to-[#0F5C5C] text-white px-4 py-4 sticky top-0 z-40 shadow-lg border-b border-orange-400/30">
-        <div className="max-w-xl mx-auto flex items-center justify-between gap-3">
-          <div className="flex items-center gap-3">
-            <button 
-              type="button"
-              onClick={onBack}
-              className="p-2 -ml-1 hover:bg-white/10 rounded-full transition-colors active:scale-95 text-white"
-            >
-              <ChevronLeft className="w-6 h-6" />
-            </button>
-            <div>
-              <h1 className="text-xl font-black leading-tight flex items-center gap-2">
-                <span>{isEditMode ? 'Edit Business Listing' : 'Register Your Shop or Service'}</span>
-                <Sparkles className="w-4 h-4 text-amber-300 animate-pulse" />
-              </h1>
-              <p className="text-xs text-orange-200 font-medium">Free 100% Instant Business Verification & Leads</p>
-            </div>
+        <div className="max-w-xl mx-auto flex items-center gap-3">
+          <button 
+            type="button"
+            onClick={onBack}
+            className="p-2 -ml-1 hover:bg-white/10 rounded-full transition-colors active:scale-95 text-white"
+          >
+            <ChevronLeft className="w-6 h-6" />
+          </button>
+          <div>
+            <h1 className="text-xl font-black leading-tight flex items-center gap-2">
+              <span>{isEditMode ? 'Edit Business Listing' : 'Register Your Shop or Service'}</span>
+              <Sparkles className="w-4 h-4 text-amber-300 animate-pulse" />
+            </h1>
+            <p className="text-xs text-orange-200 font-medium">Free 100% Instant Business Verification & Leads</p>
           </div>
-
-          <span className="bg-[#F36F21] text-white font-extrabold text-[11px] px-3 py-1 rounded-full uppercase tracking-wider shadow-md hidden sm:inline-block">
-            NO GOOGLE FORM NEEDED
-          </span>
         </div>
       </div>
 
