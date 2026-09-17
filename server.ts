@@ -87,7 +87,7 @@ async function startServer() {
       lng: body.lng ? parseFloat(body.lng) : 78.3915,
       imageUrl: body.imageUrl || 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&q=80&w=600',
       isVerified: autoApprove,
-      status: autoApprove ? 'approved' : 'pending',
+      status: (autoApprove ? 'approved' : 'pending') as 'approved' | 'pending' | 'rejected',
       rating: 4.8,
       reviewsCount: 0,
       description: body.description || '',
