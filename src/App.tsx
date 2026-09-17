@@ -851,15 +851,26 @@ export default function App() {
     }
     const newVendor = await registerVendor(finalVendorData, autoApprove);
     
-    // Do NOT await loadData, let it run in background so UI unblocks instantly
+    // Refresh live list
     loadData();
 
-    addNotification({
-      title: "Store Live Successfully!",
-      message: `Your business '${newVendor.name}' is registered and is now live on DialXprt instantly!`,
-      type: "approval",
-      storeId: newVendor.id,
-    });
+    if (autoApprove) {
+      addNotification({
+        title: "Store Live Successfully!",
+        message: `Your business '${newVendor.name}' is registered and live on DialXprt!`,
+        type: "approval",
+        storeId: newVendor.id,
+      });
+      alert(`🎉 Store '${newVendor.name}' registered & approved successfully!`);
+    } else {
+      addNotification({
+        title: "Registration Pending Volunteer Review!",
+        message: `Your business '${newVendor.name}' is submitted and pending volunteer verification.`,
+        type: "system",
+        storeId: newVendor.id,
+      });
+      alert(`✅ Business Registration Submitted!\n\nYour business '${newVendor.name}' has been submitted successfully.\n\nOur local Hyderabad volunteer team will review & verify your shop details shortly. Once approved, your listing will be live for all customers.`);
+    }
   };
 
   // Volunteer / Admin Status Action
@@ -1222,7 +1233,7 @@ export default function App() {
             currentNeighborhood={currentNeighborhood}
             isEditMode={false}
             onSubmit={async (vendorData) => {
-              await handleRegisterVendorSubmit(vendorData, true);
+              await handleRegisterVendorSubmit(vendorData, currentRole === 'admin' || currentRole === 'volunteer');
               setActiveTab(currentRole === 'admin' || currentRole === 'volunteer' ? 'admin' : 'account');
             }}
             currentLang={currentLang}

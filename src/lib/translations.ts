@@ -56,7 +56,7 @@ export const TRANSLATIONS: Record<AppLanguage, Record<string, string>> = {
 
     // Registration Modal
     registerStoreTitle: "Register Your Shop or Service",
-    registerSubTitle: "Manually fill business details to list instantly. Submissions are live immediately.",
+    registerSubTitle: "Fill business details to register. Submissions are reviewed & verified by our local volunteer team before going live.",
     shopNameLabel: "Shop / Business Name",
     shopNamePlaceholder: "e.g. Sri Venkateswara Kirana & General Store",
     categoryLabel: "Service Category",
@@ -266,7 +266,7 @@ export const TRANSLATIONS: Record<AppLanguage, Record<string, string>> = {
 
     // Registration Modal
     registerStoreTitle: "మీ షాప్ లేదా సేవను నమోదు చేయండి",
-    registerSubTitle: "తక్షణమే జాబితా చేయడానికి వ్యాపార వివరాలను మాన్యువల్‌గా పూరించండి. సమర్పణలు వెంటనే ప్రత్యక్షమవుతాయి.",
+    registerSubTitle: "నమోదు చేయడానికి వ్యాపార వివరాలను పూరించండి. ప్రత్యక్ష ప్రసారం చేయడానికి ముందు స్థానిక వాలంటీర్ బృందం ద్వారా తనిఖీ చేయబడుతుంది.",
     shopNameLabel: "షాప్ / వ్యాపారం పేరు",
     shopNamePlaceholder: "ఉదా. శ్రీ వెంకటేశ్వర కిరాణా స్టోర్",
     categoryLabel: "సేవా విభాగం",
@@ -459,7 +459,7 @@ export const TRANSLATIONS: Record<AppLanguage, Record<string, string>> = {
 
     // Registration Modal
     registerStoreTitle: "अपनी दुकान या सेवा पंजीकृत करें",
-    registerSubTitle: "तुरंत सूचीबद्ध करने के लिए व्यावसायिक विवरण मैन्युअल रूप से भरें। सबमिशन तुरंत लाइव हो जाते हैं।",
+    registerSubTitle: "पंजीकृत करने के लिए व्यावसायिक विवरण भरें। लाइव होने से पहले हमारी स्थानीय स्वयंसेवक टीम द्वारा सत्यापन किया जाएगा।",
     shopNameLabel: "दुकान / व्यवसाय का नाम",
     shopNamePlaceholder: "जैसे श्री वेंकटेश्वर किराना स्टोर",
     categoryLabel: "सेवा श्रेणी",

@@ -64,6 +64,7 @@ async function startServer() {
   // 3. Register Vendor Store Profile (Instant Registration, no verification queue)
   app.post('/api/vendors/register', (req, res) => {
     const body = req.body;
+    const autoApprove = body.autoApprove === true;
     
     const name = body.name || 'Unnamed Business';
     const neighborhood = body.neighborhood || 'Madhapur';
@@ -85,10 +86,10 @@ async function startServer() {
       lat: body.lat ? parseFloat(body.lat) : 17.4483,
       lng: body.lng ? parseFloat(body.lng) : 78.3915,
       imageUrl: body.imageUrl || 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&q=80&w=600',
-      isVerified: true,
-      status: 'approved' as const,
+      isVerified: autoApprove,
+      status: autoApprove ? 'approved' : 'pending',
       rating: 4.8,
-      reviewsCount: 12,
+      reviewsCount: 0,
       description: body.description || '',
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
@@ -101,7 +102,9 @@ async function startServer() {
 
     res.json({
       success: true,
-      message: 'Store registered successfully! Your store is now live instantly!',
+      message: autoApprove 
+        ? 'Store registered and live instantly!' 
+        : 'Store registration submitted successfully! Pending volunteer verification.',
       vendor: newVendor,
     });
   });

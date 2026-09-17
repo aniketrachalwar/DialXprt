@@ -160,7 +160,7 @@ export async function fetchNearbyVendors(
  */
 export async function registerVendor(
   vendorData: Omit<Vendor, 'id' | 'slug' | 'createdAt' | 'updatedAt' | 'status' | 'isVerified' | 'rating' | 'reviewsCount' | 'viewsCount' | 'callsCount' | 'whatsappClicksCount'>,
-  autoApprove: boolean = true
+  autoApprove: boolean = false
 ): Promise<Vendor> {
   const name = vendorData.name || 'Unnamed Business';
   const neighborhood = vendorData.neighborhood || 'Madhapur';
@@ -183,10 +183,10 @@ export async function registerVendor(
     lng: vendorData.lng || 78.3915,
     id: `v-${Date.now()}`,
     slug,
-    isVerified: true,
-    status: 'approved',
+    isVerified: autoApprove,
+    status: autoApprove ? 'approved' : 'pending',
     rating: 4.8,
-    reviewsCount: 12,
+    reviewsCount: 0,
     viewsCount: 0,
     callsCount: 0,
     whatsappClicksCount: 0,
@@ -216,8 +216,8 @@ export async function registerVendor(
           suggestions: newVendor.suggestions,
           reference_name: newVendor.referenceName,
           reference_number: newVendor.referenceNumber,
-          status: 'approved',
-          is_verified: true,
+          status: newVendor.status,
+          is_verified: newVendor.isVerified,
         },
       ]);
       // Timeout after 2.5 seconds to prevent hanging if Supabase is down or slow
