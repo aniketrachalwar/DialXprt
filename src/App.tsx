@@ -50,7 +50,6 @@ import { LoadingSpinner } from "./components/LoadingSpinner";
 
 // Lazy-loaded views
 const VendorRegistrationView = React.lazy(() => import('./components/VendorRegistrationView').then(m => ({ default: m.VendorRegistrationView })));
-const GoogleFormRegistrationView = React.lazy(() => import('./components/GoogleFormRegistrationView').then(m => ({ default: m.GoogleFormRegistrationView })));
 const AccountView = React.lazy(() => import('./components/AccountView').then(m => ({ default: m.AccountView })));
 const UserProfileEditView = React.lazy(() => import('./components/UserProfileEditView').then(m => ({ default: m.UserProfileEditView })));
 const AdminPanelView = React.lazy(() => import('./components/AdminPanelView').then(m => ({ default: m.AdminPanelView })));
@@ -1212,20 +1211,13 @@ export default function App() {
             onBack={() => setActiveTab("home")}
             currentLang={currentLang}
           />
-        ) : activeTab === "register-vendor" ? (
-          <GoogleFormRegistrationView
+        ) : (activeTab === "register-vendor" || activeTab === "add-vendor") ? (
+          <VendorRegistrationView
             onBack={() => {
-              setActiveTab("home");
+              setActiveTab(currentRole === 'admin' || currentRole === 'volunteer' ? 'admin' : 'home');
               if (location.pathname !== "/") {
                 navigate("/");
               }
-            }}
-            currentLang={currentLang}
-          />
-        ) : activeTab === "add-vendor" ? (
-          <VendorRegistrationView
-            onBack={() => {
-              setActiveTab(currentRole === 'admin' || currentRole === 'volunteer' ? 'admin' : 'account');
             }}
             categories={categories}
             userLat={userLat}
