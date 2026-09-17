@@ -13,9 +13,9 @@ export const CustomerServiceView: React.FC<CustomerServiceViewProps> = ({ onBack
   const [phone, setPhone] = useState('');
   const [message, setMessage] = useState('');
   
-  const adminPhone = '7878616178';
+  const adminPhone = '7068696869';
   const adminEmail = 'dialxprt@gmail.com';
-  const waSupportUrl = `https://wa.me/917878616178?text=${encodeURIComponent('Hi DialXprt Support, I need help.')}`;
+  const waSupportUrl = `https://wa.me/917068696869?text=${encodeURIComponent('Hi DialXprt Support, I need help.')}`;
 
   const faqs = [
     {

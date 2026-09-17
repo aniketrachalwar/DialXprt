@@ -16,6 +16,7 @@ import { NotificationToast } from "./components/NotificationToast";
 import { Footer } from "./components/Footer";
 import { RightStickyBar } from "./components/RightStickyBar";
 import { fetchUserRoles } from "./lib/adminApi";
+import { chunkData, downloadVendorsCSVChunk } from "./utils/exportUtils";
 
 import {
   Vendor,
@@ -926,37 +927,16 @@ export default function App() {
   };
 
   const handleExportCSV = () => {
-    const headers = [
-      "ID",
-      "Name",
-      "Category",
-      "Owner",
-      "Phone",
-      "Neighborhood",
-      "Status",
-      "Verified",
-    ];
-    const rows = vendors.map((v) => [
-      v.id,
-      `"${v.name}"`,
-      `"${v.category}"`,
-      `"${v.ownerName}"`,
-      v.phone,
-      `"${v.neighborhood}"`,
-      v.status,
-      v.isVerified ? "Yes" : "No",
-    ]);
-
-    const csvContent =
-      "data:text/csv;charset=utf-8," +
-      [headers.join(","), ...rows.map((e) => e.join(","))].join("\n");
-    const encodedUri = encodeURI(csvContent);
-    const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `DialXprt_Vendors_Export_${Date.now()}.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    const chunks = chunkData<Vendor>(vendors, 250);
+    if (chunks.length === 0) {
+      alert("No vendor data to export.");
+      return;
+    }
+    chunks.forEach((chunk, index) => {
+      setTimeout(() => {
+        downloadVendorsCSVChunk(chunk.data, chunk.chunkIndex, chunk.totalChunks);
+      }, index * 400);
+    });
   };
 
   const unreadCount = notifications.filter((n) => !n.read).length;

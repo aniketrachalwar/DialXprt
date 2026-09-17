@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { X, Camera, Mic, MapPin, CheckCircle2, ChevronRight, ChevronLeft, Building2, User, Phone, MessageSquare, ShieldCheck, PlusCircle } from 'lucide-react';
+import { ChevronLeft, Building2, User, Phone, MessageSquare, ShieldCheck, CheckCircle2, Sparkles, MapPin, Briefcase, Award, Compass, Hash, FileText, UserCheck, Lightbulb, Camera, Mic, X, PlusCircle } from 'lucide-react';
 import { Category, Vendor, Neighborhood } from '../types';
 import { HYDERABAD_NEIGHBORHOODS } from '../data/mockVendors';
 import { AppLanguage, getTranslation, getCategoryName } from '../lib/translations';
@@ -16,6 +16,19 @@ interface VendorRegistrationViewProps {
   isEditMode?: boolean;
 }
 
+const CITIES_LIST = [
+  'Hyderabad',
+  'Secunderabad',
+  'Cyberabad',
+  'Warangal',
+  'Nizamabad',
+  'Karimnagar',
+  'Khammam',
+  'Vijayawada',
+  'Visakhapatnam',
+  'Other City'
+];
+
 export const VendorRegistrationView: React.FC<VendorRegistrationViewProps> = ({
   onBack,
   categories,
@@ -28,58 +41,52 @@ export const VendorRegistrationView: React.FC<VendorRegistrationViewProps> = ({
   isEditMode = false,
 }) => {
   const t = (key: string) => getTranslation(currentLang, key);
-  const [step, setStep] = useState<1 | 2 | 3>(1);
   const [loading, setLoading] = useState(false);
   const [isListening, setIsListening] = useState(false);
 
-  // Form fields
-  const [name, setName] = useState('');
+  // Form Fields (Matching exact Google Form specifications)
   const [ownerName, setOwnerName] = useState('');
+  const [phone, setPhone] = useState('');
+  const [whatsapp, setWhatsapp] = useState('');
+  const [name, setName] = useState('');
   const [selectedCategories, setSelectedCategories] = useState<Category[]>([]);
   const [categorySearch, setCategorySearch] = useState('');
   const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState(false);
   const categorySearchRef = useRef<HTMLDivElement>(null);
-  
-  // Close dropdown when clicking outside
+
+  const [experience, setExperience] = useState('');
+  const [city, setCity] = useState('Hyderabad');
+  const [neighborhoodSearch, setNeighborhoodSearch] = useState('');
+  const [pincode, setPincode] = useState('');
+  const [address, setAddress] = useState('');
+  const [referenceName, setReferenceName] = useState('');
+  const [referenceNumber, setReferenceNumber] = useState('');
+  const [suggestions, setSuggestions] = useState('');
+  const [description, setDescription] = useState('');
+
+  // Additional optional states
+  const [images, setImages] = useState<string[]>([]);
+  const [locations, setLocations] = useState<[number, number][]>([[userLat, userLng]]);
+
+  // Click outside category dropdown
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (categorySearchRef.current && !categorySearchRef.current.contains(event.target as Node)) {
         setIsCategoryDropdownOpen(false);
-      }
-      if (neighborhoodSearchRef.current && !neighborhoodSearchRef.current.contains(event.target as Node)) {
-        setIsNeighborhoodDropdownOpen(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const [phone, setPhone] = useState('');
-  const [email, setEmail] = useState('');
-  const [whatsapp, setWhatsapp] = useState('');
-  const [address, setAddress] = useState('');
-  const [selectedNeighborhoods, setSelectedNeighborhoods] = useState<Neighborhood[]>([]);
-  const [neighborhoodSearch, setNeighborhoodSearch] = useState('');
-  const [isNeighborhoodDropdownOpen, setIsNeighborhoodDropdownOpen] = useState(false);
-  const neighborhoodSearchRef = useRef<HTMLDivElement>(null);
-  const [pincode, setPincode] = useState('');
-  const [description, setDescription] = useState('');
-  const [experience, setExperience] = useState('');
-  const [suggestions, setSuggestions] = useState('');
-  const [referenceName, setReferenceName] = useState('');
-  const [referenceNumber, setReferenceNumber] = useState('');
-  const [keywords, setKeywords] = useState('');
-  const [operatingHours, setOperatingHours] = useState('9:00 AM - 8:00 PM');
-  const [images, setImages] = useState<string[]>([]);
-  const [imageInputUrl, setImageInputUrl] = useState('');
-  const [locations, setLocations] = useState<[number, number][]>([[userLat, userLng]]);
-
+  // Pre-fill initial data if editing
   useEffect(() => {
     if (initialData && isEditMode) {
-      setName(initialData.name || '');
       setOwnerName(initialData.ownerName || '');
-      
-      // Load Categories (Supports single or comma-separated lists)
+      setPhone(initialData.phone || '');
+      setWhatsapp(initialData.whatsapp || '');
+      setName(initialData.name || '');
+
       if (initialData.categorySlug) {
         const slugs = initialData.categorySlug.split(',').map(s => s.trim().toLowerCase());
         const found = categories.filter(c => slugs.includes(c.slug.toLowerCase()));
@@ -89,40 +96,24 @@ export const VendorRegistrationView: React.FC<VendorRegistrationViewProps> = ({
         const found = categories.filter(c => cats.includes(c.name.toLowerCase()) || cats.includes(c.slug.toLowerCase()));
         setSelectedCategories(found);
       }
-      
-      setPhone(initialData.phone || '');
-      setEmail(initialData.email || '');
-      setWhatsapp(initialData.whatsapp || '');
-      setAddress(initialData.address || '');
-      
-      if (initialData.neighborhood) {
-        setNeighborhoodSearch(initialData.neighborhood);
-        const foundNeigh = HYDERABAD_NEIGHBORHOODS.find(n => n.name.toLowerCase() === initialData.neighborhood.toLowerCase());
-        if (foundNeigh) setSelectedNeighborhoods([foundNeigh]);
-      }
-      
-      setPincode(initialData.pincode || '');
-      setDescription(initialData.description || '');
+
       setExperience(initialData.experience || '');
-      setSuggestions(initialData.suggestions || '');
+      setCity(initialData.city || 'Hyderabad');
+      setNeighborhoodSearch(initialData.neighborhood || '');
+      setPincode(initialData.pincode || '');
+      setAddress(initialData.address || '');
       setReferenceName(initialData.referenceName || '');
       setReferenceNumber(initialData.referenceNumber || '');
-      setKeywords(initialData.keywords || '');
-      setOperatingHours(initialData.operatingHours || '9:00 AM - 8:00 PM');
-      
+      setSuggestions(initialData.suggestions || '');
+      setDescription(initialData.description || '');
+
       if (initialData.images && initialData.images.length > 0) {
         setImages(initialData.images);
       } else if (initialData.imageUrl) {
         setImages([initialData.imageUrl]);
       }
-      
-      if (initialData.lat && initialData.lng) {
-        setLocations([[initialData.lat, initialData.lng], ...(initialData.additionalLocations?.map(l => [l.lat, l.lng] as [number, number]) || [])]);
-      }
     }
   }, [initialData, isEditMode, categories]);
-
-
 
   const handleVoiceDescription = () => {
     const SpeechRecognition =
@@ -163,18 +154,29 @@ export const VendorRegistrationView: React.FC<VendorRegistrationViewProps> = ({
     }
   };
 
-  const handleUsePresetPhoto = (url: string) => {
-    setImages(prev => [...prev, url]);
-  };
-
   const handleSubmitForm = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (!ownerName.trim()) {
+      alert('Please enter your Name.');
+      return;
+    }
+
+    if (!phone.trim() || phone.trim().length < 10) {
+      alert('Please enter a valid 10-digit Phone Number.');
+      return;
+    }
+
+    if (!name.trim()) {
+      alert('Please enter your Business / Shop Name.');
+      return;
+    }
+
     setLoading(true);
 
-    const categoryName = selectedCategories.map(c => c?.name || '').filter(Boolean).join(', ') || 'Other';
-    const categorySlug = selectedCategories.map(c => c?.slug || '').filter(Boolean).join(', ') || 'other';
-    const finalNeighborhood = neighborhoodSearch || 'Madhapur';
+    const categoryName = selectedCategories.map(c => c?.name || '').filter(Boolean).join(', ') || categorySearch || 'General Service';
+    const categorySlug = selectedCategories.map(c => c?.slug || '').filter(Boolean).join(', ') || categorySearch.toLowerCase().replace(/[^a-z0-9]+/g, '-') || 'general';
+    const finalNeighborhood = neighborhoodSearch || currentNeighborhood || 'Madhapur';
 
     const finalImage =
       images[0] ||
@@ -182,30 +184,30 @@ export const VendorRegistrationView: React.FC<VendorRegistrationViewProps> = ({
 
     try {
       await onSubmit({
-        name: name || ownerName || 'Unnamed Business',
-        ownerName: ownerName || 'Anonymous Owner',
+        name: name.trim(),
+        ownerName: ownerName.trim(),
         category: categoryName,
         categorySlug,
-        phone: phone || '',
-        email,
-        whatsapp: whatsapp || phone || '',
-        address: address || finalNeighborhood,
+        phone: phone.trim(),
+        email: `${phone.trim()}@dialxprt.com`,
+        whatsapp: whatsapp.trim() || phone.trim(),
+        address: address.trim() || finalNeighborhood,
         neighborhood: finalNeighborhood,
-        city: 'Hyderabad',
-        pincode: pincode || '500081',
+        city: city || 'Hyderabad',
+        pincode: pincode.trim() || '500081',
         lat: locations[0]?.[0] || userLat,
         lng: locations[0]?.[1] || userLng,
         additionalLocations: locations.length > 1 ? locations.slice(1).map(pos => ({ lat: pos[0], lng: pos[1] })) : [],
         imageUrl: finalImage,
         images,
-        keywords,
-        operatingHours,
+        keywords: `${name} ${categoryName} ${finalNeighborhood} ${city}`,
+        operatingHours: '9:00 AM - 8:00 PM',
         fullAddress: address,
         description,
-        experience: experience || 'N/A',
-        suggestions,
-        referenceName,
-        referenceNumber,
+        experience: experience.trim() || 'N/A',
+        suggestions: suggestions.trim(),
+        referenceName: referenceName.trim(),
+        referenceNumber: referenceNumber.trim(),
       });
       setLoading(false);
     } catch (err: any) {
@@ -216,461 +218,460 @@ export const VendorRegistrationView: React.FC<VendorRegistrationViewProps> = ({
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-24 font-sans animate-fade-in flex flex-col">
-      {/* Header */}
-      <div className="bg-[#0F5C5C] text-white px-4 py-3 flex items-center gap-3 sticky top-0 z-40 shadow-md">
-        <button 
-          onClick={onBack}
-          className="p-1.5 -ml-1.5 hover:bg-white/10 rounded-full transition-colors active:scale-95"
-        >
-          <ChevronLeft className="w-6 h-6" />
-        </button>
-        <div className="flex-1">
-          <h1 className="text-lg font-bold leading-tight">
-            {isEditMode ? 'Edit Business Details' : t('registerStoreTitle')}
-          </h1>
-          <p className="text-xs text-indigo-200">Complete all details to list your business</p>
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-slate-50 to-blue-50/50 pb-24 font-sans animate-fade-in flex flex-col">
+      {/* Premium Header: Orange & Blue Branding */}
+      <div className="bg-gradient-to-r from-[#0F5C5C] via-[#1E3A8A] to-[#0F5C5C] text-white px-4 py-4 sticky top-0 z-40 shadow-lg border-b border-orange-400/30">
+        <div className="max-w-xl mx-auto flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <button 
+              type="button"
+              onClick={onBack}
+              className="p-2 -ml-1 hover:bg-white/10 rounded-full transition-colors active:scale-95 text-white"
+            >
+              <ChevronLeft className="w-6 h-6" />
+            </button>
+            <div>
+              <h1 className="text-xl font-black leading-tight flex items-center gap-2">
+                <span>{isEditMode ? 'Edit Business Listing' : 'Register Your Shop or Service'}</span>
+                <Sparkles className="w-4 h-4 text-amber-300 animate-pulse" />
+              </h1>
+              <p className="text-xs text-orange-200 font-medium">Free 100% Instant Business Verification & Leads</p>
+            </div>
+          </div>
+
+          <span className="bg-[#F36F21] text-white font-extrabold text-[11px] px-3 py-1 rounded-full uppercase tracking-wider shadow-md hidden sm:inline-block">
+            NO GOOGLE FORM NEEDED
+          </span>
         </div>
       </div>
 
-      {/* Volunteer Notice Banner */}
-      <div className="bg-amber-50 border-b border-amber-200 p-2.5 px-4 text-xs text-amber-900 flex items-start gap-2 shadow-sm">
-        <ShieldCheck className="w-4 h-4 text-[#F36F21] shrink-0 mt-0.5" />
-        <span>{t('registerSubTitle')}</span>
+      {/* Hero Announcement Badge */}
+      <div className="bg-gradient-to-r from-orange-500 to-amber-600 text-white p-3 px-4 shadow-md flex items-center justify-center gap-2 text-xs font-extrabold text-center">
+        <ShieldCheck className="w-4 h-4 text-yellow-200 shrink-0" />
+        <span>Direct Website Registration — Submissions are verified and listed instantly on DialXprt!</span>
       </div>
 
-      {/* Main Content Area */}
-      <div className="flex-1 max-w-lg mx-auto w-full p-4 sm:p-6 bg-white shadow-sm sm:my-4 sm:rounded-2xl sm:border sm:border-gray-100">
-        <form onSubmit={handleSubmitForm} className="space-y-6">
-          <div className="space-y-4 animate-fade-in">
+      {/* Main Form Container: Orange, Blue & White Card */}
+      <div className="flex-1 max-w-xl mx-auto w-full p-4 sm:p-6 my-4">
+        <div className="bg-white rounded-3xl shadow-xl border-2 border-orange-200/80 overflow-hidden">
+          
+          {/* Card Title Banner */}
+          <div className="bg-gradient-to-r from-orange-50 to-blue-50 border-b border-orange-100 p-5 flex items-center gap-3">
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#F36F21] to-amber-500 text-white flex items-center justify-center shadow-lg shrink-0">
+              <Building2 className="w-6 h-6" />
+            </div>
             <div>
-                <label className="block text-xs font-bold text-gray-700 mb-1">
-                  Business Name
-                </label>
-                <div className="relative mb-3">
-                  <User className="w-4 h-4 text-gray-400 absolute left-3 top-3.5" />
-                  <input
-                    type="text"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    placeholder="Your Business Name"
-                    className="w-full pl-9 pr-3 py-2.5 text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0F5C5C] focus:outline-none min-h-[48px]"
-                  />
-                </div>
-              </div>
+              <h2 className="text-lg font-black text-[#0F5C5C]">Official Registration Form</h2>
+              <p className="text-xs text-gray-600">Fill all the required details (* marked) to list your business</p>
+            </div>
+          </div>
 
-              <div>
-                <label className="block text-xs font-bold text-gray-700 mb-1">
-                  Full Name/పేరు/नाम
-                </label>
-                <div className="relative">
-                  <User className="w-4 h-4 text-gray-400 absolute left-3 top-3.5" />
-                  <input
-                    type="text"
-                    value={ownerName}
-                    onChange={(e) => setOwnerName(e.target.value)}
-                    placeholder="Your full name"
-                    className="w-full pl-9 pr-3 py-2.5 text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0F5C5C] focus:outline-none min-h-[48px]"
-                  />
-                </div>
+          <form onSubmit={handleSubmitForm} className="p-5 sm:p-7 space-y-6">
+            
+            {/* 1. NAME (Required) */}
+            <div className="space-y-1.5">
+              <label className="block text-xs font-extrabold text-slate-800 uppercase tracking-wider flex items-center gap-1">
+                <span>Name. / పేరు / नाम</span>
+                <span className="text-red-500 text-sm">*</span>
+              </label>
+              <div className="relative">
+                <User className="w-5 h-5 text-orange-500 absolute left-3.5 top-3.5" />
+                <input
+                  type="text"
+                  required
+                  value={ownerName}
+                  onChange={(e) => setOwnerName(e.target.value)}
+                  placeholder="Your full name"
+                  className="w-full pl-11 pr-4 py-3 text-sm font-semibold border-2 border-slate-200 rounded-2xl focus:border-[#F36F21] focus:ring-4 focus:ring-orange-500/10 outline-none transition-all bg-slate-50/50 focus:bg-white min-h-[50px]"
+                />
               </div>
+            </div>
 
-              {isEditMode ? (
-                <div ref={categorySearchRef} className="relative">
-                  <label className="block text-xs font-bold text-gray-700 mb-1">
-                    Profession/వృత్తి/वृत्ति
-                  </label>
+            {/* 2. NUMBER (Required) */}
+            <div className="space-y-1.5">
+              <label className="block text-xs font-extrabold text-slate-800 uppercase tracking-wider flex items-center gap-1">
+                <span>Number / ఫోన్ నంబర్</span>
+                <span className="text-red-500 text-sm">*</span>
+              </label>
+              <div className="relative">
+                <Phone className="w-5 h-5 text-blue-600 absolute left-3.5 top-3.5" />
+                <input
+                  type="tel"
+                  required
+                  maxLength={10}
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value.replace(/\D/g, ''))}
+                  placeholder="10-digit mobile number"
+                  className="w-full pl-11 pr-4 py-3 text-sm font-bold border-2 border-slate-200 rounded-2xl focus:border-[#0F5C5C] focus:ring-4 focus:ring-blue-500/10 outline-none transition-all bg-slate-50/50 focus:bg-white min-h-[50px]"
+                />
+              </div>
+            </div>
+
+            {/* 3. WHATSAPP NUMBER (Required) */}
+            <div className="space-y-1.5">
+              <label className="block text-xs font-extrabold text-slate-800 uppercase tracking-wider flex items-center gap-1">
+                <span>WhatsApp Number / వాట్సాప్ నంబర్</span>
+                <span className="text-red-500 text-sm">*</span>
+              </label>
+              <div className="relative">
+                <MessageSquare className="w-5 h-5 text-emerald-600 absolute left-3.5 top-3.5" />
+                <input
+                  type="tel"
+                  required
+                  maxLength={10}
+                  value={whatsapp}
+                  onChange={(e) => setWhatsapp(e.target.value.replace(/\D/g, ''))}
+                  placeholder="WhatsApp number (same as phone if empty)"
+                  className="w-full pl-11 pr-4 py-3 text-sm font-semibold border-2 border-slate-200 rounded-2xl focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 outline-none transition-all bg-slate-50/50 focus:bg-white min-h-[50px]"
+                />
+              </div>
+            </div>
+
+            {/* 4. BUSINESS/SHOP NAME (Required) */}
+            <div className="space-y-1.5">
+              <label className="block text-xs font-extrabold text-slate-800 uppercase tracking-wider flex items-center gap-1">
+                <span>Business/Shop Name / వ్యాపారం/షాప్ పేరు</span>
+                <span className="text-red-500 text-sm">*</span>
+              </label>
+              <div className="relative">
+                <Building2 className="w-5 h-5 text-orange-500 absolute left-3.5 top-3.5" />
+                <input
+                  type="text"
+                  required
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="e.g. Sri Balaji Electricals & Hardware"
+                  className="w-full pl-11 pr-4 py-3 text-sm font-bold border-2 border-slate-200 rounded-2xl focus:border-[#F36F21] focus:ring-4 focus:ring-orange-500/10 outline-none transition-all bg-slate-50/50 focus:bg-white min-h-[50px]"
+                />
+              </div>
+            </div>
+
+            {/* 5. PROFESSION (Required) */}
+            <div className="space-y-1.5" ref={categorySearchRef}>
+              <label className="block text-xs font-extrabold text-slate-800 uppercase tracking-wider flex items-center gap-1">
+                <span>Profession. / వృత్తి / वृत्ति</span>
+                <span className="text-red-500 text-sm">*</span>
+              </label>
+
+              <div className="relative">
+                <Briefcase className="w-5 h-5 text-blue-600 absolute left-3.5 top-3.5 z-10" />
+                
+                <div 
+                  className="w-full pl-11 pr-3 py-2.5 border-2 border-slate-200 rounded-2xl bg-slate-50/50 focus-within:bg-white focus-within:border-[#0F5C5C] focus-within:ring-4 focus-within:ring-blue-500/10 min-h-[50px] flex flex-wrap gap-1.5 items-center cursor-text transition-all"
+                  onClick={() => setIsCategoryDropdownOpen(true)}
+                >
+                  {selectedCategories.map(cat => (
+                    <span key={cat?.slug || Math.random().toString()} className="bg-orange-500 text-white px-2.5 py-1 rounded-xl flex items-center gap-1.5 font-bold text-xs shadow-sm">
+                      <span>{cat?.emoji || '🏷️'}</span>
+                      <span>{cat?.name || 'Custom'}</span>
+                      <X 
+                        className="w-3.5 h-3.5 cursor-pointer hover:bg-orange-600 rounded-full p-0.5" 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedCategories(prev => prev.filter(c => c?.slug !== cat?.slug));
+                        }} 
+                      />
+                    </span>
+                  ))}
                   
-                  <div 
-                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-xl bg-white min-h-[48px] flex flex-wrap gap-1.5 items-center cursor-text"
-                    onClick={() => setIsCategoryDropdownOpen(true)}
-                  >
-                    {selectedCategories.map(cat => (
-                      <span key={cat?.slug || Math.random().toString()} className="bg-orange-100 text-[#F36F21] px-2 py-1 rounded-md flex items-center gap-1 font-bold text-[11px]">
-                        {cat?.name || 'Custom'}
-                        <X 
-                          className="w-3.5 h-3.5 cursor-pointer hover:text-orange-700" 
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setSelectedCategories(prev => prev.filter(c => c?.slug !== cat?.slug));
-                          }} 
-                        />
-                      </span>
-                    ))}
-                    
-                    <input
-                      type="text"
-                      value={categorySearch}
-                      onChange={(e) => {
-                        setCategorySearch(e.target.value);
-                        setIsCategoryDropdownOpen(true);
-                      }}
-                      placeholder={selectedCategories.length === 0 ? "Search for Electrician, Plumber, etc..." : "Add more..."}
-                      className="flex-1 min-w-[120px] focus:outline-none text-sm bg-transparent my-1"
-                      onFocus={() => setIsCategoryDropdownOpen(true)}
-                    />
-                  </div>
+                  <input
+                    type="text"
+                    value={categorySearch}
+                    onChange={(e) => {
+                      setCategorySearch(e.target.value);
+                      setIsCategoryDropdownOpen(true);
+                    }}
+                    placeholder={selectedCategories.length === 0 ? "Choose or type profession (e.g. Electrician, Plumber...)" : "Add more..."}
+                    className="flex-1 min-w-[140px] focus:outline-none text-sm font-semibold bg-transparent py-1"
+                    onFocus={() => setIsCategoryDropdownOpen(true)}
+                  />
+                </div>
 
-                  {isCategoryDropdownOpen && (
-                    <div className="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-xl shadow-lg max-h-60 overflow-y-auto">
-                      {(categories || []).filter(cat => {
+                {isCategoryDropdownOpen && (
+                  <div className="absolute z-50 w-full mt-1.5 bg-white border-2 border-orange-200 rounded-2xl shadow-2xl max-h-60 overflow-y-auto">
+                    {(categories || []).filter(cat => {
+                      if (!cat) return false;
+                      if (selectedCategories.some(c => c?.slug === cat.slug)) return false;
+                      if (!categorySearch) return true;
+                      return (cat?.name || "").toLowerCase().includes((categorySearch || "").toLowerCase()) || 
+                             (cat?.slug || "").toLowerCase().includes((categorySearch || "").toLowerCase());
+                    }).length === 0 ? (
+                      <div className="px-4 py-3 text-sm text-gray-500 font-medium">No matching profession found. Type custom profession below.</div>
+                    ) : (
+                      (categories || []).filter(cat => {
                         if (!cat) return false;
                         if (selectedCategories.some(c => c?.slug === cat.slug)) return false;
                         if (!categorySearch) return true;
                         return (cat?.name || "").toLowerCase().includes((categorySearch || "").toLowerCase()) || 
                                (cat?.slug || "").toLowerCase().includes((categorySearch || "").toLowerCase());
-                      }).length === 0 ? (
-                        <div className="px-4 py-3 text-sm text-gray-500">No matching professions found.</div>
-                      ) : (
-                        (categories || []).filter(cat => {
-                          if (!cat) return false;
-                          if (selectedCategories.some(c => c?.slug === cat.slug)) return false;
-                          if (!categorySearch) return true;
-                          return (cat?.name || "").toLowerCase().includes((categorySearch || "").toLowerCase()) || 
-                                 (cat?.slug || "").toLowerCase().includes((categorySearch || "").toLowerCase());
-                        }).map(cat => (
-                          <div 
-                            key={cat?.slug || Math.random().toString()}
-                            className="px-4 py-2.5 hover:bg-orange-50 cursor-pointer flex items-center gap-2 text-sm text-gray-700 font-semibold"
-                            onClick={() => {
-                              if (cat) {
-                                setSelectedCategories(prev => [...prev, cat]);
-                                setCategorySearch('');
-                              }
-                            }}
-                          >
-                            <span className="text-xl">{cat?.emoji || '🏷️'}</span>
-                            <span>{getCategoryName(cat?.slug || '', cat?.name || '', currentLang)}</span>
-                          </div>
-                        ))
-                      )}
-                      {categorySearch && !(categories || []).some(c => c && (c.name || "").toLowerCase() === categorySearch.toLowerCase()) && (
+                      }).map(cat => (
                         <div 
-                          className="px-4 py-3 border-t border-gray-100 hover:bg-orange-50 cursor-pointer flex items-center gap-2 text-sm text-[#F36F21] font-bold"
+                          key={cat?.slug || Math.random().toString()}
+                          className="px-4 py-3 hover:bg-orange-50 cursor-pointer flex items-center gap-2.5 text-sm text-gray-800 font-bold border-b border-gray-100 last:border-none transition-colors"
                           onClick={() => {
-                            setSelectedCategories(prev => [...prev, {
-                              id: `custom-${Date.now()}`,
-                              name: categorySearch.trim(),
-                              slug: categorySearch.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-'),
-                              emoji: '🏷️'
-                            }]);
-                            setCategorySearch('');
+                            if (cat) {
+                              setSelectedCategories(prev => [...prev, cat]);
+                              setCategorySearch('');
+                            }
                           }}
                         >
-                          <PlusCircle className="w-4 h-4" /> Add "{categorySearch}"
+                          <span className="text-xl">{cat?.emoji || '🏷️'}</span>
+                          <span>{getCategoryName(cat?.slug || '', cat?.name || '', currentLang)}</span>
                         </div>
-                      )}
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <div>
-                  <label className="block text-xs font-bold text-gray-700 mb-1">
-                    Profession/వృత్తి/वृत्ति
-                  </label>
-                  <input
-                    type="text"
-                    value={selectedCategories[0]?.name || ''}
-                    onChange={(e) => {
-                      const val = e.target.value;
-                      if (!val) {
-                        setSelectedCategories([]);
-                      } else {
-                        setSelectedCategories([{
-                          id: `custom-${Date.now()}`,
-                          name: val,
-                          slug: val.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
-                          emoji: '🏷️'
-                        }]);
-                      }
-                    }}
-                    placeholder="For Example :- Electrician, Plumber, etc..."
-                    className="w-full px-3 py-2.5 text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0F5C5C] focus:outline-none min-h-[48px]"
-                  />
-                </div>
-              )}
+                      ))
+                    )}
 
-              <div>
-                <label className="block text-xs font-bold text-gray-700 mb-1">
-                  Experience
-                </label>
+                    {categorySearch && !(categories || []).some(c => c && (c.name || "").toLowerCase() === categorySearch.toLowerCase()) && (
+                      <div 
+                        className="px-4 py-3 border-t border-orange-100 bg-orange-50/70 hover:bg-orange-100 cursor-pointer flex items-center gap-2 text-sm text-[#F36F21] font-black"
+                        onClick={() => {
+                          setSelectedCategories(prev => [...prev, {
+                            id: `custom-${Date.now()}`,
+                            name: categorySearch.trim(),
+                            slug: categorySearch.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+                            emoji: '🏷️'
+                          }]);
+                          setCategorySearch('');
+                        }}
+                      >
+                        <PlusCircle className="w-5 h-5 text-orange-500" /> Use custom: "{categorySearch}"
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* 6. EXPERIENCE (Required) */}
+            <div className="space-y-1.5">
+              <label className="block text-xs font-extrabold text-slate-800 uppercase tracking-wider flex items-center gap-1">
+                <span>Experience. / అనుభవం</span>
+                <span className="text-red-500 text-sm">*</span>
+              </label>
+              <div className="relative">
+                <Award className="w-5 h-5 text-orange-500 absolute left-3.5 top-3.5" />
                 <input
                   type="text"
+                  required
                   value={experience}
                   onChange={(e) => setExperience(e.target.value)}
                   placeholder="For Example :- 1yr, 10yr, 6 Months etc..."
-                  className="w-full px-3 py-2.5 text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0F5C5C] focus:outline-none min-h-[48px]"
+                  className="w-full pl-11 pr-4 py-3 text-sm font-semibold border-2 border-slate-200 rounded-2xl focus:border-[#F36F21] focus:ring-4 focus:ring-orange-500/10 outline-none transition-all bg-slate-50/50 focus:bg-white min-h-[50px]"
                 />
               </div>
+            </div>
 
-              {isEditMode && (
-                <>
-                  <hr className="border-gray-100 my-6" />
-                  <div>
-                    <label className="block text-xs font-bold text-gray-700 mb-1">
-                      Shop Photos / Board Photos
-                    </label>
-                    <div className="border-2 border-dashed border-gray-300 rounded-xl p-3 text-center bg-gray-50 hover:bg-gray-100 transition-colors">
-                      {images.length > 0 && (
-                        <div className="grid grid-cols-2 gap-2 mb-3">
-                          {images.map((img, i) => (
-                            <div key={i} className="relative h-24 w-full rounded-lg overflow-hidden border border-gray-200">
-                              <img src={img} alt={`Preview ${i}`} className="w-full h-full object-cover" />
-                              <button
-                                type="button"
-                                onClick={() => setImages(prev => prev.filter((_, idx) => idx !== i))}
-                                className="absolute top-1 right-1 bg-red-600 text-white p-1 rounded-full text-xs shadow-md active:scale-95"
-                              >
-                                <X className="w-3.5 h-3.5" />
-                              </button>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                      
-                      <label className="cursor-pointer flex flex-col items-center justify-center py-2 border-t border-gray-200 mt-2">
-                        <Camera className="w-6 h-6 text-[#F36F21] mb-1" />
-                        <span className="text-xs font-bold text-gray-700">Take Photos or Upload Images</span>
-                        <span className="text-[10px] text-gray-500">You can upload multiple files</span>
-                        <input
-                          type="file"
-                          accept="image/*"
-                          multiple
-                          onChange={handlePhotoUpload}
-                          className="hidden"
-                        />
-                      </label>
-                    </div>
+            {/* 7. CITY (Required Dropdown matching Google Form) */}
+            <div className="space-y-1.5">
+              <label className="block text-xs font-extrabold text-slate-800 uppercase tracking-wider flex items-center gap-1">
+                <span>City. / నగరం</span>
+                <span className="text-red-500 text-sm">*</span>
+              </label>
+              <div className="relative">
+                <Compass className="w-5 h-5 text-blue-600 absolute left-3.5 top-3.5 pointer-events-none" />
+                <select
+                  required
+                  value={city}
+                  onChange={(e) => setCity(e.target.value)}
+                  className="w-full pl-11 pr-10 py-3 text-sm font-extrabold border-2 border-slate-200 rounded-2xl focus:border-[#0F5C5C] focus:ring-4 focus:ring-blue-500/10 outline-none transition-all bg-slate-50/50 focus:bg-white min-h-[50px] appearance-none cursor-pointer text-slate-900"
+                >
+                  {CITIES_LIST.map((cityName) => (
+                    <option key={cityName} value={cityName} className="font-semibold text-gray-800">
+                      {cityName}
+                    </option>
+                  ))}
+                </select>
+                <div className="pointer-events-none absolute right-3.5 top-4 text-slate-500">
+                  <svg className="w-5 h-5 fill-current" viewBox="0 0 20 20"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"/></svg>
+                </div>
+              </div>
+            </div>
 
-                    <div className="mt-2">
-                      <p className="text-[11px] text-gray-500 mb-1 font-medium">Or pick sample shop images:</p>
-                      <div className="grid grid-cols-3 gap-1.5">
-                        <button
-                          type="button"
-                          onClick={() => handleUsePresetPhoto('https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&q=80&w=600')}
-                          className="text-[10px] bg-gray-100 hover:bg-gray-200 p-1.5 rounded border font-medium truncate active:scale-95"
-                        >
-                          Electrical Store
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => handleUsePresetPhoto('https://images.unsplash.com/photo-1578916171728-46686eac8d58?auto=format&fit=crop&q=80&w=600')}
-                          className="text-[10px] bg-gray-100 hover:bg-gray-200 p-1.5 rounded border font-medium truncate active:scale-95"
-                        >
-                          Kirana Store
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => handleUsePresetPhoto('https://images.unsplash.com/photo-1585704032915-c3400ca199e7?auto=format&fit=crop&q=80&w=600')}
-                          className="text-[10px] bg-gray-100 hover:bg-gray-200 p-1.5 rounded border font-medium truncate active:scale-95"
-                        >
-                          Plumbing Shop
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </>
-              )}
-
-              <div>
-                <label className="block text-xs font-bold text-gray-700 mb-1">
-                  Area/ప్రాంతం/क्षेत्र
-                </label>
+            {/* 8. AREA (Required) */}
+            <div className="space-y-1.5">
+              <label className="block text-xs font-extrabold text-slate-800 uppercase tracking-wider flex items-center gap-1">
+                <span>Area. / ప్రాంతం / क्षेत्र</span>
+                <span className="text-red-500 text-sm">*</span>
+              </label>
+              <div className="relative">
+                <MapPin className="w-5 h-5 text-orange-500 absolute left-3.5 top-3.5" />
                 <input
                   type="text"
+                  required
                   value={neighborhoodSearch}
                   onChange={(e) => setNeighborhoodSearch(e.target.value)}
-                  placeholder="e.g. Madhapur, Gachibowli"
-                  className="w-full px-3 py-2.5 text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0F5C5C] focus:outline-none min-h-[48px]"
+                  placeholder="e.g. Madhapur, Gachibowli, Kachiguda"
+                  className="w-full pl-11 pr-4 py-3 text-sm font-semibold border-2 border-slate-200 rounded-2xl focus:border-[#F36F21] focus:ring-4 focus:ring-orange-500/10 outline-none transition-all bg-slate-50/50 focus:bg-white min-h-[50px]"
                 />
               </div>
+            </div>
 
-              <div>
-                <label className="block text-xs font-bold text-gray-700 mb-1">
-                  Pincode
-                </label>
+            {/* 9. PINCODE (Required) */}
+            <div className="space-y-1.5">
+              <label className="block text-xs font-extrabold text-slate-800 uppercase tracking-wider flex items-center gap-1">
+                <span>Pincode. / పిన్‌కోడ్</span>
+                <span className="text-red-500 text-sm">*</span>
+              </label>
+              <div className="relative">
+                <Hash className="w-5 h-5 text-blue-600 absolute left-3.5 top-3.5" />
                 <input
                   type="text"
+                  required
+                  maxLength={6}
                   value={pincode}
-                  onChange={(e) => setPincode(e.target.value)}
+                  onChange={(e) => setPincode(e.target.value.replace(/\D/g, ''))}
                   placeholder="e.g. 500081"
-                  className="w-full px-3 py-2.5 text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0F5C5C] focus:outline-none min-h-[48px]"
+                  className="w-full pl-11 pr-4 py-3 text-sm font-bold border-2 border-slate-200 rounded-2xl focus:border-[#0F5C5C] focus:ring-4 focus:ring-blue-500/10 outline-none transition-all bg-slate-50/50 focus:bg-white min-h-[50px]"
                 />
               </div>
+            </div>
 
-              {isEditMode && (
-                <div>
-                  <label className="block text-xs font-bold text-gray-700 mb-1">
-                    Exact Shop Location (GPS)
-                  </label>
-                  <div className="bg-teal-50 border border-teal-100 rounded-xl p-3">
-                    <p className="text-xs text-teal-800 mb-3 font-medium">Please stand inside or right outside your shop/business and click the auto-detect button to capture your exact location.</p>
-                    <button 
-                      type="button" 
-                      onClick={() => {
-                        if (navigator.geolocation) {
-                          navigator.geolocation.getCurrentPosition((pos) => {
-                            setLocations([[pos.coords.latitude, pos.coords.longitude]]);
-                            alert('Location detected successfully!');
-                          }, (err) => {
-                            alert('Unable to detect location: ' + err.message);
-                          }, { enableHighAccuracy: true });
-                        } else {
-                          alert('Geolocation is not supported by your browser');
-                        }
-                      }}
-                      className="w-full bg-[#0F5C5C] hover:bg-teal-700 text-white py-2.5 rounded-lg font-bold active:scale-95 flex items-center justify-center gap-2 transition-transform shadow-sm min-h-[48px]"
-                    >
-                      <MapPin className="w-5 h-5" />
-                      Auto Detect Exact Location
-                    </button>
-                    {locations.length > 0 && (
-                      <p className="text-[11px] text-center text-teal-700 mt-3 font-bold bg-teal-100/50 py-1.5 rounded-md flex items-center justify-center gap-1">
-                        <CheckCircle2 className="w-3.5 h-3.5" /> Location captured successfully
-                      </p>
-                    )}
-                  </div>
-                </div>
-              )}
+            <hr className="border-orange-100 my-6" />
 
-              <div>
-                <label className="block text-xs font-bold text-gray-700 mb-1">
-                  Address/చిరునామా/पता ( OPTIONAL )
-                </label>
-                <textarea
-                  rows={2}
-                  value={address}
-                  onChange={(e) => setAddress(e.target.value)}
-                  placeholder="In detail with Landmark. ( Example :- Shivaji Nagar Opposite Hanuman Temple etc...)"
-                  className="w-full p-2.5 text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0F5C5C] focus:outline-none"
-                />
-              </div>
+            {/* 10. ADDRESS WITH LANDMARK (Optional) */}
+            <div className="space-y-1.5">
+              <label className="block text-xs font-extrabold text-slate-700 uppercase tracking-wider flex items-center gap-1">
+                <span>Address with landmark. ( Optional )</span>
+              </label>
+              <textarea
+                rows={2}
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                placeholder="In detail with landmark (e.g. Shivaji Nagar, Opposite Hanuman Temple)"
+                className="w-full p-3 text-sm font-medium border-2 border-slate-200 rounded-2xl focus:border-[#F36F21] focus:ring-4 focus:ring-orange-500/10 outline-none transition-all bg-slate-50/50 focus:bg-white"
+              />
+            </div>
 
-              <hr className="border-gray-100 my-6" />
-
-              <div>
-                <label className="block text-xs font-bold text-gray-700 mb-1">
-                  {t('phoneLabel')}
-                </label>
-                <div className="relative">
-                  <Phone className="w-4 h-4 text-gray-400 absolute left-3 top-3.5" />
-                  <input
-                    type="tel"
-                    maxLength={10}
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value.replace(/\D/g, ''))}
-                    placeholder="e.g. 9849012345"
-                    className="w-full pl-9 pr-3 py-2.5 text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0F5C5C] focus:outline-none font-semibold min-h-[48px]"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-gray-700 mb-1">
-                  WhatsApp Number
-                </label>
-                <div className="relative">
-                  <MessageSquare className="w-4 h-4 text-emerald-600 absolute left-3 top-3.5" />
-                  <input
-                    type="tel"
-                    maxLength={10}
-                    value={whatsapp}
-                    onChange={(e) => setWhatsapp(e.target.value.replace(/\D/g, ''))}
-                    placeholder="Same as phone number if empty"
-                    className="w-full pl-9 pr-3 py-2.5 text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0F5C5C] focus:outline-none min-h-[48px]"
-                  />
-                </div>
-              </div>
-
-              {/* Speak to Fill Description Feature for low-literacy shop owners */}
-              <div>
-                <div className="flex items-center justify-between mb-1">
-                  <label className="block text-xs font-bold text-gray-700">
-                    Profession Discription ( OPTIONAL )
-                  </label>
-                  <button
-                    type="button"
-                    onClick={handleVoiceDescription}
-                    className={`flex items-center gap-1 text-xs font-bold px-2 py-1 rounded-lg border transition-all ${
-                      isListening
-                        ? 'bg-red-500 text-white border-red-600 animate-pulse'
-                        : 'bg-indigo-50 text-[#0F5C5C] border-indigo-200 hover:bg-indigo-100'
-                    }`}
-                  >
-                    <Mic className="w-3.5 h-3.5 text-[#F36F21]" />
-                    <span>{isListening ? 'Listening...' : 'Speak Details (Voice)'}</span>
-                  </button>
-                </div>
-                <textarea
-                  rows={3}
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  placeholder="Better if you provide discription."
-                  className="w-full p-2.5 text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0F5C5C] focus:outline-none"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-gray-700 mb-1">
-                  Any Suggestions ( OPTIONAL )
-                </label>
-                <textarea
-                  rows={2}
-                  value={suggestions}
-                  onChange={(e) => setSuggestions(e.target.value)}
-                  placeholder="Your suggestions"
-                  className="w-full p-2.5 text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0F5C5C] focus:outline-none"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-gray-700 mb-1">
-                  Reference Name ( OPTIONAL )
-                </label>
+            {/* 11. REFERENCE NAME (Optional) */}
+            <div className="space-y-1.5">
+              <label className="block text-xs font-extrabold text-slate-700 uppercase tracking-wider flex items-center gap-1">
+                <span>Reference Name ( Optional )</span>
+              </label>
+              <div className="relative">
+                <UserCheck className="w-5 h-5 text-indigo-500 absolute left-3.5 top-3.5" />
                 <input
                   type="text"
                   value={referenceName}
                   onChange={(e) => setReferenceName(e.target.value)}
                   placeholder="Name of the person who referred you"
-                  className="w-full px-3 py-2.5 text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0F5C5C] focus:outline-none min-h-[48px]"
+                  className="w-full pl-11 pr-4 py-3 text-sm font-medium border-2 border-slate-200 rounded-2xl focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 outline-none transition-all bg-slate-50/50 focus:bg-white min-h-[50px]"
                 />
-              </div>
-
-              <div>
-                <label className="block text-xs font-bold text-gray-700 mb-1">
-                  Reference Number ( OPTIONAL )
-                </label>
-                <input
-                  type="text"
-                  value={referenceNumber}
-                  onChange={(e) => setReferenceNumber(e.target.value)}
-                  placeholder="Number of the person who referred you"
-                  className="w-full px-3 py-2.5 text-sm border border-gray-300 rounded-xl focus:ring-2 focus:ring-[#0F5C5C] focus:outline-none min-h-[48px]"
-                />
-              </div>
-
-
-
-              <div className="flex pt-4 mt-2">
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full bg-[#F36F21] hover:bg-orange-600 text-white font-bold py-3 px-4 rounded-xl flex items-center justify-center gap-2 shadow-lg min-h-[48px] disabled:opacity-50"
-                >
-                  {loading ? (
-                    <span>Submitting Store...</span>
-                  ) : (
-                    <>
-                      <CheckCircle2 className="w-5 h-5" />
-                      <span>{t('submitRegister')}</span>
-                    </>
-                  )}
-                </button>
               </div>
             </div>
-        </form>
+
+            {/* 12. REFERENCE NUMBER (Optional) */}
+            <div className="space-y-1.5">
+              <label className="block text-xs font-extrabold text-slate-700 uppercase tracking-wider flex items-center gap-1">
+                <span>Reference Number ( Optional )</span>
+              </label>
+              <div className="relative">
+                <Phone className="w-5 h-5 text-indigo-500 absolute left-3.5 top-3.5" />
+                <input
+                  type="tel"
+                  maxLength={10}
+                  value={referenceNumber}
+                  onChange={(e) => setReferenceNumber(e.target.value.replace(/\D/g, ''))}
+                  placeholder="Phone number of the referee"
+                  className="w-full pl-11 pr-4 py-3 text-sm font-medium border-2 border-slate-200 rounded-2xl focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 outline-none transition-all bg-slate-50/50 focus:bg-white min-h-[50px]"
+                />
+              </div>
+            </div>
+
+            {/* 13. SUGGESTIONS (Optional) */}
+            <div className="space-y-1.5">
+              <label className="block text-xs font-extrabold text-slate-700 uppercase tracking-wider flex items-center gap-1">
+                <span>Suggestions ( Optional )</span>
+              </label>
+              <div className="relative">
+                <textarea
+                  rows={2}
+                  value={suggestions}
+                  onChange={(e) => setSuggestions(e.target.value)}
+                  placeholder="Any feedback or suggestions for DialXprt"
+                  className="w-full p-3 text-sm font-medium border-2 border-slate-200 rounded-2xl focus:border-[#F36F21] focus:ring-4 focus:ring-orange-500/10 outline-none transition-all bg-slate-50/50 focus:bg-white"
+                />
+              </div>
+            </div>
+
+            {/* OPTIONAL SHOP PHOTOS / VOICE RECORDING ACCORDION */}
+            <div className="bg-gradient-to-r from-blue-50 to-orange-50 border border-blue-100 rounded-2xl p-4 space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-black text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
+                  <Camera className="w-4 h-4 text-orange-500" />
+                  <span>Shop Photos & Voice Note (Optional)</span>
+                </span>
+                
+                <button
+                  type="button"
+                  onClick={handleVoiceDescription}
+                  className={`flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-xl border transition-all shadow-sm ${
+                    isListening
+                      ? 'bg-red-500 text-white border-red-600 animate-pulse'
+                      : 'bg-white text-[#0F5C5C] border-blue-200 hover:bg-blue-100'
+                  }`}
+                >
+                  <Mic className="w-3.5 h-3.5 text-orange-500" />
+                  <span>{isListening ? 'Listening...' : 'Voice Record Details'}</span>
+                </button>
+              </div>
+
+              {images.length > 0 && (
+                <div className="grid grid-cols-3 gap-2">
+                  {images.map((img, i) => (
+                    <div key={i} className="relative h-20 rounded-xl overflow-hidden border border-gray-200 shadow-sm">
+                      <img src={img} alt={`Shop ${i}`} className="w-full h-full object-cover" />
+                      <button
+                        type="button"
+                        onClick={() => setImages(prev => prev.filter((_, idx) => idx !== i))}
+                        className="absolute top-1 right-1 bg-red-600 text-white p-1 rounded-full text-xs shadow-md"
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              <label className="cursor-pointer flex items-center justify-center gap-2 py-2.5 bg-white border border-dashed border-orange-300 hover:border-orange-500 rounded-xl transition-colors">
+                <Camera className="w-4 h-4 text-orange-500" />
+                <span className="text-xs font-bold text-slate-700">Upload Shop / Board Photos</span>
+                <input
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  onChange={handlePhotoUpload}
+                  className="hidden"
+                />
+              </label>
+
+              {description && (
+                <p className="text-xs text-slate-600 italic bg-white p-2 rounded-xl border border-blue-100">
+                  "{description}"
+                </p>
+              )}
+            </div>
+
+            {/* SUBMIT BUTTON */}
+            <div className="pt-2">
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full bg-gradient-to-r from-[#F36F21] via-orange-500 to-[#F36F21] hover:from-orange-600 hover:to-orange-700 text-white font-black py-4 px-6 rounded-2xl flex items-center justify-center gap-2 shadow-xl hover:shadow-orange-500/20 min-h-[54px] disabled:opacity-50 text-base active:scale-98 transition-all uppercase tracking-wide border-b-4 border-orange-700"
+              >
+                {loading ? (
+                  <span>Registering Business...</span>
+                ) : (
+                  <>
+                    <CheckCircle2 className="w-6 h-6 text-yellow-200 animate-bounce" />
+                    <span>{isEditMode ? 'Save Changes' : 'Submit Business Registration'}</span>
+                  </>
+                )}
+              </button>
+            </div>
+
+          </form>
+        </div>
       </div>
     </div>
   );
 };
-
