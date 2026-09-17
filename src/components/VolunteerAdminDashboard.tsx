@@ -8,6 +8,8 @@ interface VolunteerAdminDashboardProps {
   onRefreshData: () => void;
   currentRole: UserRole;
   onExportCSV: () => void;
+  onOpenAddVendor?: () => void;
+  onOpenEditVendor?: (vendor: Vendor) => void;
 }
 
 export const VolunteerAdminDashboard: React.FC<VolunteerAdminDashboardProps> = ({
@@ -16,6 +18,8 @@ export const VolunteerAdminDashboard: React.FC<VolunteerAdminDashboardProps> = (
   onRefreshData,
   currentRole,
   onExportCSV,
+  onOpenAddVendor,
+  onOpenEditVendor,
 }) => {
   const [activeTab, setActiveTab] = useState<'pending' | 'all' | 'analytics' | 'sql'>('pending');
   const [volunteerName, setVolunteerName] = useState('Volunteer Aniket');
@@ -69,7 +73,17 @@ export const VolunteerAdminDashboard: React.FC<VolunteerAdminDashboardProps> = (
         </div>
 
         {/* Top Action Controls */}
-        <div className="flex items-center gap-2 w-full md:w-auto">
+        <div className="flex items-center gap-2 w-full md:w-auto flex-wrap">
+          {onOpenAddVendor && (
+            <button
+              onClick={onOpenAddVendor}
+              className="flex-1 md:flex-none bg-purple-600 hover:bg-purple-700 text-white text-xs font-black px-3.5 py-2.5 rounded-xl flex items-center justify-center gap-1.5 transition-all shadow min-h-[44px]"
+            >
+              <MapPin className="w-4 h-4 text-amber-300" />
+              <span>+ Add Business (GPS Verification)</span>
+            </button>
+          )}
+
           <button
             onClick={onRefreshData}
             className="flex-1 md:flex-none bg-indigo-800 hover:bg-indigo-700 text-white text-xs font-bold px-3 py-2.5 rounded-xl flex items-center justify-center gap-1.5 transition-colors border border-indigo-500/30 min-h-[44px]"
@@ -276,7 +290,7 @@ export const VolunteerAdminDashboard: React.FC<VolunteerAdminDashboardProps> = (
                   </div>
 
                   {/* Verification Call & Approval Action Buttons */}
-                  <div className="grid grid-cols-3 gap-2 pt-1">
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1">
                     <a
                       href={`tel:+91${vendor.phone}`}
                       className="bg-indigo-50 hover:bg-indigo-100 text-[#0F5C5C] font-bold py-2 px-2 rounded-xl text-xs flex items-center justify-center gap-1 border border-indigo-200"
@@ -284,6 +298,16 @@ export const VolunteerAdminDashboard: React.FC<VolunteerAdminDashboardProps> = (
                       <Phone className="w-3.5 h-3.5" />
                       <span>Call Owner</span>
                     </a>
+
+                    {onOpenEditVendor && (
+                      <button
+                        onClick={() => onOpenEditVendor(vendor)}
+                        className="bg-amber-50 hover:bg-amber-100 text-amber-900 font-bold py-2 px-2 rounded-xl text-xs flex items-center justify-center gap-1 border border-amber-200"
+                      >
+                        <MapPin className="w-3.5 h-3.5 text-amber-600" />
+                        <span>Verify GPS</span>
+                      </button>
+                    )}
 
                     <button
                       onClick={() =>
@@ -297,7 +321,7 @@ export const VolunteerAdminDashboard: React.FC<VolunteerAdminDashboardProps> = (
                       className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-2 rounded-xl text-xs flex items-center justify-center gap-1 shadow"
                     >
                       <CheckCircle className="w-3.5 h-3.5" />
-                      <span>Approve & Live</span>
+                      <span>Approve</span>
                     </button>
 
                     <button

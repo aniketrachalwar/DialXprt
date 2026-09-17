@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ChevronLeft, Building2, User, Phone, MessageSquare, ShieldCheck, CheckCircle2, Sparkles, MapPin, Briefcase, Award, Compass, Hash, FileText, UserCheck, Lightbulb, Camera, Mic, X, PlusCircle } from 'lucide-react';
-import { Category, Vendor, Neighborhood } from '../types';
+import { Category, Vendor, Neighborhood, UserRole } from '../types';
 import { HYDERABAD_NEIGHBORHOODS } from '../data/mockVendors';
 import { AppLanguage, getTranslation, getCategoryName } from '../lib/translations';
 
@@ -14,19 +14,11 @@ interface VendorRegistrationViewProps {
   currentLang?: AppLanguage;
   initialData?: Vendor;
   isEditMode?: boolean;
+  currentRole?: UserRole;
 }
 
 const CITIES_LIST = [
-  'Hyderabad',
-  'Secunderabad',
-  'Cyberabad',
-  'Warangal',
-  'Nizamabad',
-  'Karimnagar',
-  'Khammam',
-  'Vijayawada',
-  'Visakhapatnam',
-  'Other City'
+  'Hyderabad'
 ];
 
 export const VendorRegistrationView: React.FC<VendorRegistrationViewProps> = ({
@@ -39,6 +31,7 @@ export const VendorRegistrationView: React.FC<VendorRegistrationViewProps> = ({
   currentLang = 'en',
   initialData,
   isEditMode = false,
+  currentRole = 'vendor',
 }) => {
   const t = (key: string) => getTranslation(currentLang, key);
   const [loading, setLoading] = useState(false);
@@ -515,47 +508,54 @@ export const VendorRegistrationView: React.FC<VendorRegistrationViewProps> = ({
                 </div>
               </div>
             </div>
-            {/* EXACT SHOP GPS LOCATION CAPTURE (FIELD VERIFICATION FOR VOLUNTEERS/ADMINS) */}
-            <div className="bg-gradient-to-r from-teal-50 via-cyan-50 to-blue-50 border-2 border-teal-200 rounded-2xl p-4 space-y-3 shadow-sm my-4">
-              <div className="flex items-start justify-between gap-2">
-                <div>
-                  <h3 className="text-xs font-black text-[#0F5C5C] uppercase tracking-wider flex items-center gap-1.5">
-                    <MapPin className="w-4 h-4 text-orange-500 animate-bounce" />
-                    <span>Exact Shop GPS Location (Field Verification)</span>
-                  </h3>
-                  <p className="text-[11px] text-teal-800 font-medium mt-0.5">
-                    When visiting the shop, tap below to auto-detect live GPS coordinates so customers discover the exact location on the map.
-                  </p>
+            {/* EXACT SHOP GPS LOCATION CAPTURE (ACCESSIBLE ONLY TO ADMIN & VOLUNTEER) */}
+            {(currentRole === 'admin' || currentRole === 'volunteer') && (
+              <div className="bg-gradient-to-r from-teal-50 via-cyan-50 to-blue-50 border-2 border-teal-300 rounded-2xl p-4 space-y-3 shadow-md my-4 animate-fade-in">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 border-b border-teal-200/60 pb-2.5">
+                  <div>
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <h3 className="text-xs font-black text-[#0F5C5C] uppercase tracking-wider flex items-center gap-1.5">
+                        <MapPin className="w-4 h-4 text-orange-500 animate-bounce" />
+                        <span>Exact Shop GPS Location (Field Verification)</span>
+                      </h3>
+                      <span className="bg-purple-100 text-purple-900 text-[10px] font-black px-2.5 py-0.5 rounded-full border border-purple-300 flex items-center gap-1 uppercase tracking-wider shadow-xs">
+                        <ShieldCheck className="w-3 h-3 text-purple-700" /> Admin & Volunteer Only
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-teal-800 font-medium mt-1">
+                      When visiting the shop, tap below to auto-detect live GPS coordinates so customers discover the exact location on the map.
+                    </p>
+                  </div>
+
+                  {locationSuccess && (
+                    <span className="bg-emerald-100 text-emerald-800 text-[10px] font-black px-2.5 py-1 rounded-full uppercase shrink-0 border border-emerald-300 flex items-center gap-1">
+                      <CheckCircle2 className="w-3 h-3 text-emerald-600" /> GPS Saved
+                    </span>
+                  )}
                 </div>
 
-                {locationSuccess && (
-                  <span className="bg-emerald-100 text-emerald-800 text-[10px] font-black px-2.5 py-1 rounded-full uppercase shrink-0 border border-emerald-300 flex items-center gap-1">
-                    <CheckCircle2 className="w-3 h-3 text-emerald-600" /> GPS Saved
-                  </span>
+                <button 
+                  type="button" 
+                  onClick={handleDetectLocation}
+                  disabled={isLocating}
+                  className="w-full bg-[#0F5C5C] hover:bg-teal-800 text-white font-black py-3 px-4 rounded-xl shadow-md flex items-center justify-center gap-2 transition-all active:scale-95 disabled:opacity-50 text-xs uppercase tracking-wide min-h-[48px]"
+                >
+                  <Compass className={`w-4 h-4 text-amber-300 ${isLocating ? 'animate-spin' : ''}`} />
+                  <span>{isLocating ? 'Capturing Live GPS Coordinates...' : 'Auto-Detect Live Shop GPS Location'}</span>
+                </button>
+
+                {locationSuccess && lat && lng && (
+                  <div className="bg-white/90 border border-teal-200 rounded-xl p-2.5 text-[11px] text-slate-700 font-bold flex items-center justify-between shadow-xs">
+                    <span className="flex items-center gap-1 text-teal-900">
+                      📍 Coordinates: <strong className="text-orange-600">{lat.toFixed(6)}, {lng.toFixed(6)}</strong>
+                    </span>
+                    <span className="text-[10px] text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                      Live Verified
+                    </span>
+                  </div>
                 )}
               </div>
-
-              <button 
-                type="button" 
-                onClick={handleDetectLocation}
-                disabled={isLocating}
-                className="w-full bg-[#0F5C5C] hover:bg-teal-800 text-white font-black py-3 px-4 rounded-xl shadow-md flex items-center justify-center gap-2 transition-all active:scale-95 disabled:opacity-50 text-xs uppercase tracking-wide min-h-[48px]"
-              >
-                <Compass className={`w-4 h-4 text-amber-300 ${isLocating ? 'animate-spin' : ''}`} />
-                <span>{isLocating ? 'Capturing Live GPS Coordinates...' : 'Auto-Detect Live Shop GPS Location'}</span>
-              </button>
-
-              {locationSuccess && lat && lng && (
-                <div className="bg-white/90 border border-teal-200 rounded-xl p-2.5 text-[11px] text-slate-700 font-bold flex items-center justify-between shadow-xs">
-                  <span className="flex items-center gap-1 text-teal-900">
-                    📍 Coordinates: <strong className="text-orange-600">{lat.toFixed(6)}, {lng.toFixed(6)}</strong>
-                  </span>
-                  <span className="text-[10px] text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
-                    Live Verified
-                  </span>
-                </div>
-              )}
-            </div>
+            )}
 
             {/* 8. AREA (Required) */}
             <div className="space-y-1.5">
@@ -663,63 +663,70 @@ export const VendorRegistrationView: React.FC<VendorRegistrationViewProps> = ({
               </div>
             </div>
 
-            {/* OPTIONAL SHOP PHOTOS / VOICE RECORDING ACCORDION */}
-            <div className="bg-gradient-to-r from-blue-50 to-orange-50 border border-blue-100 rounded-2xl p-4 space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-black text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
-                  <Camera className="w-4 h-4 text-orange-500" />
-                  <span>Shop Photos & Voice Note (Optional)</span>
-                </span>
-                
-                <button
-                  type="button"
-                  onClick={handleVoiceDescription}
-                  className={`flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-xl border transition-all shadow-sm ${
-                    isListening
-                      ? 'bg-red-500 text-white border-red-600 animate-pulse'
-                      : 'bg-white text-[#0F5C5C] border-blue-200 hover:bg-blue-100'
-                  }`}
-                >
-                  <Mic className="w-3.5 h-3.5 text-orange-500" />
-                  <span>{isListening ? 'Listening...' : 'Voice Record Details'}</span>
-                </button>
-              </div>
-
-              {images.length > 0 && (
-                <div className="grid grid-cols-3 gap-2">
-                  {images.map((img, i) => (
-                    <div key={i} className="relative h-20 rounded-xl overflow-hidden border border-gray-200 shadow-sm">
-                      <img src={img} alt={`Shop ${i}`} className="w-full h-full object-cover" />
-                      <button
-                        type="button"
-                        onClick={() => setImages(prev => prev.filter((_, idx) => idx !== i))}
-                        className="absolute top-1 right-1 bg-red-600 text-white p-1 rounded-full text-xs shadow-md"
-                      >
-                        <X className="w-3 h-3" />
-                      </button>
-                    </div>
-                  ))}
+            {/* OPTIONAL SHOP PHOTOS / VOICE RECORDING ACCORDION (ACCESSIBLE ONLY TO ADMIN & VOLUNTEER) */}
+            {(currentRole === 'admin' || currentRole === 'volunteer') && (
+              <div className="bg-gradient-to-r from-blue-50 to-orange-50 border border-blue-200 rounded-2xl p-4 space-y-3 animate-fade-in my-4">
+                <div className="flex items-center justify-between flex-wrap gap-2">
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <span className="text-xs font-black text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
+                      <Camera className="w-4 h-4 text-orange-500" />
+                      <span>Shop Photos & Voice Note (Optional)</span>
+                    </span>
+                    <span className="bg-purple-100 text-purple-900 text-[10px] font-black px-2 py-0.5 rounded-full border border-purple-300 uppercase tracking-wider shadow-xs">
+                      Admin & Volunteer Only
+                    </span>
+                  </div>
+                  
+                  <button
+                    type="button"
+                    onClick={handleVoiceDescription}
+                    className={`flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-xl border transition-all shadow-sm ${
+                      isListening
+                        ? 'bg-red-500 text-white border-red-600 animate-pulse'
+                        : 'bg-white text-[#0F5C5C] border-blue-200 hover:bg-blue-100'
+                    }`}
+                  >
+                    <Mic className="w-3.5 h-3.5 text-orange-500" />
+                    <span>{isListening ? 'Listening...' : 'Voice Record Details'}</span>
+                  </button>
                 </div>
-              )}
 
-              <label className="cursor-pointer flex items-center justify-center gap-2 py-2.5 bg-white border border-dashed border-orange-300 hover:border-orange-500 rounded-xl transition-colors">
-                <Camera className="w-4 h-4 text-orange-500" />
-                <span className="text-xs font-bold text-slate-700">Upload Shop / Board Photos</span>
-                <input
-                  type="file"
-                  accept="image/*"
-                  multiple
-                  onChange={handlePhotoUpload}
-                  className="hidden"
-                />
-              </label>
+                {images.length > 0 && (
+                  <div className="grid grid-cols-3 gap-2">
+                    {images.map((img, i) => (
+                      <div key={i} className="relative h-20 rounded-xl overflow-hidden border border-gray-200 shadow-sm">
+                        <img src={img} alt={`Shop ${i}`} className="w-full h-full object-cover" />
+                        <button
+                          type="button"
+                          onClick={() => setImages(prev => prev.filter((_, idx) => idx !== i))}
+                          className="absolute top-1 right-1 bg-red-600 text-white p-1 rounded-full text-xs shadow-md"
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
 
-              {description && (
-                <p className="text-xs text-slate-600 italic bg-white p-2 rounded-xl border border-blue-100">
-                  "{description}"
-                </p>
-              )}
-            </div>
+                <label className="cursor-pointer flex items-center justify-center gap-2 py-2.5 bg-white border border-dashed border-orange-300 hover:border-orange-500 rounded-xl transition-colors">
+                  <Camera className="w-4 h-4 text-orange-500" />
+                  <span className="text-xs font-bold text-slate-700">Upload Shop / Board Photos</span>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={handlePhotoUpload}
+                    className="hidden"
+                  />
+                </label>
+
+                {description && (
+                  <p className="text-xs text-slate-600 italic bg-white p-2 rounded-xl border border-blue-100">
+                    "{description}"
+                  </p>
+                )}
+              </div>
+            )}
 
             {/* SUBMIT BUTTON */}
             <div className="pt-2">

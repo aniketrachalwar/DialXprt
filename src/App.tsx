@@ -1224,6 +1224,7 @@ export default function App() {
             userLng={userLng}
             currentNeighborhood={currentNeighborhood}
             isEditMode={false}
+            currentRole={currentRole}
             onSubmit={async (vendorData) => {
               await handleRegisterVendorSubmit(vendorData, currentRole === 'admin' || currentRole === 'volunteer');
               setActiveTab(currentRole === 'admin' || currentRole === 'volunteer' ? 'admin' : 'account');
@@ -1242,6 +1243,7 @@ export default function App() {
             currentNeighborhood={currentNeighborhood}
             initialData={selectedVendorToEdit}
             isEditMode={true}
+            currentRole={currentRole}
             onSubmit={async (vendorData) => {
               // Call the existing update handler
               await handleUpdateVendorDetailsSubmit({ ...selectedVendorToEdit, ...vendorData } as Vendor);
