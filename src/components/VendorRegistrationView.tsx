@@ -64,8 +64,12 @@ export const VendorRegistrationView: React.FC<VendorRegistrationViewProps> = ({
   const [suggestions, setSuggestions] = useState('');
   const [description, setDescription] = useState('');
 
-  // Additional optional states
+  // Additional optional & GPS location states
   const [images, setImages] = useState<string[]>([]);
+  const [lat, setLat] = useState<number>(initialData?.lat || userLat);
+  const [lng, setLng] = useState<number>(initialData?.lng || userLng);
+  const [isLocating, setIsLocating] = useState(false);
+  const [locationSuccess, setLocationSuccess] = useState(Boolean(initialData?.lat && initialData?.lng));
   const [locations, setLocations] = useState<[number, number][]>([[userLat, userLng]]);
 
   // Click outside category dropdown
@@ -81,7 +85,7 @@ export const VendorRegistrationView: React.FC<VendorRegistrationViewProps> = ({
 
   // Pre-fill initial data if editing
   useEffect(() => {
-    if (initialData && isEditMode) {
+    if (initialData) {
       setOwnerName(initialData.ownerName || '');
       setPhone(initialData.phone || '');
       setWhatsapp(initialData.whatsapp || '');
@@ -107,6 +111,13 @@ export const VendorRegistrationView: React.FC<VendorRegistrationViewProps> = ({
       setSuggestions(initialData.suggestions || '');
       setDescription(initialData.description || '');
 
+      if (initialData.lat && initialData.lng) {
+        setLat(initialData.lat);
+        setLng(initialData.lng);
+        setLocations([[initialData.lat, initialData.lng]]);
+        setLocationSuccess(true);
+      }
+
       if (initialData.images && initialData.images.length > 0) {
         setImages(initialData.images);
       } else if (initialData.imageUrl) {
@@ -114,6 +125,31 @@ export const VendorRegistrationView: React.FC<VendorRegistrationViewProps> = ({
       }
     }
   }, [initialData, isEditMode, categories]);
+
+  const handleDetectLocation = () => {
+    if (!navigator.geolocation) {
+      alert('Geolocation is not supported by your browser.');
+      return;
+    }
+
+    setIsLocating(true);
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const capturedLat = position.coords.latitude;
+        const capturedLng = position.coords.longitude;
+        setLat(capturedLat);
+        setLng(capturedLng);
+        setLocations([[capturedLat, capturedLng]]);
+        setIsLocating(false);
+        setLocationSuccess(true);
+      },
+      (error) => {
+        setIsLocating(false);
+        alert('Unable to capture exact GPS location: ' + error.message + '. Please ensure location permission is allowed.');
+      },
+      { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+    );
+  };
 
   const handleVoiceDescription = () => {
     const SpeechRecognition =
@@ -195,8 +231,8 @@ export const VendorRegistrationView: React.FC<VendorRegistrationViewProps> = ({
         neighborhood: finalNeighborhood,
         city: city || 'Hyderabad',
         pincode: pincode.trim() || '500081',
-        lat: locations[0]?.[0] || userLat,
-        lng: locations[0]?.[1] || userLng,
+        lat: lat || locations[0]?.[0] || userLat,
+        lng: lng || locations[0]?.[1] || userLng,
         additionalLocations: locations.length > 1 ? locations.slice(1).map(pos => ({ lat: pos[0], lng: pos[1] })) : [],
         imageUrl: finalImage,
         images,
@@ -478,6 +514,47 @@ export const VendorRegistrationView: React.FC<VendorRegistrationViewProps> = ({
                   <svg className="w-5 h-5 fill-current" viewBox="0 0 20 20"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"/></svg>
                 </div>
               </div>
+            </div>
+            {/* EXACT SHOP GPS LOCATION CAPTURE (FIELD VERIFICATION FOR VOLUNTEERS/ADMINS) */}
+            <div className="bg-gradient-to-r from-teal-50 via-cyan-50 to-blue-50 border-2 border-teal-200 rounded-2xl p-4 space-y-3 shadow-sm my-4">
+              <div className="flex items-start justify-between gap-2">
+                <div>
+                  <h3 className="text-xs font-black text-[#0F5C5C] uppercase tracking-wider flex items-center gap-1.5">
+                    <MapPin className="w-4 h-4 text-orange-500 animate-bounce" />
+                    <span>Exact Shop GPS Location (Field Verification)</span>
+                  </h3>
+                  <p className="text-[11px] text-teal-800 font-medium mt-0.5">
+                    When visiting the shop, tap below to auto-detect live GPS coordinates so customers discover the exact location on the map.
+                  </p>
+                </div>
+
+                {locationSuccess && (
+                  <span className="bg-emerald-100 text-emerald-800 text-[10px] font-black px-2.5 py-1 rounded-full uppercase shrink-0 border border-emerald-300 flex items-center gap-1">
+                    <CheckCircle2 className="w-3 h-3 text-emerald-600" /> GPS Saved
+                  </span>
+                )}
+              </div>
+
+              <button 
+                type="button" 
+                onClick={handleDetectLocation}
+                disabled={isLocating}
+                className="w-full bg-[#0F5C5C] hover:bg-teal-800 text-white font-black py-3 px-4 rounded-xl shadow-md flex items-center justify-center gap-2 transition-all active:scale-95 disabled:opacity-50 text-xs uppercase tracking-wide min-h-[48px]"
+              >
+                <Compass className={`w-4 h-4 text-amber-300 ${isLocating ? 'animate-spin' : ''}`} />
+                <span>{isLocating ? 'Capturing Live GPS Coordinates...' : 'Auto-Detect Live Shop GPS Location'}</span>
+              </button>
+
+              {locationSuccess && lat && lng && (
+                <div className="bg-white/90 border border-teal-200 rounded-xl p-2.5 text-[11px] text-slate-700 font-bold flex items-center justify-between shadow-xs">
+                  <span className="flex items-center gap-1 text-teal-900">
+                    📍 Coordinates: <strong className="text-orange-600">{lat.toFixed(6)}, {lng.toFixed(6)}</strong>
+                  </span>
+                  <span className="text-[10px] text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                    Live Verified
+                  </span>
+                </div>
+              )}
             </div>
 
             {/* 8. AREA (Required) */}
